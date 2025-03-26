@@ -1,7 +1,7 @@
 
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
-import { Search, Calendar, Package, User, MapPin, Check, Filter } from 'lucide-react';
+import { Search, Calendar, Package, User, MapPin, Check, Filter, Download, RefreshCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -16,74 +16,138 @@ import {
 import { DatePicker } from '@/components/ui/date-picker';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { Badge } from '@/components/ui/badge';
 
-// Mock data for pick orders
+// Updated mock data for pick orders to include the new required fields
 const mockPickOrders = [
   {
     id: 'PO-001',
-    customer: 'Bangkok Hospital',
+    status: 'Pending',
+    waitingToProcess: 'Yes',
+    requestDate: '2023-08-15',
+    warehouseFrom: 'Bangkok Central',
+    referenceDoc: 'REF-11235',
+    requestType: 'Regular',
+    notes: 'Urgent delivery needed',
+    customerId: 'CUST-001',
+    deliveryDate: '2023-08-20',
+    warehouseTo: 'Phuket Branch',
     requester: 'Dr. Somchai',
+    customer: 'Bangkok Hospital',
     items: [
       { sku: 'VIT-001', name: 'Vitamin C 1000mg', quantity: 200, location: 'A-01-02' },
       { sku: 'MIN-005', name: 'Calcium + D3', quantity: 100, location: 'A-02-03' }
     ],
-    status: 'Pending',
-    requiredDate: '2023-08-15',
-    priority: 'High'
+    priority: 'High',
+    requiredDate: '2023-08-15'
   },
   {
     id: 'PO-002',
-    customer: 'Chiang Mai Clinic',
+    status: 'Processing',
+    waitingToProcess: 'No',
+    requestDate: '2023-08-16',
+    warehouseFrom: 'Bangkok Central',
+    referenceDoc: 'REF-11236',
+    requestType: 'Rush',
+    notes: 'Call before delivery',
+    customerId: 'CUST-002',
+    deliveryDate: '2023-08-18',
+    warehouseTo: 'Chiang Mai Branch',
     requester: 'Nurse Pornpan',
+    customer: 'Chiang Mai Clinic',
     items: [
       { sku: 'VIT-001', name: 'Vitamin C 1000mg', quantity: 50, location: 'A-01-02' },
       { sku: 'VIT-003', name: 'Vitamin B Complex', quantity: 75, location: 'A-01-05' }
     ],
-    status: 'Processing',
-    requiredDate: '2023-08-18',
-    priority: 'Medium'
+    priority: 'Medium',
+    requiredDate: '2023-08-18'
   },
   {
     id: 'PO-003',
-    customer: 'Phuket Medical Center',
+    status: 'Pending',
+    waitingToProcess: 'Yes',
+    requestDate: '2023-08-17',
+    warehouseFrom: 'Bangkok Central',
+    referenceDoc: 'REF-11237',
+    requestType: 'Regular',
+    notes: '',
+    customerId: 'CUST-003',
+    deliveryDate: '2023-08-22',
+    warehouseTo: 'Phuket Branch',
     requester: 'Dr. Wichai',
+    customer: 'Phuket Medical Center',
     items: [
       { sku: 'MIN-005', name: 'Calcium + D3', quantity: 150, location: 'A-02-03' },
       { sku: 'PRO-002', name: 'Whey Protein', quantity: 25, location: 'B-03-01' }
     ],
-    status: 'Pending',
-    requiredDate: '2023-08-20',
-    priority: 'Low'
+    priority: 'Low',
+    requiredDate: '2023-08-20'
   },
   {
     id: 'PO-004',
-    customer: 'Bangkok Hospital',
+    status: 'Pending',
+    waitingToProcess: 'Yes',
+    requestDate: '2023-08-18',
+    warehouseFrom: 'Bangkok Central',
+    referenceDoc: 'REF-11238',
+    requestType: 'Regular',
+    notes: 'Handle with care',
+    customerId: 'CUST-001',
+    deliveryDate: '2023-08-23',
+    warehouseTo: 'Bangkok Branch',
     requester: 'Dr. Somchai',
+    customer: 'Bangkok Hospital',
     items: [
       { sku: 'VIT-001', name: 'Vitamin C 1000mg', quantity: 100, location: 'A-01-02' },
       { sku: 'PRO-002', name: 'Whey Protein', quantity: 50, location: 'B-03-01' }
     ],
-    status: 'Pending',
-    requiredDate: '2023-08-22',
-    priority: 'Medium'
+    priority: 'Medium',
+    requiredDate: '2023-08-22'
   },
   {
     id: 'PO-005',
-    customer: 'Pattaya Clinic',
+    status: 'Pending',
+    waitingToProcess: 'Yes',
+    requestDate: '2023-08-19',
+    warehouseFrom: 'Bangkok Central',
+    referenceDoc: 'REF-11239',
+    requestType: 'Rush',
+    notes: '',
+    customerId: 'CUST-004',
+    deliveryDate: '2023-08-24',
+    warehouseTo: 'Pattaya Branch',
     requester: 'Nurse Thana',
+    customer: 'Pattaya Clinic',
     items: [
       { sku: 'VIT-001', name: 'Vitamin C 1000mg', quantity: 75, location: 'A-01-02' },
       { sku: 'VIT-003', name: 'Vitamin B Complex', quantity: 100, location: 'A-01-05' }
     ],
-    status: 'Pending',
-    requiredDate: '2023-08-25',
-    priority: 'High'
+    priority: 'High',
+    requiredDate: '2023-08-25'
   }
 ];
 
+// Define the warehouses for dropdown
+const warehouses = ['All Warehouses', 'Bangkok Central', 'Chiang Mai Distribution', 'Phuket Storage', 'Pattaya Facility'];
+const zones = ['All Zones', 'Zone A', 'Zone B', 'Zone C', 'Zone D'];
+const areas = ['All Areas', 'Dry Food', 'Wet Food', 'Premium Section', 'Specialty', 'Health', 'Small Pets', 'Aquatics'];
+const categories = ['All Categories', 'Dog Food', 'Cat Food', 'Bird Food', 'Fish Food', 'Small Animal'];
+
 const PickOrders = () => {
   const [showFilters, setShowFilters] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [selectedWarehouse, setSelectedWarehouse] = useState('All Warehouses');
+  const [selectedZone, setSelectedZone] = useState('All Zones');
+  const [selectedArea, setSelectedArea] = useState('All Areas');
+  const [selectedCategory, setSelectedCategory] = useState('All Categories');
   const [filterBySku, setFilterBySku] = useState('all');
   const [filterByCustomer, setFilterByCustomer] = useState('all');
   const [filterByRequester, setFilterByRequester] = useState('all');
@@ -107,6 +171,48 @@ const PickOrders = () => {
   const applyFilters = () => {
     let result = [...mockPickOrders];
 
+    // Apply search term filter
+    if (searchTerm) {
+      const term = searchTerm.toLowerCase();
+      result = result.filter(order => 
+        order.id.toLowerCase().includes(term) ||
+        order.customer.toLowerCase().includes(term) ||
+        order.requester.toLowerCase().includes(term) ||
+        order.items.some(item => 
+          item.sku.toLowerCase().includes(term) || 
+          item.name.toLowerCase().includes(term)
+        )
+      );
+    }
+
+    // Apply warehouse filter
+    if (selectedWarehouse !== 'All Warehouses') {
+      result = result.filter(order => order.warehouseFrom === selectedWarehouse);
+    }
+
+    // Apply zone filter
+    if (selectedZone !== 'All Zones') {
+      result = result.filter(order => 
+        order.items.some(item => item.location.startsWith(selectedZone.replace('Zone ', '')))
+      );
+    }
+
+    // Apply area filter
+    if (selectedArea !== 'All Areas') {
+      result = result.filter(order => 
+        order.items.some(item => item.location.includes(selectedArea))
+      );
+    }
+
+    // Apply category filter
+    if (selectedCategory !== 'All Categories') {
+      // This would require category data in the items, assuming it for now
+      result = result.filter(order => 
+        order.items.some(item => item.name.includes(selectedCategory))
+      );
+    }
+
+    // Apply specific tab filters
     if (activeTab === 'sku' && filterBySku && filterBySku !== 'all') {
       result = result.filter(order => 
         order.items.some(item => item.sku.toLowerCase().includes(filterBySku.toLowerCase()))
@@ -157,7 +263,16 @@ const PickOrders = () => {
     }
   };
 
+  const handleSearch = () => {
+    applyFilters();
+  };
+
   const resetFilters = () => {
+    setSearchTerm('');
+    setSelectedWarehouse('All Warehouses');
+    setSelectedZone('All Zones');
+    setSelectedArea('All Areas');
+    setSelectedCategory('All Categories');
     setFilterBySku('all');
     setFilterByCustomer('all');
     setFilterByRequester('all');
@@ -196,143 +311,85 @@ const PickOrders = () => {
           className="mb-6"
         >
           <Card>
-            <CardHeader>
-              <CardTitle className="text-lg flex items-center gap-2">
-                <Filter size={18} />
-                Filter Pick Orders
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <TabsList className="grid w-full grid-cols-5">
-                  <TabsTrigger value="sku" className="flex items-center gap-1">
-                    <Package size={16} />
-                    <span>By SKU</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="customer" className="flex items-center gap-1">
-                    <User size={16} />
-                    <span>By Customer</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="requester" className="flex items-center gap-1">
-                    <User size={16} />
-                    <span>By Requester</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="location" className="flex items-center gap-1">
-                    <MapPin size={16} />
-                    <span>By Location</span>
-                  </TabsTrigger>
-                  <TabsTrigger value="date" className="flex items-center gap-1">
-                    <Calendar size={16} />
-                    <span>By Date</span>
-                  </TabsTrigger>
-                </TabsList>
+            <CardContent className="p-6">
+              <div className="grid gap-4 grid-cols-1 md:grid-cols-2 lg:grid-cols-4">
+                <div>
+                  <Input
+                    type="text"
+                    placeholder="Search by item code, name, or lot"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="w-full"
+                  />
+                </div>
 
-                <TabsContent value="sku" className="mt-4">
-                  <div className="flex gap-2">
-                    <div className="w-full">
-                      <Select 
-                        value={filterBySku} 
-                        onValueChange={setFilterBySku}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select SKU" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="all">All SKUs</SelectItem>
-                          {uniqueSkus.map(sku => (
-                            <SelectItem key={sku} value={sku}>{sku}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <Button onClick={applyFilters}>Apply</Button>
-                    <Button variant="outline" onClick={resetFilters}>Reset</Button>
-                  </div>
-                </TabsContent>
+                <div>
+                  <Select value={selectedWarehouse} onValueChange={setSelectedWarehouse}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Warehouse" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {warehouses.map((warehouse) => (
+                        <SelectItem key={warehouse} value={warehouse}>{warehouse}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
 
-                <TabsContent value="customer" className="mt-4">
-                  <div className="flex gap-2">
-                    <div className="w-full">
-                      <Select 
-                        value={filterByCustomer} 
-                        onValueChange={setFilterByCustomer}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select Customer" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="all">All Customers</SelectItem>
-                          {uniqueCustomers.map(customer => (
-                            <SelectItem key={customer} value={customer}>{customer}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <Button onClick={applyFilters}>Apply</Button>
-                    <Button variant="outline" onClick={resetFilters}>Reset</Button>
-                  </div>
-                </TabsContent>
+                <div>
+                  <Select value={selectedZone} onValueChange={setSelectedZone}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Zone" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {zones.map((zone) => (
+                        <SelectItem key={zone} value={zone}>{zone}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
 
-                <TabsContent value="requester" className="mt-4">
-                  <div className="flex gap-2">
-                    <div className="w-full">
-                      <Select 
-                        value={filterByRequester} 
-                        onValueChange={setFilterByRequester}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select Requester" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="all">All Requesters</SelectItem>
-                          {uniqueRequesters.map(requester => (
-                            <SelectItem key={requester} value={requester}>{requester}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <Button onClick={applyFilters}>Apply</Button>
-                    <Button variant="outline" onClick={resetFilters}>Reset</Button>
-                  </div>
-                </TabsContent>
+                <div>
+                  <Select value={selectedArea} onValueChange={setSelectedArea}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Area" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {areas.map((area) => (
+                        <SelectItem key={area} value={area}>{area}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
 
-                <TabsContent value="location" className="mt-4">
-                  <div className="flex gap-2">
-                    <div className="w-full">
-                      <Select 
-                        value={filterByLocation} 
-                        onValueChange={setFilterByLocation}
-                      >
-                        <SelectTrigger>
-                          <SelectValue placeholder="Select Location" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="all">All Locations</SelectItem>
-                          {uniqueLocations.map(location => (
-                            <SelectItem key={location} value={location}>{location}</SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <Button onClick={applyFilters}>Apply</Button>
-                    <Button variant="outline" onClick={resetFilters}>Reset</Button>
-                  </div>
-                </TabsContent>
+                <div>
+                  <Select value={selectedCategory} onValueChange={setSelectedCategory}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Select Category" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {categories.map((category) => (
+                        <SelectItem key={category} value={category}>{category}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
 
-                <TabsContent value="date" className="mt-4">
-                  <div className="flex gap-2">
-                    <div className="w-full">
-                      <DatePicker 
-                        selected={filterByDate}
-                        onSelect={setFilterByDate}
-                        placeholder="Select required date"
-                      />
-                    </div>
-                    <Button onClick={applyFilters}>Apply</Button>
-                    <Button variant="outline" onClick={resetFilters}>Reset</Button>
-                  </div>
-                </TabsContent>
-              </Tabs>
+                <div className="md:col-span-3 flex space-x-2">
+                  <Button onClick={handleSearch} className="flex items-center gap-2 bg-red-700 hover:bg-red-800">
+                    <Search size={18} />
+                    Search
+                  </Button>
+                  <Button variant="outline" onClick={resetFilters} className="flex items-center gap-2">
+                    <RefreshCcw size={18} />
+                    Clear
+                  </Button>
+                  <Button variant="outline" className="flex items-center gap-2">
+                    <Download size={18} />
+                    Export
+                  </Button>
+                </div>
+              </div>
             </CardContent>
           </Card>
         </motion.div>
@@ -365,72 +422,73 @@ const PickOrders = () => {
         </CardHeader>
         <CardContent>
           <div className="rounded-md border">
-            <table className="w-full text-sm">
-              <thead>
-                <tr className="border-b bg-muted/50 text-left font-medium text-muted-foreground">
-                  <th className="px-4 py-3 w-[50px]">Select</th>
-                  <th className="px-4 py-3">Order ID</th>
-                  <th className="px-4 py-3">Customer</th>
-                  <th className="px-4 py-3">Requester</th>
-                  <th className="px-4 py-3">SKUs</th>
-                  <th className="px-4 py-3">Locations</th>
-                  <th className="px-4 py-3">Required Date</th>
-                  <th className="px-4 py-3">Priority</th>
-                  <th className="px-4 py-3">Status</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredOrders.map((order) => (
-                  <tr 
-                    key={order.id} 
-                    className="border-b hover:bg-muted/50 transition-colors"
-                  >
-                    <td className="px-4 py-3">
-                      <Checkbox 
-                        checked={selectedPickOrders.includes(order.id)}
-                        onCheckedChange={() => handleSelectPickOrder(order.id)}
-                      />
-                    </td>
-                    <td className="px-4 py-3 font-medium">{order.id}</td>
-                    <td className="px-4 py-3">{order.customer}</td>
-                    <td className="px-4 py-3">{order.requester}</td>
-                    <td className="px-4 py-3">
-                      {order.items.map(item => item.sku).join(', ')}
-                    </td>
-                    <td className="px-4 py-3">
-                      {order.items.map(item => item.location).join(', ')}
-                    </td>
-                    <td className="px-4 py-3">{order.requiredDate}</td>
-                    <td className="px-4 py-3">
-                      <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium
-                        ${order.priority === 'High' ? 'bg-red-100 text-red-800' : 
-                          order.priority === 'Medium' ? 'bg-yellow-100 text-yellow-800' : 
-                          'bg-green-100 text-green-800'}`}
-                      >
-                        {order.priority}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3">
-                      <span className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium
-                        ${order.status === 'Pending' ? 'bg-blue-100 text-blue-800' : 
-                          order.status === 'Processing' ? 'bg-purple-100 text-purple-800' : 
-                          order.status === 'Completed' ? 'bg-green-100 text-green-800' : 
-                          'bg-gray-100 text-gray-800'}`}
-                      >
-                        {order.status}
-                      </span>
-                    </td>
-                  </tr>
-                ))}
-                {filteredOrders.length === 0 && (
-                  <tr>
-                    <td colSpan={9} className="px-4 py-8 text-center text-muted-foreground">
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead className="w-[50px]">Select</TableHead>
+                  <TableHead className="w-[50px]">No.</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>รอจัด</TableHead>
+                  <TableHead>วันที่ขอเบิก</TableHead>
+                  <TableHead>ขอเบิกจากคลัง</TableHead>
+                  <TableHead>เอกสารอ้างอิง</TableHead>
+                  <TableHead>ประเภทขอเบิก</TableHead>
+                  <TableHead>หมายเหตุ</TableHead>
+                  <TableHead>รหัสลูกค้า</TableHead>
+                  <TableHead>วันที่จัดส่งสินค้า</TableHead>
+                  <TableHead>คลังขอเบิก</TableHead>
+                  <TableHead>ขอเบิกโดยใคร</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredOrders.length === 0 ? (
+                  <TableRow>
+                    <TableCell colSpan={13} className="h-24 text-center">
                       No pick orders found matching the filter criteria
-                    </td>
-                  </tr>
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  filteredOrders.map((order, index) => (
+                    <TableRow key={order.id}>
+                      <TableCell>
+                        <Checkbox 
+                          checked={selectedPickOrders.includes(order.id)}
+                          onCheckedChange={() => handleSelectPickOrder(order.id)}
+                        />
+                      </TableCell>
+                      <TableCell>{index + 1}</TableCell>
+                      <TableCell>
+                        <Badge className={`
+                          ${order.status === 'Pending' ? 'bg-blue-100 text-blue-800' : 
+                            order.status === 'Processing' ? 'bg-purple-100 text-purple-800' : 
+                            order.status === 'Completed' ? 'bg-green-100 text-green-800' : 
+                            'bg-gray-100 text-gray-800'}
+                        `}>
+                          {order.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>{order.waitingToProcess}</TableCell>
+                      <TableCell>{order.requestDate}</TableCell>
+                      <TableCell>{order.warehouseFrom}</TableCell>
+                      <TableCell>{order.referenceDoc}</TableCell>
+                      <TableCell>
+                        <Badge className={`
+                          ${order.requestType === 'Rush' ? 'bg-red-100 text-red-800' : 
+                            'bg-green-100 text-green-800'}
+                        `}>
+                          {order.requestType}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>{order.notes || '-'}</TableCell>
+                      <TableCell>{order.customerId}</TableCell>
+                      <TableCell>{order.deliveryDate}</TableCell>
+                      <TableCell>{order.warehouseTo}</TableCell>
+                      <TableCell>{order.requester}</TableCell>
+                    </TableRow>
+                  ))
                 )}
-              </tbody>
-            </table>
+              </TableBody>
+            </Table>
           </div>
         </CardContent>
       </Card>
