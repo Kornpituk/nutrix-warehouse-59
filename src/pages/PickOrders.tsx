@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { motion } from 'framer-motion';
 import { Search, Calendar, Package, User, MapPin, Check, Filter, Download, RefreshCcw } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -157,6 +157,8 @@ const PickOrders = () => {
   const [filteredOrders, setFilteredOrders] = useState(mockPickOrders);
   const [selectedPickOrders, setSelectedPickOrders] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState('sku');
+  const [skuFilterResults, setSkuFilterResults] = useState<{ sku: string, orderIds: string[] }[]>([]);
+  const [isSkuFiltered, setIsSkuFiltered] = useState(false);
 
   // Get unique values for dropdown filters
   const uniqueCustomers = [...new Set(mockPickOrders.map(order => order.customer))];
@@ -213,28 +215,47 @@ const PickOrders = () => {
       );
     }
 
+    // Reset SKU filter results
+    setIsSkuFiltered(false);
+    setSkuFilterResults([]);
+
     // Apply specific tab filters
     if (activeTab === 'sku' && filterBySku && filterBySku !== 'all') {
-      result = result.filter(order => 
-        order.items.some(item => item.sku.toLowerCase() === filterBySku.toLowerCase())
+      // Find all orders containing the selected SKU
+      const ordersWithSku = mockPickOrders.filter(order => 
+        order.items.some(item => item.sku === filterBySku)
       );
+      
+      // Set the filtered orders based on the selected SKU
+      result = ordersWithSku;
+      
+      // Group and save which SKUs are in which orders for display
+      setIsSkuFiltered(true);
+      setSkuFilterResults([{
+        sku: filterBySku,
+        orderIds: ordersWithSku.map(order => order.id)
+      }]);
     }
 
-    if (activeTab === 'customer' && filterByCustomer && filterByCustomer !== 'all') {
-      result = result.filter(order => 
-        order.customer.toLowerCase() === filterByCustomer.toLowerCase()
-      );
-    }
-
-    if (activeTab === 'requester' && filterByRequester && filterByRequester !== 'all') {
-      result = result.filter(order => 
-        order.requester.toLowerCase() === filterByRequester.toLowerCase()
-      );
+    if (activeTab === 'customer') {
+      // Apply customer filter if selected
+      if (filterByCustomer && filterByCustomer !== 'all') {
+        result = result.filter(order => 
+          order.customer.toLowerCase() === filterByCustomer.toLowerCase()
+        );
+      }
+      
+      // Apply requester filter if selected
+      if (filterByRequester && filterByRequester !== 'all') {
+        result = result.filter(order => 
+          order.requester.toLowerCase() === filterByRequester.toLowerCase()
+        );
+      }
     }
 
     if (activeTab === 'location' && filterByLocation && filterByLocation !== 'all') {
       result = result.filter(order => 
-        order.items.some(item => item.location.toLowerCase() === filterByLocation.toLowerCase())
+        order.items.some(item => item.location === filterByLocation)
       );
     }
 
@@ -279,6 +300,8 @@ const PickOrders = () => {
     setFilterByRequester('all');
     setFilterByLocation('all');
     setFilterByDate(undefined);
+    setIsSkuFiltered(false);
+    setSkuFilterResults([]);
     setFilteredOrders(mockPickOrders);
   };
 
@@ -392,7 +415,7 @@ const PickOrders = () => {
                 </div>
               </div>
 
-              {/* New Tabbed Filtering Section */}
+              {/* Enhanced Tabbed Filtering Section */}
               <div className="mt-6">
                 <Tabs defaultValue="sku" value={activeTab} onValueChange={setActiveTab} className="w-full">
                   <TabsList className="grid grid-cols-4 mb-4">
@@ -433,6 +456,26 @@ const PickOrders = () => {
                         Filter
                       </Button>
                     </div>
+                    
+                    {isSkuFiltered && skuFilterResults.length > 0 && (
+                      <div className="mt-4 p-4 bg-slate-50 rounded-md">
+                        <h3 className="text-md font-semibold mb-2">SKU Filter Results:</h3>
+                        {skuFilterResults.map((result) => (
+                          <div key={result.sku} className="mb-2">
+                            <p className="text-sm font-medium">
+                              SKU: <span className="font-bold">{result.sku}</span> found in {result.orderIds.length} pick orders
+                            </p>
+                            <div className="mt-1 flex flex-wrap gap-1">
+                              {result.orderIds.map(orderId => (
+                                <Badge key={orderId} variant="outline" className="bg-blue-50">
+                                  {orderId}
+                                </Badge>
+                              ))}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
                   </TabsContent>
                   
                   <TabsContent value="customer" className="mt-2">
@@ -502,6 +545,16 @@ const PickOrders = () => {
                         Filter
                       </Button>
                     </div>
+                    
+                    {activeTab === 'location' && filterByLocation !== 'all' && (
+                      <div className="mt-4 p-4 bg-slate-50 rounded-md">
+                        <h3 className="text-md font-semibold mb-2">Location Filter Results:</h3>
+                        <p className="text-sm">
+                          Found {filteredOrders.length} pick orders containing items in location: 
+                          <span className="font-bold ml-1">{filterByLocation}</span>
+                        </p>
+                      </div>
+                    )}
                   </TabsContent>
                   
                   <TabsContent value="date" className="mt-2">
@@ -517,6 +570,22 @@ const PickOrders = () => {
                         Filter
                       </Button>
                     </div>
+                    
+                    {activeTab === 'date' && filterByDate && (
+                      <div className="mt-4 p-4 bg-slate-50 rounded-md">
+                        <h3 className="text-md font-semibold mb-2">Date Filter Results:</h3>
+                        <p className="text-sm">
+                          Found {filteredOrders.length} pick orders with required date: 
+                          <span className="font-bold ml-1">
+                            {filterByDate.toLocaleDateString('en-US', {
+                              year: 'numeric',
+                              month: 'long',
+                              day: 'numeric',
+                            })}
+                          </span>
+                        </p>
+                      </div>
+                    )}
                   </TabsContent>
                 </Tabs>
               </div>
@@ -537,13 +606,15 @@ const PickOrders = () => {
                 className="flex items-center gap-1"
               >
                 <Check size={16} />
-                {selectedPickOrders.length === filteredOrders.length ? 'Deselect All' : 'Select All'}
+                {selectedPickOrders.length === filteredOrders.length && filteredOrders.length > 0 
+                  ? 'Deselect All' 
+                  : 'Select All'}
               </Button>
               <Button 
                 variant="default" 
                 size="sm" 
                 disabled={selectedPickOrders.length === 0}
-                className="flex items-center gap-1"
+                className="flex items-center gap-1 bg-red-700 hover:bg-red-800"
               >
                 Process Selected ({selectedPickOrders.length})
               </Button>
@@ -551,7 +622,7 @@ const PickOrders = () => {
           </div>
         </CardHeader>
         <CardContent>
-          <div className="rounded-md border">
+          <div className="rounded-md border overflow-x-auto">
             <Table>
               <TableHeader>
                 <TableRow>
@@ -579,7 +650,10 @@ const PickOrders = () => {
                   </TableRow>
                 ) : (
                   filteredOrders.map((order, index) => (
-                    <TableRow key={order.id}>
+                    <TableRow key={order.id} className={
+                      isSkuFiltered && filterBySku !== 'all' ? 
+                      'bg-blue-50 hover:bg-blue-100' : ''
+                    }>
                       <TableCell>
                         <Checkbox 
                           checked={selectedPickOrders.includes(order.id)}
