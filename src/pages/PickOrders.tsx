@@ -16,6 +16,7 @@ import {
 import { DatePicker } from '@/components/ui/date-picker';
 import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Table,
   TableBody,
@@ -215,25 +216,25 @@ const PickOrders = () => {
     // Apply specific tab filters
     if (activeTab === 'sku' && filterBySku && filterBySku !== 'all') {
       result = result.filter(order => 
-        order.items.some(item => item.sku.toLowerCase().includes(filterBySku.toLowerCase()))
+        order.items.some(item => item.sku.toLowerCase() === filterBySku.toLowerCase())
       );
     }
 
     if (activeTab === 'customer' && filterByCustomer && filterByCustomer !== 'all') {
       result = result.filter(order => 
-        order.customer.toLowerCase().includes(filterByCustomer.toLowerCase())
+        order.customer.toLowerCase() === filterByCustomer.toLowerCase()
       );
     }
 
     if (activeTab === 'requester' && filterByRequester && filterByRequester !== 'all') {
       result = result.filter(order => 
-        order.requester.toLowerCase().includes(filterByRequester.toLowerCase())
+        order.requester.toLowerCase() === filterByRequester.toLowerCase()
       );
     }
 
     if (activeTab === 'location' && filterByLocation && filterByLocation !== 'all') {
       result = result.filter(order => 
-        order.items.some(item => item.location.toLowerCase().includes(filterByLocation.toLowerCase()))
+        order.items.some(item => item.location.toLowerCase() === filterByLocation.toLowerCase())
       );
     }
 
@@ -389,6 +390,135 @@ const PickOrders = () => {
                     Export
                   </Button>
                 </div>
+              </div>
+
+              {/* New Tabbed Filtering Section */}
+              <div className="mt-6">
+                <Tabs defaultValue="sku" value={activeTab} onValueChange={setActiveTab} className="w-full">
+                  <TabsList className="grid grid-cols-4 mb-4">
+                    <TabsTrigger value="sku" className="flex items-center gap-1">
+                      <Package size={16} />
+                      Filter by SKU
+                    </TabsTrigger>
+                    <TabsTrigger value="customer" className="flex items-center gap-1">
+                      <User size={16} />
+                      Filter by Customer/Requester
+                    </TabsTrigger>
+                    <TabsTrigger value="location" className="flex items-center gap-1">
+                      <MapPin size={16} />
+                      Filter by Location
+                    </TabsTrigger>
+                    <TabsTrigger value="date" className="flex items-center gap-1">
+                      <Calendar size={16} />
+                      Filter by Required Date
+                    </TabsTrigger>
+                  </TabsList>
+                  
+                  <TabsContent value="sku" className="mt-2">
+                    <div className="flex space-x-2 items-center">
+                      <div className="w-full">
+                        <Select value={filterBySku} onValueChange={setFilterBySku}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select SKU" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">All SKUs</SelectItem>
+                            {uniqueSkus.map((sku) => (
+                              <SelectItem key={sku} value={sku}>{sku}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <Button onClick={applyFilters} className="bg-red-700 hover:bg-red-800">
+                        Filter
+                      </Button>
+                    </div>
+                  </TabsContent>
+                  
+                  <TabsContent value="customer" className="mt-2">
+                    <div className="grid grid-cols-2 gap-4">
+                      <div>
+                        <p className="text-sm font-medium mb-2">Filter by Customer</p>
+                        <div className="flex space-x-2 items-center">
+                          <div className="w-full">
+                            <Select value={filterByCustomer} onValueChange={setFilterByCustomer}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select Customer" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="all">All Customers</SelectItem>
+                                {uniqueCustomers.map((customer) => (
+                                  <SelectItem key={customer} value={customer}>{customer}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div>
+                        <p className="text-sm font-medium mb-2">Filter by Requester</p>
+                        <div className="flex space-x-2 items-center">
+                          <div className="w-full">
+                            <Select value={filterByRequester} onValueChange={setFilterByRequester}>
+                              <SelectTrigger>
+                                <SelectValue placeholder="Select Requester" />
+                              </SelectTrigger>
+                              <SelectContent>
+                                <SelectItem value="all">All Requesters</SelectItem>
+                                {uniqueRequesters.map((requester) => (
+                                  <SelectItem key={requester} value={requester}>{requester}</SelectItem>
+                                ))}
+                              </SelectContent>
+                            </Select>
+                          </div>
+                        </div>
+                      </div>
+                      
+                      <div className="col-span-2">
+                        <Button onClick={applyFilters} className="bg-red-700 hover:bg-red-800">
+                          Filter
+                        </Button>
+                      </div>
+                    </div>
+                  </TabsContent>
+                  
+                  <TabsContent value="location" className="mt-2">
+                    <div className="flex space-x-2 items-center">
+                      <div className="w-full">
+                        <Select value={filterByLocation} onValueChange={setFilterByLocation}>
+                          <SelectTrigger>
+                            <SelectValue placeholder="Select Location" />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="all">All Locations</SelectItem>
+                            {uniqueLocations.map((location) => (
+                              <SelectItem key={location} value={location}>{location}</SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+                      <Button onClick={applyFilters} className="bg-red-700 hover:bg-red-800">
+                        Filter
+                      </Button>
+                    </div>
+                  </TabsContent>
+                  
+                  <TabsContent value="date" className="mt-2">
+                    <div className="flex space-x-2 items-center">
+                      <div className="w-full">
+                        <DatePicker 
+                          selected={filterByDate} 
+                          onSelect={setFilterByDate} 
+                          placeholder="Select required date"
+                        />
+                      </div>
+                      <Button onClick={applyFilters} className="bg-red-700 hover:bg-red-800">
+                        Filter
+                      </Button>
+                    </div>
+                  </TabsContent>
+                </Tabs>
               </div>
             </CardContent>
           </Card>
