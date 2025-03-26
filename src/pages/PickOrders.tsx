@@ -123,6 +123,321 @@ const mockPickOrders = [
     notes: 'Weekend delivery required',
     priority: 'High',
     destinationWarehouse: 'Pattaya Branch'
+  },
+  {
+    id: 'PO-006',
+    no: '006',
+    customer: 'Khon Kaen Hospital',
+    customerCode: 'KKH-006',
+    requester: 'Dr. Pimchanok',
+    items: [
+      { sku: 'MIN-005', name: 'Calcium + D3', quantity: 120, location: 'A-02-03' },
+      { sku: 'VIT-004', name: 'Vitamin D3 5000IU', quantity: 60, location: 'A-01-06' }
+    ],
+    status: 'Pending',
+    pendingItems: 2,
+    requestDate: '2023-08-20',
+    deliveryDate: '2023-08-27',
+    sourceWarehouse: 'Main Warehouse',
+    referenceDoc: 'REF-12350',
+    requestType: 'Regular',
+    notes: 'Deliver to Pharmacy department',
+    priority: 'Medium',
+    destinationWarehouse: 'Khon Kaen Branch'
+  },
+  {
+    id: 'PO-007',
+    no: '007',
+    customer: 'Samui Medical',
+    customerCode: 'SMM-007',
+    requester: 'Nurse Ratana',
+    items: [
+      { sku: 'PRO-002', name: 'Whey Protein', quantity: 40, location: 'B-03-01' },
+      { sku: 'PRO-003', name: 'Plant Protein', quantity: 35, location: 'B-03-02' }
+    ],
+    status: 'Processing',
+    pendingItems: 1,
+    requestDate: '2023-08-21',
+    deliveryDate: '2023-08-28',
+    sourceWarehouse: 'Secondary Warehouse',
+    referenceDoc: 'REF-12351',
+    requestType: 'Expedited',
+    notes: 'Island delivery - use ferry service',
+    priority: 'High',
+    destinationWarehouse: 'Samui Branch'
+  },
+  {
+    id: 'PO-008',
+    no: '008',
+    customer: 'Hua Hin Wellness',
+    customerCode: 'HHW-008',
+    requester: 'Dr. Chai',
+    items: [
+      { sku: 'VIT-001', name: 'Vitamin C 1000mg', quantity: 90, location: 'A-01-02' },
+      { sku: 'VIT-005', name: 'Multivitamin Complex', quantity: 45, location: 'A-01-07' }
+    ],
+    status: 'Pending',
+    pendingItems: 2,
+    requestDate: '2023-08-22',
+    deliveryDate: '2023-08-29',
+    sourceWarehouse: 'Main Warehouse',
+    referenceDoc: 'REF-12352',
+    requestType: 'Regular',
+    notes: '',
+    priority: 'Low',
+    destinationWarehouse: 'Hua Hin Branch'
+  },
+  {
+    id: 'PO-009',
+    no: '009',
+    customer: 'Chiang Rai Hospital',
+    customerCode: 'CRH-009',
+    requester: 'Dr. Sarawut',
+    items: [
+      { sku: 'MIN-006', name: 'Zinc Picolinate', quantity: 80, location: 'A-02-04' },
+      { sku: 'MIN-007', name: 'Magnesium Glycinate', quantity: 70, location: 'A-02-05' }
+    ],
+    status: 'Completed',
+    pendingItems: 0,
+    requestDate: '2023-08-23',
+    deliveryDate: '2023-08-30',
+    sourceWarehouse: 'Main Warehouse',
+    referenceDoc: 'REF-12353',
+    requestType: 'Regular',
+    notes: 'Signature required',
+    priority: 'Medium',
+    destinationWarehouse: 'Chiang Rai Branch'
+  },
+  {
+    id: 'PO-010',
+    no: '010',
+    customer: 'Bangkok Hospital',
+    customerCode: 'BKH-001',
+    requester: 'Dr. Somchai',
+    items: [
+      { sku: 'VIT-003', name: 'Vitamin B Complex', quantity: 110, location: 'A-01-05' },
+      { sku: 'VIT-005', name: 'Multivitamin Complex', quantity: 55, location: 'A-01-07' }
+    ],
+    status: 'Pending',
+    pendingItems: 2,
+    requestDate: '2023-08-24',
+    deliveryDate: '2023-08-31',
+    sourceWarehouse: 'Main Warehouse',
+    referenceDoc: 'REF-12354',
+    requestType: 'Regular',
+    notes: 'Monthly order',
+    priority: 'Medium',
+    destinationWarehouse: 'Bangkok Branch'
+  },
+  {
+    id: 'PO-011',
+    no: '011',
+    customer: 'Pattaya Clinic',
+    customerCode: 'PTC-005',
+    requester: 'Nurse Thana',
+    items: [
+      { sku: 'PRO-002', name: 'Whey Protein', quantity: 30, location: 'B-03-01' },
+      { sku: 'PRO-004', name: 'Collagen Peptides', quantity: 25, location: 'B-03-03' }
+    ],
+    status: 'Processing',
+    pendingItems: 1,
+    requestDate: '2023-08-25',
+    deliveryDate: '2023-09-01',
+    sourceWarehouse: 'Secondary Warehouse',
+    referenceDoc: 'REF-12355',
+    requestType: 'Expedited',
+    notes: 'Customer pickup available',
+    priority: 'High',
+    destinationWarehouse: 'Pattaya Branch'
+  },
+  {
+    id: 'PO-012',
+    no: '012',
+    customer: 'Udon Thani Medical',
+    customerCode: 'UTM-012',
+    requester: 'Dr. Prasert',
+    items: [
+      { sku: 'MIN-005', name: 'Calcium + D3', quantity: 95, location: 'A-02-03' },
+      { sku: 'MIN-007', name: 'Magnesium Glycinate', quantity: 85, location: 'A-02-05' }
+    ],
+    status: 'Pending',
+    pendingItems: 2,
+    requestDate: '2023-08-26',
+    deliveryDate: '2023-09-02',
+    sourceWarehouse: 'Main Warehouse',
+    referenceDoc: 'REF-12356',
+    requestType: 'Regular',
+    notes: '',
+    priority: 'Low',
+    destinationWarehouse: 'Udon Thani Branch'
+  },
+  {
+    id: 'PO-013',
+    no: '013',
+    customer: 'Chiang Mai Clinic',
+    customerCode: 'CMC-002',
+    requester: 'Nurse Pornpan',
+    items: [
+      { sku: 'VIT-001', name: 'Vitamin C 1000mg', quantity: 65, location: 'A-01-02' },
+      { sku: 'VIT-004', name: 'Vitamin D3 5000IU', quantity: 40, location: 'A-01-06' }
+    ],
+    status: 'Completed',
+    pendingItems: 0,
+    requestDate: '2023-08-27',
+    deliveryDate: '2023-09-03',
+    sourceWarehouse: 'Main Warehouse',
+    referenceDoc: 'REF-12357',
+    requestType: 'Regular',
+    notes: 'Followed up by phone',
+    priority: 'Medium',
+    destinationWarehouse: 'Chiang Mai Branch'
+  },
+  {
+    id: 'PO-014',
+    no: '014',
+    customer: 'Phuket Medical Center',
+    customerCode: 'PMC-003',
+    requester: 'Dr. Wichai',
+    items: [
+      { sku: 'PRO-003', name: 'Plant Protein', quantity: 50, location: 'B-03-02' },
+      { sku: 'PRO-004', name: 'Collagen Peptides', quantity: 45, location: 'B-03-03' }
+    ],
+    status: 'Pending',
+    pendingItems: 2,
+    requestDate: '2023-08-28',
+    deliveryDate: '2023-09-04',
+    sourceWarehouse: 'Secondary Warehouse',
+    referenceDoc: 'REF-12358',
+    requestType: 'Expedited',
+    notes: 'Rush order',
+    priority: 'High',
+    destinationWarehouse: 'Phuket Branch'
+  },
+  {
+    id: 'PO-015',
+    no: '015',
+    customer: 'Khon Kaen Hospital',
+    customerCode: 'KKH-006',
+    requester: 'Dr. Pimchanok',
+    items: [
+      { sku: 'VIT-005', name: 'Multivitamin Complex', quantity: 60, location: 'A-01-07' },
+      { sku: 'VIT-006', name: 'Vitamin E 400IU', quantity: 30, location: 'A-01-08' }
+    ],
+    status: 'Processing',
+    pendingItems: 1,
+    requestDate: '2023-08-29',
+    deliveryDate: '2023-09-05',
+    sourceWarehouse: 'Main Warehouse',
+    referenceDoc: 'REF-12359',
+    requestType: 'Regular',
+    notes: 'Partial delivery accepted',
+    priority: 'Medium',
+    destinationWarehouse: 'Khon Kaen Branch'
+  },
+  {
+    id: 'PO-016',
+    no: '016',
+    customer: 'Bangkok Hospital',
+    customerCode: 'BKH-001',
+    requester: 'Dr. Somchai',
+    items: [
+      { sku: 'MIN-006', name: 'Zinc Picolinate', quantity: 70, location: 'A-02-04' },
+      { sku: 'MIN-008', name: 'Iron Bisglycinate', quantity: 60, location: 'A-02-06' }
+    ],
+    status: 'Pending',
+    pendingItems: 2,
+    requestDate: '2023-08-30',
+    deliveryDate: '2023-09-06',
+    sourceWarehouse: 'Main Warehouse',
+    referenceDoc: 'REF-12360',
+    requestType: 'Regular',
+    notes: 'Quarterly stock update',
+    priority: 'Low',
+    destinationWarehouse: 'Bangkok Branch'
+  },
+  {
+    id: 'PO-017',
+    no: '017',
+    customer: 'Hua Hin Wellness',
+    customerCode: 'HHW-008',
+    requester: 'Dr. Chai',
+    items: [
+      { sku: 'PRO-002', name: 'Whey Protein', quantity: 55, location: 'B-03-01' },
+      { sku: 'PRO-005', name: 'Protein Bars', quantity: 100, location: 'B-03-04' }
+    ],
+    status: 'Completed',
+    pendingItems: 0,
+    requestDate: '2023-08-31',
+    deliveryDate: '2023-09-07',
+    sourceWarehouse: 'Secondary Warehouse',
+    referenceDoc: 'REF-12361',
+    requestType: 'Expedited',
+    notes: 'Prepaid order',
+    priority: 'High',
+    destinationWarehouse: 'Hua Hin Branch'
+  },
+  {
+    id: 'PO-018',
+    no: '018',
+    customer: 'Samui Medical',
+    customerCode: 'SMM-007',
+    requester: 'Nurse Ratana',
+    items: [
+      { sku: 'VIT-001', name: 'Vitamin C 1000mg', quantity: 85, location: 'A-01-02' },
+      { sku: 'VIT-007', name: 'Vitamin K2 MK-7', quantity: 40, location: 'A-01-09' }
+    ],
+    status: 'Pending',
+    pendingItems: 2,
+    requestDate: '2023-09-01',
+    deliveryDate: '2023-09-08',
+    sourceWarehouse: 'Main Warehouse',
+    referenceDoc: 'REF-12362',
+    requestType: 'Regular',
+    notes: 'Confirm delivery date beforehand',
+    priority: 'Medium',
+    destinationWarehouse: 'Samui Branch'
+  },
+  {
+    id: 'PO-019',
+    no: '019',
+    customer: 'Chiang Rai Hospital',
+    customerCode: 'CRH-009',
+    requester: 'Dr. Sarawut',
+    items: [
+      { sku: 'PRO-003', name: 'Plant Protein', quantity: 45, location: 'B-03-02' },
+      { sku: 'PRO-006', name: 'Protein Shake Ready-mix', quantity: 60, location: 'B-03-05' }
+    ],
+    status: 'Processing',
+    pendingItems: 1,
+    requestDate: '2023-09-02',
+    deliveryDate: '2023-09-09',
+    sourceWarehouse: 'Secondary Warehouse',
+    referenceDoc: 'REF-12363',
+    requestType: 'Expedited',
+    notes: 'Special handling required',
+    priority: 'High',
+    destinationWarehouse: 'Chiang Rai Branch'
+  },
+  {
+    id: 'PO-020',
+    no: '020',
+    customer: 'Udon Thani Medical',
+    customerCode: 'UTM-012',
+    requester: 'Dr. Prasert',
+    items: [
+      { sku: 'VIT-005', name: 'Multivitamin Complex', quantity: 75, location: 'A-01-07' },
+      { sku: 'VIT-008', name: 'Vitamin A 10000IU', quantity: 35, location: 'A-01-10' }
+    ],
+    status: 'Pending',
+    pendingItems: 2,
+    requestDate: '2023-09-03',
+    deliveryDate: '2023-09-10',
+    sourceWarehouse: 'Main Warehouse',
+    referenceDoc: 'REF-12364',
+    requestType: 'Regular',
+    notes: 'New branch delivery',
+    priority: 'Medium',
+    destinationWarehouse: 'Udon Thani Branch'
   }
 ];
 
