@@ -4,6 +4,8 @@ import { motion } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 
+import { Loading } from "@/components/ui/custom/loading";
+
 const Index = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
@@ -30,7 +32,7 @@ const Index = () => {
             transition={{ duration: 0.5 }}
             className="mb-6"
           >
-            <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+            {/* <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
               <path d="M60 10C32.4 10 10 32.4 10 60C10 87.6 32.4 110 60 110C87.6 110 110 87.6 110 60C110 32.4 87.6 10 60 10ZM60 100C37.9 100 20 82.1 20 60C20 37.9 37.9 20 60 20C82.1 20 100 37.9 100 60C100 82.1 82.1 100 60 100Z" fill="#AB0006"/>
               <path d="M60 30C48.95 30 40 38.95 40 50C40 61.05 48.95 70 60 70C71.05 70 80 61.05 80 50C80 38.95 71.05 30 60 30Z" fill="#AB0006"/>
               <motion.path 
@@ -47,7 +49,8 @@ const Index = () => {
                 animate={{ rotate: [0, -10, 0] }}
                 transition={{ repeat: Infinity, duration: 2 }}
               />
-            </svg>
+            </svg> */}
+            <Loading />
           </motion.div>
           <motion.p
             initial={{ opacity: 0 }}
