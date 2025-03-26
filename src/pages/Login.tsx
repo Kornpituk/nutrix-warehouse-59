@@ -6,6 +6,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
+import { ArrowLeft, Home } from 'lucide-react';
 
 const Login = () => {
   const navigate = useNavigate();
@@ -41,8 +42,24 @@ const Login = () => {
     }, 1000);
   };
 
+  const handleBackToHome = () => {
+    navigate('/');
+  };
+
   return (
     <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 px-4">
+      <div className="absolute left-4 top-4">
+        <Button 
+          variant="outline" 
+          size="sm" 
+          onClick={handleBackToHome}
+          className="gap-2 text-primary hover:bg-primary-50 hover:text-primary"
+        >
+          <ArrowLeft size={16} />
+          Back to Home
+        </Button>
+      </div>
+      
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
@@ -179,3 +196,4 @@ const Login = () => {
 };
 
 export default Login;
+
