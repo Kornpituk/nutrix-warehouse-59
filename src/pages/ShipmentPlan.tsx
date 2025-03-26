@@ -13,7 +13,8 @@ import {
   FileText,
   Calendar,
   CheckCircle2,
-  Clock
+  Clock,
+  EyeOff
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -51,6 +52,7 @@ import {
   FormMessage,
 } from '@/components/ui/form';
 import { Label } from '@/components/ui/label';
+import { Switch } from '@/components/ui/switch';
 import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { format } from 'date-fns';
@@ -216,6 +218,7 @@ const ShipmentPlan = () => {
   const [isCreateTruckOrderOpen, setIsCreateTruckOrderOpen] = useState(false);
   const [isPrintDialogOpen, setIsPrintDialogOpen] = useState(false);
   const [selectedTruckOrder, setSelectedTruckOrder] = useState<typeof truckOrders[0] | null>(null);
+  const [showFilters, setShowFilters] = useState(true);
 
   useEffect(() => {
     // Check if user is authenticated
@@ -321,6 +324,10 @@ const ShipmentPlan = () => {
     setIsPrintDialogOpen(false);
   };
 
+  const toggleFilters = () => {
+    setShowFilters(!showFilters);
+  };
+
   // Get truck orders for a specific shipment
   const getShipmentTruckOrders = (shipmentId: string) => {
     return truckOrders.filter(order => order.shipmentId === shipmentId);
@@ -363,74 +370,84 @@ const ShipmentPlan = () => {
       variants={containerVariants}
       className="container mx-auto"
     >
-      <motion.div variants={itemVariants} className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Shipment Plan</h1>
-        <p className="text-gray-600">Manage and track your shipment schedules</p>
+      <motion.div variants={itemVariants} className="mb-6 flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Shipment Plan</h1>
+          <p className="text-gray-600">Manage and track your shipment schedules</p>
+        </div>
+        <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-2">
+            <Label htmlFor="showFilters" className="text-sm">Show Filters</Label>
+            <Switch id="showFilters" checked={showFilters} onCheckedChange={toggleFilters} />
+          </div>
+        </div>
       </motion.div>
 
-      <motion.div variants={itemVariants}>
-        <Card className="mb-6">
-          <CardContent className="p-6">
-            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-              <div className="lg:col-span-2">
-                <div className="flex w-full items-center space-x-2">
-                  <Input
-                    type="text"
-                    placeholder="Search by ID, customer, or destination"
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="w-full"
-                  />
+      {showFilters && (
+        <motion.div variants={itemVariants}>
+          <Card className="mb-6">
+            <CardContent className="p-6">
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+                <div className="lg:col-span-2">
+                  <div className="flex w-full items-center space-x-2">
+                    <Input
+                      type="text"
+                      placeholder="Search by ID, customer, or destination"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="w-full"
+                    />
+                  </div>
+                </div>
+
+                <div>
+                  <Select value={statusFilter} onValueChange={setStatusFilter}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Status" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="All">All Statuses</SelectItem>
+                      <SelectItem value="Pending">Pending</SelectItem>
+                      <SelectItem value="Scheduled">Scheduled</SelectItem>
+                      <SelectItem value="In Progress">In Progress</SelectItem>
+                      <SelectItem value="Completed">Completed</SelectItem>
+                      <SelectItem value="Cancelled">Cancelled</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div>
+                  <Select value={dateFilter} onValueChange={setDateFilter}>
+                    <SelectTrigger>
+                      <SelectValue placeholder="Date Range" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="All">All Dates</SelectItem>
+                      <SelectItem value="This Week">This Week</SelectItem>
+                      <SelectItem value="Next 2 Weeks">Next 2 Weeks</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="flex space-x-2 lg:col-span-4">
+                  <Button variant="default" onClick={handleSearch} className="flex-1 space-x-1 bg-primary">
+                    <Search size={16} />
+                    <span>Search</span>
+                  </Button>
+                  <Button variant="outline" onClick={handleClear} className="flex-1 space-x-1">
+                    <RefreshCcw size={16} />
+                    <span>Clear</span>
+                  </Button>
+                  <Button variant="outline" onClick={handleExport} className="flex-1 space-x-1">
+                    <Download size={16} />
+                    <span>Export</span>
+                  </Button>
                 </div>
               </div>
-
-              <div>
-                <Select value={statusFilter} onValueChange={setStatusFilter}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="All">All Statuses</SelectItem>
-                    <SelectItem value="Pending">Pending</SelectItem>
-                    <SelectItem value="Scheduled">Scheduled</SelectItem>
-                    <SelectItem value="In Progress">In Progress</SelectItem>
-                    <SelectItem value="Completed">Completed</SelectItem>
-                    <SelectItem value="Cancelled">Cancelled</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div>
-                <Select value={dateFilter} onValueChange={setDateFilter}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Date Range" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="All">All Dates</SelectItem>
-                    <SelectItem value="This Week">This Week</SelectItem>
-                    <SelectItem value="Next 2 Weeks">Next 2 Weeks</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-
-              <div className="flex space-x-2 lg:col-span-4">
-                <Button variant="default" onClick={handleSearch} className="flex-1 space-x-1 bg-primary">
-                  <Search size={16} />
-                  <span>Search</span>
-                </Button>
-                <Button variant="outline" onClick={handleClear} className="flex-1 space-x-1">
-                  <RefreshCcw size={16} />
-                  <span>Clear</span>
-                </Button>
-                <Button variant="outline" onClick={handleExport} className="flex-1 space-x-1">
-                  <Download size={16} />
-                  <span>Export</span>
-                </Button>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
-      </motion.div>
+            </CardContent>
+          </Card>
+        </motion.div>
+      )}
 
       <motion.div variants={itemVariants}>
         <Card>
@@ -439,10 +456,11 @@ const ShipmentPlan = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
+                    <TableHead>No.</TableHead>
+                    <TableHead>Status</TableHead>
                     <TableHead>Shipment ID</TableHead>
                     <TableHead>Customer</TableHead>
                     <TableHead>Date</TableHead>
-                    <TableHead>Status</TableHead>
                     <TableHead className="text-right">Items</TableHead>
                     <TableHead className="text-right">Weight (kg)</TableHead>
                     <TableHead>Destination</TableHead>
@@ -453,16 +471,14 @@ const ShipmentPlan = () => {
                 <TableBody>
                   {filteredShipments.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={9} className="h-24 text-center">
+                      <TableCell colSpan={10} className="h-24 text-center">
                         No shipment plans found.
                       </TableCell>
                     </TableRow>
                   ) : (
-                    filteredShipments.map((shipment) => (
+                    filteredShipments.map((shipment, index) => (
                       <TableRow key={shipment.id}>
-                        <TableCell className="font-medium">{shipment.id}</TableCell>
-                        <TableCell>{shipment.customer}</TableCell>
-                        <TableCell>{format(new Date(shipment.date), 'MMM dd, yyyy')}</TableCell>
+                        <TableCell>{index + 1}</TableCell>
                         <TableCell>
                           <Badge variant="outline" className={
                             shipment.status === 'Scheduled' ? 'bg-blue-100 text-blue-800' :
@@ -474,6 +490,9 @@ const ShipmentPlan = () => {
                             {shipment.status}
                           </Badge>
                         </TableCell>
+                        <TableCell className="font-medium">{shipment.id}</TableCell>
+                        <TableCell>{shipment.customer}</TableCell>
+                        <TableCell>{format(new Date(shipment.date), 'MMM dd, yyyy')}</TableCell>
                         <TableCell className="text-right">{shipment.items}</TableCell>
                         <TableCell className="text-right">{shipment.weight}</TableCell>
                         <TableCell>{shipment.destination}</TableCell>
@@ -612,6 +631,7 @@ const ShipmentPlan = () => {
                     <Table>
                       <TableHeader>
                         <TableRow>
+                          <TableHead>No.</TableHead>
                           <TableHead>Order ID</TableHead>
                           <TableHead>Driver</TableHead>
                           <TableHead>Vehicle</TableHead>
@@ -624,13 +644,14 @@ const ShipmentPlan = () => {
                       <TableBody>
                         {getShipmentTruckOrders(selectedShipment.id).length === 0 ? (
                           <TableRow>
-                            <TableCell colSpan={7} className="h-24 text-center">
+                            <TableCell colSpan={8} className="h-24 text-center">
                               No truck orders found for this shipment.
                             </TableCell>
                           </TableRow>
                         ) : (
-                          getShipmentTruckOrders(selectedShipment.id).map((order) => (
+                          getShipmentTruckOrders(selectedShipment.id).map((order, index) => (
                             <TableRow key={order.id}>
+                              <TableCell>{index + 1}</TableCell>
                               <TableCell className="font-medium">{order.id}</TableCell>
                               <TableCell>{order.driver}</TableCell>
                               <TableCell>{order.vehicle}</TableCell>

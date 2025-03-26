@@ -15,11 +15,45 @@ import {
   PieChart,
   Pie,
   Cell,
-  Legend
+  Legend,
+  LineChart,
+  Line,
+  ScatterChart,
+  Scatter,
+  ZAxis
 } from 'recharts';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Package, Truck, ArrowUpCircle, ArrowDownCircle, TrendingUp, TrendingDown, AlertCircle } from 'lucide-react';
+import { 
+  Package, 
+  Truck, 
+  ArrowUpCircle, 
+  ArrowDownCircle, 
+  TrendingUp, 
+  TrendingDown, 
+  AlertCircle,
+  Bell,
+  Eye,
+  EyeOff,
+  Filter,
+  MapPin,
+  BarChart2,
+  MoveHorizontal
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { Switch } from '@/components/ui/switch';
+import { Label } from '@/components/ui/label';
+import { Badge } from '@/components/ui/badge';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from '@/components/ui/table';
+import { useToast } from '@/hooks/use-toast';
 
 // Mock data for charts
 const inventoryData = [
@@ -52,6 +86,41 @@ const shipmentsData = [
   { name: 'Sun', outbound: 35, inbound: 25 },
 ];
 
+// New data for warehouse movement
+const warehouseMovementData = [
+  { x: 10, y: 30, z: 200, name: 'Dog Food Pallet A' },
+  { x: 40, y: 50, z: 150, name: 'Cat Food Pallet B' },
+  { x: 70, y: 20, z: 300, name: 'Bird Food Box C' },
+  { x: 30, y: 80, z: 100, name: 'Fish Food Package D' },
+  { x: 50, y: 50, z: 250, name: 'Premium Pet Food E' },
+  { x: 80, y: 10, z: 180, name: 'Special Diet Mix F' },
+];
+
+// New data for warehouse space utilization
+const warehouseSpaceData = [
+  { name: 'Zone A', used: 85, available: 15 },
+  { name: 'Zone B', used: 65, available: 35 },
+  { name: 'Zone C', used: 90, available: 10 },
+  { name: 'Zone D', used: 45, available: 55 },
+];
+
+// New data for warehouse staff productivity
+const staffProductivityData = [
+  { name: 'Week 1', picking: 42, packing: 28, shipping: 18 },
+  { name: 'Week 2', picking: 38, packing: 30, shipping: 20 },
+  { name: 'Week 3', picking: 45, packing: 32, shipping: 25 },
+  { name: 'Week 4', picking: 50, packing: 35, shipping: 30 },
+];
+
+// Mock inventory movement data
+const inventoryMovementData = [
+  { id: 1, product: 'Premium Dog Food', from: 'Receiving', to: 'Zone A', quantity: 120, time: '10:30 AM', status: 'Completed' },
+  { id: 2, product: 'Cat Treats', from: 'Zone B', to: 'Packing', quantity: 75, time: '11:45 AM', status: 'In Progress' },
+  { id: 3, product: 'Bird Seed Mix', from: 'Zone C', to: 'Zone D', quantity: 50, time: '01:15 PM', status: 'Pending' },
+  { id: 4, product: 'Fish Food Flakes', from: 'Receiving', to: 'Zone B', quantity: 30, time: '02:30 PM', status: 'Scheduled' },
+  { id: 5, product: 'Small Animal Bedding', from: 'Zone A', to: 'Shipping', quantity: 45, time: '03:45 PM', status: 'Completed' },
+];
+
 const lowStockItems = [
   { id: 1, name: 'Premium Dog Food', category: 'Dog Food', stock: 23, threshold: 50 },
   { id: 2, name: 'Senior Cat Formula', category: 'Cat Food', stock: 18, threshold: 30 },
@@ -66,10 +135,25 @@ const expiringItems = [
   { id: 4, name: 'Special Diet Mix', category: 'Bird Food', expiresIn: 12 },
 ];
 
+// New notifications data
+const notificationsData = [
+  { id: 1, title: 'Low Stock Alert', message: 'Premium Dog Food is below threshold', time: '30 minutes ago', read: false, type: 'warning' },
+  { id: 2, title: 'Expiring Products', message: 'Organic Cat Treats expire in 5 days', time: '1 hour ago', read: false, type: 'danger' },
+  { id: 3, title: 'Shipment Completed', message: 'Order #12456 has been delivered', time: '3 hours ago', read: true, type: 'success' },
+  { id: 4, title: 'New Order', message: 'Order #12457 has been received', time: '5 hours ago', read: true, type: 'info' },
+  { id: 5, title: 'System Update', message: 'System will be updated tonight', time: '1 day ago', read: true, type: 'info' },
+];
+
 const Dashboard = () => {
   const navigate = useNavigate();
+  const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
+  const [showFilters, setShowFilters] = useState(false);
+  const [showNotifications, setShowNotifications] = useState(false);
+  const [unreadNotifications, setUnreadNotifications] = useState(
+    notificationsData.filter(n => !n.read).length
+  );
   
   useEffect(() => {
     // Check if user is authenticated
@@ -93,6 +177,18 @@ const Dashboard = () => {
     
     return () => clearTimeout(timer);
   }, [navigate]);
+
+  const markAllAsRead = () => {
+    setUnreadNotifications(0);
+    toast({
+      title: "Notifications Marked as Read",
+      description: "All notifications have been marked as read.",
+    });
+  };
+
+  const toggleFilters = () => {
+    setShowFilters(!showFilters);
+  };
 
   // Animation variants
   const containerVariants = {
@@ -131,10 +227,132 @@ const Dashboard = () => {
       variants={containerVariants}
       className="container mx-auto"
     >
-      <motion.div variants={itemVariants} className="mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-        <p className="text-gray-600">Welcome back to your pet food warehouse management system</p>
+      <motion.div variants={itemVariants} className="mb-6 flex justify-between items-center">
+        <div>
+          <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
+          <p className="text-gray-600">Welcome back to your pet food warehouse management system</p>
+        </div>
+        <div className="flex items-center space-x-4">
+          <div className="relative">
+            <Button 
+              variant="outline" 
+              size="icon" 
+              onClick={() => setShowNotifications(!showNotifications)}
+              className="relative"
+            >
+              <Bell size={20} />
+              {unreadNotifications > 0 && (
+                <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-red-500 text-[10px] text-white">
+                  {unreadNotifications}
+                </span>
+              )}
+            </Button>
+            
+            {showNotifications && (
+              <div className="absolute right-0 mt-2 w-80 rounded-md border border-gray-200 bg-white p-2 shadow-lg z-50">
+                <div className="flex items-center justify-between border-b border-gray-200 pb-2">
+                  <h3 className="font-medium">Notifications</h3>
+                  <Button variant="ghost" size="sm" onClick={markAllAsRead}>
+                    Mark all read
+                  </Button>
+                </div>
+                <div className="max-h-96 overflow-y-auto py-2">
+                  {notificationsData.length === 0 ? (
+                    <p className="py-2 text-center text-sm text-gray-500">No notifications</p>
+                  ) : (
+                    notificationsData.map((notification) => (
+                      <div 
+                        key={notification.id} 
+                        className={`mb-2 rounded-md p-2 ${!notification.read ? 'bg-gray-50' : ''}`}
+                      >
+                        <div className="flex items-start">
+                          <div className={`mt-0.5 mr-2 h-2 w-2 rounded-full ${
+                            notification.type === 'warning' ? 'bg-amber-500' :
+                            notification.type === 'danger' ? 'bg-red-500' :
+                            notification.type === 'success' ? 'bg-green-500' :
+                            'bg-blue-500'
+                          }`} />
+                          <div className="flex-1">
+                            <p className="text-sm font-medium">{notification.title}</p>
+                            <p className="text-xs text-gray-600">{notification.message}</p>
+                            <p className="mt-1 text-xs text-gray-400">{notification.time}</p>
+                          </div>
+                        </div>
+                      </div>
+                    ))
+                  )}
+                </div>
+              </div>
+            )}
+          </div>
+          
+          <Button 
+            variant="outline" 
+            size="icon"
+            onClick={toggleFilters}
+          >
+            {showFilters ? <EyeOff size={20} /> : <Filter size={20} />}
+          </Button>
+        </div>
       </motion.div>
+
+      {showFilters && (
+        <motion.div 
+          initial={{ opacity: 0, height: 0 }}
+          animate={{ opacity: 1, height: "auto" }}
+          exit={{ opacity: 0, height: 0 }}
+          className="mb-6"
+        >
+          <Card>
+            <CardContent className="p-4">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="dateRange">Date Range</Label>
+                    <Switch id="dateFilter" />
+                  </div>
+                  <select className="w-full rounded-md border border-gray-300 px-3 py-2">
+                    <option>Today</option>
+                    <option>Last 7 days</option>
+                    <option>Last 30 days</option>
+                    <option>This month</option>
+                    <option>Custom range</option>
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="warehouseFilter">Warehouse</Label>
+                    <Switch id="warehouseFilter" />
+                  </div>
+                  <select className="w-full rounded-md border border-gray-300 px-3 py-2">
+                    <option>All Warehouses</option>
+                    <option>Bangkok Warehouse</option>
+                    <option>Chiang Mai Warehouse</option>
+                    <option>Phuket Warehouse</option>
+                  </select>
+                </div>
+                <div className="space-y-2">
+                  <div className="flex items-center justify-between">
+                    <Label htmlFor="categoryFilter">Category</Label>
+                    <Switch id="categoryFilter" />
+                  </div>
+                  <select className="w-full rounded-md border border-gray-300 px-3 py-2">
+                    <option>All Categories</option>
+                    <option>Dog Food</option>
+                    <option>Cat Food</option>
+                    <option>Bird Food</option>
+                    <option>Fish Food</option>
+                  </select>
+                </div>
+              </div>
+              <div className="mt-4 flex justify-end space-x-2">
+                <Button variant="outline" size="sm">Reset</Button>
+                <Button variant="default" size="sm" className="bg-primary">Apply Filters</Button>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+      )}
 
       <Tabs defaultValue="overview" value={activeTab} onValueChange={setActiveTab}>
         <TabsList className="mb-6">
@@ -142,6 +360,7 @@ const Dashboard = () => {
           <TabsTrigger value="inventory">Inventory</TabsTrigger>
           <TabsTrigger value="shipments">Shipments</TabsTrigger>
           <TabsTrigger value="alerts">Alerts</TabsTrigger>
+          <TabsTrigger value="movement">Movement</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview">
@@ -290,6 +509,30 @@ const Dashboard = () => {
             </motion.div>
           </motion.div>
 
+          {/* New chart - Warehouse Space Utilization */}
+          <motion.div variants={itemVariants} className="mb-6">
+            <Card>
+              <CardHeader>
+                <CardTitle>Warehouse Space Utilization</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <div className="h-80">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={warehouseSpaceData} layout="vertical" margin={{ top: 20, right: 30, left: 20, bottom: 5 }}>
+                      <CartesianGrid strokeDasharray="3 3" />
+                      <XAxis type="number" domain={[0, 100]} />
+                      <YAxis dataKey="name" type="category" />
+                      <Tooltip formatter={(value) => [`${value}%`, 'Space']} />
+                      <Legend />
+                      <Bar dataKey="used" stackId="a" fill="#AB0006" name="Used Space (%)" />
+                      <Bar dataKey="available" stackId="a" fill="#06D6A0" name="Available Space (%)" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </div>
+              </CardContent>
+            </Card>
+          </motion.div>
+
           {/* Alerts Section */}
           <motion.div variants={itemVariants}>
             <Card>
@@ -418,6 +661,34 @@ const Dashboard = () => {
                         <Tooltip />
                         <Area type="monotone" dataKey="turnover" stroke="#06D6A0" fillOpacity={1} fill="url(#colorTurnover)" />
                       </AreaChart>
+                    </ResponsiveContainer>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            {/* New Chart - Staff Productivity */}
+            <motion.div variants={itemVariants}>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Staff Productivity</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-80">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <LineChart
+                        data={staffProductivityData}
+                        margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                      >
+                        <CartesianGrid strokeDasharray="3 3" />
+                        <XAxis dataKey="name" />
+                        <YAxis />
+                        <Tooltip />
+                        <Legend />
+                        <Line type="monotone" dataKey="picking" stroke="#AB0006" activeDot={{ r: 8 }} />
+                        <Line type="monotone" dataKey="packing" stroke="#FFD166" />
+                        <Line type="monotone" dataKey="shipping" stroke="#06D6A0" />
+                      </LineChart>
                     </ResponsiveContainer>
                   </div>
                 </CardContent>
@@ -609,6 +880,162 @@ const Dashboard = () => {
                   </div>
                 </CardContent>
               </Card>
+            </motion.div>
+          </motion.div>
+        </TabsContent>
+
+        {/* New Movement Tab */}
+        <TabsContent value="movement">
+          <motion.div variants={containerVariants} className="grid gap-6">
+            {/* Warehouse Movement Visualization */}
+            <motion.div variants={itemVariants}>
+              <Card>
+                <CardHeader>
+                  <CardTitle>Warehouse Item Movement</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="h-80">
+                    <ResponsiveContainer width="100%" height="100%">
+                      <ScatterChart
+                        margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
+                      >
+                        <CartesianGrid />
+                        <XAxis type="number" dataKey="x" name="Warehouse X-Coordinate" unit="m" />
+                        <YAxis type="number" dataKey="y" name="Warehouse Y-Coordinate" unit="m" />
+                        <ZAxis type="number" dataKey="z" range={[100, 500]} name="Volume" unit="units" />
+                        <Tooltip cursor={{ strokeDasharray: '3 3' }} formatter={(value, name, props) => {
+                          if (name === 'Warehouse X-Coordinate' || name === 'Warehouse Y-Coordinate') {
+                            return [`${value} m`, name];
+                          }
+                          if (name === 'Volume') {
+                            return [`${value} units`, name];
+                          }
+                          return [value, name];
+                        }} />
+                        <Legend />
+                        <Scatter name="Products" data={warehouseMovementData} fill="#AB0006" />
+                      </ScatterChart>
+                    </ResponsiveContainer>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            {/* Movement table */}
+            <motion.div variants={itemVariants}>
+              <Card>
+                <CardHeader className="flex flex-row items-center justify-between">
+                  <CardTitle>Recent Inventory Movements</CardTitle>
+                  <div className="flex items-center space-x-2">
+                    <MapPin className="h-4 w-4 text-gray-500" />
+                    <span className="text-sm text-gray-500">Live Updates</span>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="rounded-md border">
+                    <Table>
+                      <TableHeader>
+                        <TableRow>
+                          <TableHead>Product</TableHead>
+                          <TableHead>From</TableHead>
+                          <TableHead>To</TableHead>
+                          <TableHead className="text-right">Quantity</TableHead>
+                          <TableHead>Time</TableHead>
+                          <TableHead>Status</TableHead>
+                        </TableRow>
+                      </TableHeader>
+                      <TableBody>
+                        {inventoryMovementData.map((movement) => (
+                          <TableRow key={movement.id}>
+                            <TableCell className="font-medium">{movement.product}</TableCell>
+                            <TableCell>{movement.from}</TableCell>
+                            <TableCell>{movement.to}</TableCell>
+                            <TableCell className="text-right">{movement.quantity}</TableCell>
+                            <TableCell>{movement.time}</TableCell>
+                            <TableCell>
+                              <Badge variant="outline" className={
+                                movement.status === 'Completed' ? 'bg-green-100 text-green-800' :
+                                movement.status === 'In Progress' ? 'bg-blue-100 text-blue-800' :
+                                movement.status === 'Pending' ? 'bg-amber-100 text-amber-800' :
+                                'bg-gray-100 text-gray-800'
+                              }>
+                                {movement.status}
+                              </Badge>
+                            </TableCell>
+                          </TableRow>
+                        ))}
+                      </TableBody>
+                    </Table>
+                  </div>
+                </CardContent>
+              </Card>
+            </motion.div>
+
+            {/* Movement stats */}
+            <motion.div variants={containerVariants} className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
+              <motion.div variants={itemVariants}>
+                <Card>
+                  <CardContent className="p-6">
+                    <div className="flex items-center space-x-4">
+                      <div className="rounded-full bg-primary-50 p-3">
+                        <MoveHorizontal size={20} className="text-primary" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-500">Today's Movements</p>
+                        <h3 className="text-2xl font-bold text-gray-900">187</h3>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+
+              <motion.div variants={itemVariants}>
+                <Card>
+                  <CardContent className="p-6">
+                    <div className="flex items-center space-x-4">
+                      <div className="rounded-full bg-amber-50 p-3">
+                        <BarChart2 size={20} className="text-amber-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-500">Avg. Processing Time</p>
+                        <h3 className="text-2xl font-bold text-gray-900">14.3 min</h3>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+
+              <motion.div variants={itemVariants}>
+                <Card>
+                  <CardContent className="p-6">
+                    <div className="flex items-center space-x-4">
+                      <div className="rounded-full bg-green-50 p-3">
+                        <TrendingUp size={20} className="text-green-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-500">Efficiency Rate</p>
+                        <h3 className="text-2xl font-bold text-gray-900">94.7%</h3>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
+
+              <motion.div variants={itemVariants}>
+                <Card>
+                  <CardContent className="p-6">
+                    <div className="flex items-center space-x-4">
+                      <div className="rounded-full bg-blue-50 p-3">
+                        <Truck size={20} className="text-blue-600" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-500">Active Transporters</p>
+                        <h3 className="text-2xl font-bold text-gray-900">12</h3>
+                      </div>
+                    </div>
+                  </CardContent>
+                </Card>
+              </motion.div>
             </motion.div>
           </motion.div>
         </TabsContent>
