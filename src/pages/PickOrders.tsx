@@ -84,10 +84,10 @@ const mockPickOrders = [
 
 const PickOrders = () => {
   const [showFilters, setShowFilters] = useState(true);
-  const [filterBySku, setFilterBySku] = useState('');
-  const [filterByCustomer, setFilterByCustomer] = useState('');
-  const [filterByRequester, setFilterByRequester] = useState('');
-  const [filterByLocation, setFilterByLocation] = useState('');
+  const [filterBySku, setFilterBySku] = useState('all');
+  const [filterByCustomer, setFilterByCustomer] = useState('all');
+  const [filterByRequester, setFilterByRequester] = useState('all');
+  const [filterByLocation, setFilterByLocation] = useState('all');
   const [filterByDate, setFilterByDate] = useState<Date | undefined>(undefined);
   const [filteredOrders, setFilteredOrders] = useState(mockPickOrders);
   const [selectedPickOrders, setSelectedPickOrders] = useState<string[]>([]);
@@ -107,25 +107,25 @@ const PickOrders = () => {
   const applyFilters = () => {
     let result = [...mockPickOrders];
 
-    if (activeTab === 'sku' && filterBySku) {
+    if (activeTab === 'sku' && filterBySku && filterBySku !== 'all') {
       result = result.filter(order => 
         order.items.some(item => item.sku.toLowerCase().includes(filterBySku.toLowerCase()))
       );
     }
 
-    if (activeTab === 'customer' && filterByCustomer) {
+    if (activeTab === 'customer' && filterByCustomer && filterByCustomer !== 'all') {
       result = result.filter(order => 
         order.customer.toLowerCase().includes(filterByCustomer.toLowerCase())
       );
     }
 
-    if (activeTab === 'requester' && filterByRequester) {
+    if (activeTab === 'requester' && filterByRequester && filterByRequester !== 'all') {
       result = result.filter(order => 
         order.requester.toLowerCase().includes(filterByRequester.toLowerCase())
       );
     }
 
-    if (activeTab === 'location' && filterByLocation) {
+    if (activeTab === 'location' && filterByLocation && filterByLocation !== 'all') {
       result = result.filter(order => 
         order.items.some(item => item.location.toLowerCase().includes(filterByLocation.toLowerCase()))
       );
@@ -158,10 +158,10 @@ const PickOrders = () => {
   };
 
   const resetFilters = () => {
-    setFilterBySku('');
-    setFilterByCustomer('');
-    setFilterByRequester('');
-    setFilterByLocation('');
+    setFilterBySku('all');
+    setFilterByCustomer('all');
+    setFilterByRequester('all');
+    setFilterByLocation('all');
     setFilterByDate(undefined);
     setFilteredOrders(mockPickOrders);
   };
@@ -238,7 +238,7 @@ const PickOrders = () => {
                           <SelectValue placeholder="Select SKU" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="">All SKUs</SelectItem>
+                          <SelectItem value="all">All SKUs</SelectItem>
                           {uniqueSkus.map(sku => (
                             <SelectItem key={sku} value={sku}>{sku}</SelectItem>
                           ))}
@@ -261,7 +261,7 @@ const PickOrders = () => {
                           <SelectValue placeholder="Select Customer" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="">All Customers</SelectItem>
+                          <SelectItem value="all">All Customers</SelectItem>
                           {uniqueCustomers.map(customer => (
                             <SelectItem key={customer} value={customer}>{customer}</SelectItem>
                           ))}
@@ -284,7 +284,7 @@ const PickOrders = () => {
                           <SelectValue placeholder="Select Requester" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="">All Requesters</SelectItem>
+                          <SelectItem value="all">All Requesters</SelectItem>
                           {uniqueRequesters.map(requester => (
                             <SelectItem key={requester} value={requester}>{requester}</SelectItem>
                           ))}
@@ -307,7 +307,7 @@ const PickOrders = () => {
                           <SelectValue placeholder="Select Location" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="">All Locations</SelectItem>
+                          <SelectItem value="all">All Locations</SelectItem>
                           {uniqueLocations.map(location => (
                             <SelectItem key={location} value={location}>{location}</SelectItem>
                           ))}
