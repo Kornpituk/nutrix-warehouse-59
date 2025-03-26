@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
@@ -11,7 +10,8 @@ import {
   X, 
   LogOut, 
   Store, 
-  ChevronDown
+  ChevronDown,
+  Package as PackageIcon
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 
@@ -41,6 +41,7 @@ const SidebarNav: React.FC<SidebarNavProps> = ({ children }) => {
     { path: '/dashboard', name: 'Dashboard', icon: <LayoutDashboard size={20} /> },
     { path: '/stock', name: 'Stock Update', icon: <Package size={20} /> },
     { path: '/shipment', name: 'Shipment Plan', icon: <Truck size={20} /> },
+    { path: '/pick-orders', name: 'Pick Orders', icon: <PackageIcon size={20} /> },
     { path: '/settings', name: 'Settings', icon: <Settings size={20} /> },
   ];
 
@@ -58,7 +59,6 @@ const SidebarNav: React.FC<SidebarNavProps> = ({ children }) => {
 
   return (
     <div className="flex h-screen w-full overflow-hidden">
-      {/* Sidebar Toggle Button */}
       <div className="fixed left-4 top-4 z-50 lg:hidden">
         <Button
           variant="outline"
@@ -70,7 +70,6 @@ const SidebarNav: React.FC<SidebarNavProps> = ({ children }) => {
         </Button>
       </div>
 
-      {/* Mobile Overlay */}
       <AnimatePresence>
         {isOpen && (
           <motion.div
@@ -84,7 +83,6 @@ const SidebarNav: React.FC<SidebarNavProps> = ({ children }) => {
         )}
       </AnimatePresence>
 
-      {/* Sidebar */}
       <motion.div
         initial={{ x: -320 }}
         animate={{ x: isOpen ? 0 : -320 }}
@@ -184,7 +182,6 @@ const SidebarNav: React.FC<SidebarNavProps> = ({ children }) => {
         </div>
       </motion.div>
 
-      {/* Main Content */}
       <div className="flex-1 overflow-auto">
         <div className="min-h-screen bg-gray-50 px-4 py-4 lg:px-8 lg:py-6">
           {children}

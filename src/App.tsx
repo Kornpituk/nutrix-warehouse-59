@@ -11,6 +11,7 @@ import SelectWarehouse from "./pages/SelectWarehouse";
 import Dashboard from "./pages/Dashboard";
 import StockUpdate from "./pages/StockUpdate";
 import ShipmentPlan from "./pages/ShipmentPlan";
+import PickOrders from "./pages/PickOrders";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
 
@@ -62,6 +63,11 @@ const App = () => (
           <Route path="/shipment" element={
             <ProtectedRoute>
               <ShipmentPlan />
+            </ProtectedRoute>
+          } />
+          <Route path="/pick-orders" element={
+            <ProtectedRoute>
+              <PickOrders />
             </ProtectedRoute>
           } />
           <Route path="/settings" element={
