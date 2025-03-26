@@ -85,7 +85,7 @@ const Index = () => {
                   transition={{ repeat: Infinity, duration: 2 }}
                 />
               </svg>
-              <span className="text-xl font-bold text-primary">Nutrix Public Company Limited</span>
+              <span className="text-xl font-bold text-primary">PetFeed WMS</span>
             </div>
             <div className="hidden space-x-8 md:flex">
               <a href="#features" className="text-gray-600 hover:text-primary-600 transition-colors">Features</a>
