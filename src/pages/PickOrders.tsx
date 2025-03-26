@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { motion } from 'framer-motion';
 import { Search, Calendar, Package, User, MapPin, Check, Filter } from 'lucide-react';
@@ -18,7 +17,6 @@ import { Switch } from '@/components/ui/switch';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 
-// Mock data for pick orders
 const mockPickOrders = [
   {
     id: 'PO-001',
@@ -93,7 +91,6 @@ const PickOrders = () => {
   const [selectedPickOrders, setSelectedPickOrders] = useState<string[]>([]);
   const [activeTab, setActiveTab] = useState('sku');
 
-  // Get unique values for dropdown filters
   const uniqueCustomers = [...new Set(mockPickOrders.map(order => order.customer))];
   const uniqueRequesters = [...new Set(mockPickOrders.map(order => order.requester))];
   const uniqueLocations = [...new Set(mockPickOrders.flatMap(order => 
@@ -103,29 +100,28 @@ const PickOrders = () => {
     order.items.map(item => item.sku)
   ))];
 
-  // Function to filter orders based on selected criteria
   const applyFilters = () => {
     let result = [...mockPickOrders];
 
-    if (activeTab === 'sku' && filterBySku) {
+    if (activeTab === 'sku' && filterBySku && filterBySku !== 'all') {
       result = result.filter(order => 
         order.items.some(item => item.sku.toLowerCase().includes(filterBySku.toLowerCase()))
       );
     }
 
-    if (activeTab === 'customer' && filterByCustomer) {
+    if (activeTab === 'customer' && filterByCustomer && filterByCustomer !== 'all') {
       result = result.filter(order => 
         order.customer.toLowerCase().includes(filterByCustomer.toLowerCase())
       );
     }
 
-    if (activeTab === 'requester' && filterByRequester) {
+    if (activeTab === 'requester' && filterByRequester && filterByRequester !== 'all') {
       result = result.filter(order => 
         order.requester.toLowerCase().includes(filterByRequester.toLowerCase())
       );
     }
 
-    if (activeTab === 'location' && filterByLocation) {
+    if (activeTab === 'location' && filterByLocation && filterByLocation !== 'all') {
       result = result.filter(order => 
         order.items.some(item => item.location.toLowerCase().includes(filterByLocation.toLowerCase()))
       );
@@ -139,7 +135,6 @@ const PickOrders = () => {
     setFilteredOrders(result);
   };
 
-  // Handle pick order selection
   const handleSelectPickOrder = (orderId: string) => {
     if (selectedPickOrders.includes(orderId)) {
       setSelectedPickOrders(selectedPickOrders.filter(id => id !== orderId));
@@ -148,7 +143,6 @@ const PickOrders = () => {
     }
   };
 
-  // Handle select all
   const handleSelectAll = () => {
     if (selectedPickOrders.length === filteredOrders.length) {
       setSelectedPickOrders([]);
@@ -158,10 +152,10 @@ const PickOrders = () => {
   };
 
   const resetFilters = () => {
-    setFilterBySku('');
-    setFilterByCustomer('');
-    setFilterByRequester('');
-    setFilterByLocation('');
+    if (activeTab === 'sku') setFilterBySku('all');
+    if (activeTab === 'customer') setFilterByCustomer('all');
+    if (activeTab === 'requester') setFilterByRequester('all');
+    if (activeTab === 'location') setFilterByLocation('all');
     setFilterByDate(undefined);
     setFilteredOrders(mockPickOrders);
   };
@@ -238,7 +232,7 @@ const PickOrders = () => {
                           <SelectValue placeholder="Select SKU" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="">All SKUs</SelectItem>
+                          <SelectItem value="all">All SKUs</SelectItem>
                           {uniqueSkus.map(sku => (
                             <SelectItem key={sku} value={sku}>{sku}</SelectItem>
                           ))}
@@ -261,7 +255,7 @@ const PickOrders = () => {
                           <SelectValue placeholder="Select Customer" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="">All Customers</SelectItem>
+                          <SelectItem value="all">All Customers</SelectItem>
                           {uniqueCustomers.map(customer => (
                             <SelectItem key={customer} value={customer}>{customer}</SelectItem>
                           ))}
@@ -284,7 +278,7 @@ const PickOrders = () => {
                           <SelectValue placeholder="Select Requester" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="">All Requesters</SelectItem>
+                          <SelectItem value="all">All Requesters</SelectItem>
                           {uniqueRequesters.map(requester => (
                             <SelectItem key={requester} value={requester}>{requester}</SelectItem>
                           ))}
@@ -307,7 +301,7 @@ const PickOrders = () => {
                           <SelectValue placeholder="Select Location" />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="">All Locations</SelectItem>
+                          <SelectItem value="all">All Locations</SelectItem>
                           {uniqueLocations.map(location => (
                             <SelectItem key={location} value={location}>{location}</SelectItem>
                           ))}
