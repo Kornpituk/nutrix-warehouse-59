@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -57,7 +56,6 @@ import { useToast } from '@/hooks/use-toast';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { format } from 'date-fns';
 
-// Mock shipment plan data
 const shipmentPlans = [
   {
     id: "SP-2023-001",
@@ -138,7 +136,6 @@ const shipmentPlans = [
   },
 ];
 
-// Mock truck order data
 const truckOrders = [
   {
     id: "TO-2023-001",
@@ -221,21 +218,18 @@ const ShipmentPlan = () => {
   const [showFilters, setShowFilters] = useState(true);
 
   useEffect(() => {
-    // Check if user is authenticated
     const isAuthenticated = localStorage.getItem('isAuthenticated');
     if (!isAuthenticated) {
       navigate('/login');
       return;
     }
     
-    // Check if warehouse is selected
     const selectedWarehouse = localStorage.getItem('selectedWarehouse');
     if (!selectedWarehouse) {
       navigate('/select-warehouse');
       return;
     }
     
-    // Simulate loading
     const timer = setTimeout(() => {
       setIsLoading(false);
     }, 1000);
@@ -244,7 +238,6 @@ const ShipmentPlan = () => {
   }, [navigate]);
 
   useEffect(() => {
-    // Filter shipments based on search and filters
     let filtered = shipmentPlans;
     
     if (searchTerm) {
@@ -300,7 +293,6 @@ const ShipmentPlan = () => {
   };
 
   const handleSearch = () => {
-    // Already handled in useEffect
   };
 
   const handleClear = () => {
@@ -328,12 +320,10 @@ const ShipmentPlan = () => {
     setShowFilters(!showFilters);
   };
 
-  // Get truck orders for a specific shipment
   const getShipmentTruckOrders = (shipmentId: string) => {
     return truckOrders.filter(order => order.shipmentId === shipmentId);
   };
 
-  // Animation variants
   const containerVariants = {
     hidden: { opacity: 0 },
     visible: {
@@ -376,10 +366,8 @@ const ShipmentPlan = () => {
           <p className="text-gray-600">Manage and track your shipment schedules</p>
         </div>
         <div className="flex items-center space-x-2">
-          <div className="flex items-center space-x-2">
-            <Label htmlFor="showFilters" className="text-sm">Show Filters</Label>
-            <Switch id="showFilters" checked={showFilters} onCheckedChange={toggleFilters} />
-          </div>
+          <Label htmlFor="showFilters" className="text-sm">Show Filters</Label>
+          <Switch id="showFilters" checked={showFilters} onCheckedChange={toggleFilters} />
         </div>
       </motion.div>
 
@@ -516,7 +504,6 @@ const ShipmentPlan = () => {
         </Card>
       </motion.div>
 
-      {/* Shipment Detail Dialog */}
       <Dialog open={isDetailOpen} onOpenChange={setIsDetailOpen}>
         <DialogContent className="sm:max-w-4xl">
           <DialogHeader>
@@ -691,7 +678,6 @@ const ShipmentPlan = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Create Truck Order Dialog */}
       <Dialog open={isCreateTruckOrderOpen} onOpenChange={setIsCreateTruckOrderOpen}>
         <DialogContent>
           <DialogHeader>
@@ -750,7 +736,6 @@ const ShipmentPlan = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Print Truck Order Dialog */}
       <Dialog open={isPrintDialogOpen} onOpenChange={setIsPrintDialogOpen}>
         <DialogContent>
           <DialogHeader>
