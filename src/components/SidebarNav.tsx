@@ -5,14 +5,12 @@ import { motion, AnimatePresence } from 'framer-motion';
 import { 
   LayoutDashboard, 
   Package, 
-  Truck, 
   Settings, 
   Menu, 
   X, 
   LogOut, 
   Store, 
   ChevronDown,
-  Package as PackageIcon,
   Globe,
   DownloadCloud,
   FileHeart,
@@ -50,8 +48,6 @@ const SidebarNav: React.FC<SidebarNavProps> = ({ children }) => {
   const mainMenuItems = [
     { path: '/dashboard', name: t('nav.dashboard'), icon: <LayoutDashboard size={20} /> },
     { path: '/stock', name: t('nav.stock'), icon: <Package size={20} /> },
-    { path: '/shipment', name: t('nav.shipment'), icon: <Truck size={20} /> },
-    { path: '/pick-orders', name: t('nav.pickOrders'), icon: <PackageIcon size={20} /> },
     { path: '/receiving', name: t('nav.receiving'), icon: <DownloadCloud size={20} /> },
     { path: '/request-picking', name: t('nav.requestForPicking'), icon: <FileHeart size={20} /> },
     { path: '/packing-ptw', name: t('nav.packingPTW'), icon: <Box size={20} /> },

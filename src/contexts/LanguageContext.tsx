@@ -25,14 +25,6 @@ const translations: Record<string, Record<LanguageType, string>> = {
     en: 'Stock Update',
     th: 'อัปเดตสต็อก',
   },
-  'nav.shipment': {
-    en: 'Shipment Plan',
-    th: 'แผนการจัดส่ง',
-  },
-  'nav.pickOrders': {
-    en: 'Pick Orders',
-    th: 'รายการหยิบสินค้า',
-  },
   'nav.receiving': {
     en: 'Receiving',
     th: 'การรับสินค้า',
@@ -265,6 +257,222 @@ const translations: Record<string, Record<LanguageType, string>> = {
   'ui.update': {
     en: 'Update',
     th: 'อัปเดต',
+  },
+  'ui.filter': {
+    en: 'Filter',
+    th: 'ตัวกรอง',
+  },
+  'ui.actions': {
+    en: 'Actions',
+    th: 'การดำเนินการ',
+  },
+  'ui.departments': {
+    en: 'Departments',
+    th: 'แผนก',
+  },
+  'ui.department': {
+    en: 'Department',
+    th: 'แผนก',
+  },
+  'ui.departmentID': {
+    en: 'Department ID',
+    th: 'รหัสแผนก',
+  },
+  'ui.staffID': {
+    en: 'Staff ID',
+    th: 'รหัสพนักงาน',
+  },
+  'ui.departmentName': {
+    en: 'Department Name',
+    th: 'ชื่อแผนก',
+  },
+  'ui.managerName': {
+    en: 'Manager Name',
+    th: 'ชื่อผู้จัดการ',
+  },
+  'ui.status': {
+    en: 'Status',
+    th: 'สถานะ',
+  },
+  'ui.totalStaff': {
+    en: 'Total Staff',
+    th: 'พนักงานทั้งหมด',
+  },
+  'ui.activeStaff': {
+    en: 'Active Staff',
+    th: 'พนักงานที่ใช้งานอยู่',
+  },
+  'ui.staffList': {
+    en: 'Staff List',
+    th: 'รายชื่อพนักงาน',
+  },
+  'ui.name': {
+    en: 'Name',
+    th: 'ชื่อ',
+  },
+  'ui.manager': {
+    en: 'Manager',
+    th: 'ผู้จัดการ',
+  },
+  'ui.staffCount': {
+    en: 'Staff Count',
+    th: 'จำนวนพนักงาน',
+  },
+  'ui.position': {
+    en: 'Position',
+    th: 'ตำแหน่ง',
+  },
+  'ui.staffName': {
+    en: 'Staff Name',
+    th: 'ชื่อพนักงาน',
+  },
+  'ui.addDepartment': {
+    en: 'Add Department',
+    th: 'เพิ่มแผนก',
+  },
+  'ui.editDepartment': {
+    en: 'Edit Department',
+    th: 'แก้ไขแผนก',
+  },
+  'ui.addStaff': {
+    en: 'Add Staff',
+    th: 'เพิ่มพนักงาน',
+  },
+  'ui.editStaff': {
+    en: 'Edit Staff',
+    th: 'แก้ไขพนักงาน',
+  },
+  'ui.fillDepartmentDetails': {
+    en: 'Fill in the department details',
+    th: 'กรอกรายละเอียดแผนก',
+  },
+  'ui.updateDepartmentDetails': {
+    en: 'Update the department details',
+    th: 'อัปเดตรายละเอียดแผนก',
+  },
+  'ui.fillStaffDetails': {
+    en: 'Fill in the staff details',
+    th: 'กรอกรายละเอียดพนักงาน',
+  },
+  'ui.updateStaffDetails': {
+    en: 'Update the staff details',
+    th: 'อัปเดตรายละเอียดพนักงาน',
+  },
+  'ui.enterDepartmentName': {
+    en: 'Enter department name',
+    th: 'ป้อนชื่อแผนก',
+  },
+  'ui.enterManagerName': {
+    en: 'Enter manager name',
+    th: 'ป้อนชื่อผู้จัดการ',
+  },
+  'ui.enterStatus': {
+    en: 'Enter status',
+    th: 'ป้อนสถานะ',
+  },
+  'ui.enterStaffName': {
+    en: 'Enter staff name',
+    th: 'ป้อนชื่อพนักงาน',
+  },
+  'ui.enterDepartment': {
+    en: 'Enter department',
+    th: 'ป้อนแผนก',
+  },
+  'ui.enterPosition': {
+    en: 'Enter position',
+    th: 'ป้อนตำแหน่ง',
+  },
+  'ui.departmentDetails': {
+    en: 'Department Details',
+    th: 'รายละเอียดแผนก',
+  },
+  'ui.staffDetails': {
+    en: 'Staff Details',
+    th: 'รายละเอียดพนักงาน',
+  },
+  'ui.departmentStaff': {
+    en: 'Department Staff',
+    th: 'พนักงานในแผนก',
+  },
+  'ui.departmentInfo': {
+    en: 'Department Information',
+    th: 'ข้อมูลแผนก',
+  },
+  'ui.noStaffInDepartment': {
+    en: 'No staff in this department',
+    th: 'ไม่มีพนักงานในแผนกนี้',
+  },
+  'ui.departmentNotFound': {
+    en: 'Department not found',
+    th: 'ไม่พบแผนก',
+  },
+  'ui.confirmDelete': {
+    en: 'Confirm Delete',
+    th: 'ยืนยันการลบ',
+  },
+  'ui.confirmDeleteDepartment': {
+    en: 'Are you sure you want to delete this department? This action cannot be undone.',
+    th: 'คุณแน่ใจหรือไม่ว่าต้องการลบแผนกนี้? การกระทำนี้ไม่สามารถยกเลิกได้',
+  },
+  'ui.confirmDeleteStaff': {
+    en: 'Are you sure you want to delete this staff member? This action cannot be undone.',
+    th: 'คุณแน่ใจหรือไม่ว่าต้องการลบพนักงานคนนี้? การกระทำนี้ไม่สามารถยกเลิกได้',
+  },
+  'ui.error': {
+    en: 'Error',
+    th: 'ข้อผิดพลาด',
+  },
+  'ui.success': {
+    en: 'Success',
+    th: 'สำเร็จ',
+  },
+  'ui.fillRequiredFields': {
+    en: 'Please fill in all required fields',
+    th: 'กรุณากรอกข้อมูลที่จำเป็นทั้งหมด',
+  },
+  'ui.departmentAdded': {
+    en: 'Department has been added successfully',
+    th: 'เพิ่มแผนกสำเร็จแล้ว',
+  },
+  'ui.departmentUpdated': {
+    en: 'Department has been updated successfully',
+    th: 'อัปเดตแผนกสำเร็จแล้ว',
+  },
+  'ui.departmentDeleted': {
+    en: 'Department has been deleted successfully',
+    th: 'ลบแผนกสำเร็จแล้ว',
+  },
+  'ui.staffAdded': {
+    en: 'Staff has been added successfully',
+    th: 'เพิ่มพนักงานสำเร็จแล้ว',
+  },
+  'ui.staffUpdated': {
+    en: 'Staff has been updated successfully',
+    th: 'อัปเดตพนักงานสำเร็จแล้ว',
+  },
+  'ui.staffDeleted': {
+    en: 'Staff has been deleted successfully',
+    th: 'ลบพนักงานสำเร็จแล้ว',
+  },
+  'ui.cannotDeleteDeptWithStaff': {
+    en: 'Cannot delete department with staff. Please reassign or delete staff first.',
+    th: 'ไม่สามารถลบแผนกที่มีพนักงานได้ โปรดย้ายหรือลบพนักงานก่อน',
+  },
+  'ui.manageDepartments': {
+    en: 'Manage your departments and staff members',
+    th: 'จัดการแผนกและพนักงานของคุณ',
+  },
+  'ui.manageStaff': {
+    en: 'Manage your warehouse staff',
+    th: 'จัดการพนักงานคลังสินค้าของคุณ',
+  },
+  'ui.searchDepartments': {
+    en: 'Search departments...',
+    th: 'ค้นหาแผนก...',
+  },
+  'ui.searchStaff': {
+    en: 'Search staff...',
+    th: 'ค้นหาพนักงาน...',
   },
 };
 
