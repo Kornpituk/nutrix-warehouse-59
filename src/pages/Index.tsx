@@ -1,14 +1,16 @@
 
 import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useAnimation } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-
+import { RotateCw, Pause } from 'lucide-react';
 import { Loading } from "@/components/ui/custom/loading";
 
 const Index = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
+  const [isRotating, setIsRotating] = useState(true);
+  const cubeControls = useAnimation();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -17,6 +19,26 @@ const Index = () => {
 
     return () => clearTimeout(timer);
   }, []);
+
+  useEffect(() => {
+    if (isRotating) {
+      cubeControls.start({
+        rotateX: [0, 360],
+        rotateY: [0, 360],
+        transition: {
+          duration: 20,
+          repeat: Infinity,
+          ease: "linear"
+        }
+      });
+    } else {
+      cubeControls.stop();
+    }
+  }, [isRotating, cubeControls]);
+
+  const toggleRotation = () => {
+    setIsRotating(!isRotating);
+  };
 
   const handleStart = () => {
     navigate('/login');
@@ -32,24 +54,6 @@ const Index = () => {
             transition={{ duration: 0.5 }}
             className="mb-6"
           >
-            {/* <svg width="120" height="120" viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-              <path d="M60 10C32.4 10 10 32.4 10 60C10 87.6 32.4 110 60 110C87.6 110 110 87.6 110 60C110 32.4 87.6 10 60 10ZM60 100C37.9 100 20 82.1 20 60C20 37.9 37.9 20 60 20C82.1 20 100 37.9 100 60C100 82.1 82.1 100 60 100Z" fill="#AB0006"/>
-              <path d="M60 30C48.95 30 40 38.95 40 50C40 61.05 48.95 70 60 70C71.05 70 80 61.05 80 50C80 38.95 71.05 30 60 30Z" fill="#AB0006"/>
-              <motion.path 
-                d="M45 80C35 80 30 90 30 95C30 100 32.5 105 40 105C47.5 105 52.5 100 55 95C57.5 90 55 80 45 80Z" 
-                fill="#AB0006"
-                initial={{ rotate: 0 }}
-                animate={{ rotate: [0, 10, 0] }}
-                transition={{ repeat: Infinity, duration: 2 }}
-              />
-              <motion.path 
-                d="M75 80C85 80 90 90 90 95C90 100 87.5 105 80 105C72.5 105 67.5 100 65 95C62.5 90 65 80 75 80Z" 
-                fill="#AB0006"
-                initial={{ rotate: 0 }}
-                animate={{ rotate: [0, -10, 0] }}
-                transition={{ repeat: Infinity, duration: 2 }}
-              />
-            </svg> */}
             <Loading text=" " />
           </motion.div>
           <motion.p
@@ -158,7 +162,10 @@ const Index = () => {
               transition={{ duration: 0.5 }}
             >
               <div className="scene-container absolute inset-0 mx-auto">
-                <div className="cube">
+                <motion.div 
+                  className="cube"
+                  animate={cubeControls}
+                >
                   <div className="cube__face cube__face--front">
                     <motion.img 
                       src="https://images.unsplash.com/photo-1583511655826-05700a52f8ba?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" 
@@ -207,8 +214,21 @@ const Index = () => {
                       whileHover={{ scale: 1.05 }}
                     />
                   </div>
-                </div>
+                </motion.div>
               </div>
+
+              {/* Cube rotation control button */}
+              <motion.button
+                onClick={toggleRotation}
+                className="absolute top-0 right-0 z-10 flex h-10 w-10 items-center justify-center rounded-full bg-white/80 shadow-md backdrop-blur-sm transition-all hover:bg-white"
+                whileHover={{ scale: 1.1 }}
+                whileTap={{ scale: 0.95 }}
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 1 }}
+              >
+                {isRotating ? <Pause className="h-5 w-5 text-primary" /> : <RotateCw className="h-5 w-5 text-primary" />}
+              </motion.button>
 
               <motion.div 
                 className="pet-container absolute bottom-4 left-10"
