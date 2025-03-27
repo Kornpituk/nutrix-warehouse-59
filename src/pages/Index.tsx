@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from 'react';
 import { motion, useAnimation } from 'framer-motion';
 import { useNavigate } from 'react-router-dom';
@@ -10,7 +9,9 @@ const Index = () => {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [isRotating, setIsRotating] = useState(true);
+  const [isLogoRotating, setIsLogoRotating] = useState(true);
   const cubeControls = useAnimation();
+  const logoControls = useAnimation();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -36,8 +37,27 @@ const Index = () => {
     }
   }, [isRotating, cubeControls]);
 
+  useEffect(() => {
+    if (isLogoRotating) {
+      logoControls.start({
+        rotate: [0, 360],
+        transition: {
+          duration: 10,
+          repeat: Infinity,
+          ease: "linear"
+        }
+      });
+    } else {
+      logoControls.stop();
+    }
+  }, [isLogoRotating, logoControls]);
+
   const toggleRotation = () => {
     setIsRotating(!isRotating);
+  };
+
+  const toggleLogoRotation = () => {
+    setIsLogoRotating(!isLogoRotating);
   };
 
   const handleStart = () => {
@@ -76,22 +96,44 @@ const Index = () => {
         <div className="container mx-auto px-4 py-20 sm:py-32">
           <nav className="flex items-center justify-between py-4">
             <div className="flex items-center space-x-2">
-              <svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M16 4C9.4 4 4 9.4 4 16C4 22.6 9.4 28 16 28C22.6 28 28 22.6 28 16C28 9.4 22.6 4 16 4ZM16 26C10.5 26 6 21.5 6 16C6 10.5 10.5 6 16 6C21.5 6 26 10.5 26 16C26 21.5 21.5 26 16 26Z" fill="#AB0006"/>
-                <path d="M16 10C13.8 10 12 11.8 12 14C12 16.2 13.8 18 16 18C18.2 18 20 16.2 20 14C20 11.8 18.2 10 16 10Z" fill="#AB0006"/>
-                <motion.path 
-                  d="M13 20C11 20 10 22 10 23C10 24 10.5 25 12 25C13.5 25 14.5 24 15 23C15.5 22 15 20 13 20Z" 
-                  fill="#AB0006"
-                  animate={{ rotate: [0, 5, 0] }}
-                  transition={{ repeat: Infinity, duration: 2 }}
-                />
-                <motion.path 
-                  d="M19 20C21 20 22 22 22 23C22 24 21.5 25 20 25C18.5 25 17.5 24 17 23C16.5 22 17 20 19 20Z" 
-                  fill="#AB0006"
-                  animate={{ rotate: [0, -5, 0] }}
-                  transition={{ repeat: Infinity, duration: 2 }}
-                />
-              </svg>
+              <div className="relative cursor-pointer" onClick={toggleLogoRotation}>
+                <motion.svg 
+                  width="32" 
+                  height="32" 
+                  viewBox="0 0 32 32" 
+                  fill="none" 
+                  xmlns="http://www.w3.org/2000/svg"
+                  animate={logoControls}
+                  whileHover={{ scale: 1.1 }}
+                  whileTap={{ scale: 0.95 }}
+                >
+                  <path d="M16 4C9.4 4 4 9.4 4 16C4 22.6 9.4 28 16 28C22.6 28 28 22.6 28 16C28 9.4 22.6 4 16 4ZM16 26C10.5 26 6 21.5 6 16C6 10.5 10.5 6 16 6C21.5 6 26 10.5 26 16C26 21.5 21.5 26 16 26Z" fill="#AB0006"/>
+                  <path d="M16 10C13.8 10 12 11.8 12 14C12 16.2 13.8 18 16 18C18.2 18 20 16.2 20 14C20 11.8 18.2 10 16 10Z" fill="#AB0006"/>
+                  <motion.path 
+                    d="M13 20C11 20 10 22 10 23C10 24 10.5 25 12 25C13.5 25 14.5 24 15 23C15.5 22 15 20 13 20Z" 
+                    fill="#AB0006"
+                    animate={{ rotate: isLogoRotating ? [0, 5, 0] : 0 }}
+                    transition={{ repeat: Infinity, duration: 2 }}
+                  />
+                  <motion.path 
+                    d="M19 20C21 20 22 22 22 23C22 24 21.5 25 20 25C18.5 25 17.5 24 17 23C16.5 22 17 20 19 20Z" 
+                    fill="#AB0006"
+                    animate={{ rotate: isLogoRotating ? [0, -5, 0] : 0 }}
+                    transition={{ repeat: Infinity, duration: 2 }}
+                  />
+                </motion.svg>
+                <motion.div
+                  className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-white/80 shadow-sm"
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  transition={{ delay: 0.5 }}
+                >
+                  {isLogoRotating ? 
+                    <Pause className="h-2 w-2 text-primary" /> : 
+                    <RotateCw className="h-2 w-2 text-primary" />
+                  }
+                </motion.div>
+              </div>
               <span className="text-xl font-bold text-primary">Nutrix Public Company Limited</span>
             </div>
             <div className="hidden space-x-8 md:flex">
@@ -289,7 +331,7 @@ const Index = () => {
                 description: "Get instant insights into your inventory and operations with our intuitive dashboard.",
                 icon: (
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v16m14 0h2m-2 0h-5m-9 0H3m2 0h5M9 7h1m-1 4h1m4-4h1m-1 4h1m-5 10v-5a1 1 0 011-1h2a1 1 0 011 1v5m-4 0h4" />
                   </svg>
                 ),
               },
@@ -308,7 +350,7 @@ const Index = () => {
                 icon: (
                   <svg xmlns="http://www.w3.org/2000/svg" className="h-10 w-10 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                     <path d="M9 17a2 2 0 11-4 0 2 2 0 014 0zM19 17a2 2 0 11-4 0 2 2 0 014 0z" />
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l3.414 3.414a1 1 0 01.293.707V16a1 1 0 01-1 1h-1m-6-1a1 1 0 001 1h1M5 17a2 2 0 104 0m-4 0a2 2 0 114 0m6 0a2 2 0 104 0m-4 0a2 2 0 114 0" />
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16V6a1 1 0 00-1-1H4a1 1 0 00-1 1v10a1 1 0 001 1h1m8-1a1 1 0 01-1 1H9m4-1V8a1 1 0 011-1h2.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
                   </svg>
                 ),
               },
