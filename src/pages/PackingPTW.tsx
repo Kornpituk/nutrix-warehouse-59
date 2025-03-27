@@ -1,28 +1,200 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { 
+  Dialog, 
+  DialogContent, 
+  DialogDescription, 
+  DialogHeader, 
+  DialogTitle 
+} from '@/components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { Search, ChevronDown, ChevronUp, Filter, Box, Users } from 'lucide-react';
 
 const PackingPTW = () => {
   const { t } = useLanguage();
+  const [isPackingFilterOpen, setIsPackingFilterOpen] = useState(false);
+  const [isPtwFilterOpen, setIsPtwFilterOpen] = useState(false);
+  const [packingSearchTerm, setPackingSearchTerm] = useState('');
+  const [ptwSearchTerm, setPtwSearchTerm] = useState('');
+  const [selectedJob, setSelectedJob] = useState<any>(null);
+  const [selectedTask, setSelectedTask] = useState<any>(null);
+  const [isDetailOpen, setIsDetailOpen] = useState(false);
+  const [detailType, setDetailType] = useState<'packing' | 'ptw'>('packing');
 
   const packingJobs = [
-    { id: 'PACK-2345', orderRef: 'ORD-9876', items: 12, status: 'Ready', priority: 'Normal', customer: 'ABC Corp' },
-    { id: 'PACK-2344', orderRef: 'ORD-9875', items: 8, status: 'In Progress', priority: 'Rush', customer: 'XYZ Ltd' },
-    { id: 'PACK-2343', orderRef: 'ORD-9874', items: 15, status: 'Complete', priority: 'Normal', customer: 'Acme Inc' },
-    { id: 'PACK-2342', orderRef: 'ORD-9873', items: 5, status: 'Ready', priority: 'Low', customer: '123 Company' },
-    { id: 'PACK-2341', orderRef: 'ORD-9872', items: 20, status: 'In Progress', priority: 'Rush', customer: 'Big Store' },
+    { 
+      id: 'PACK-2345', 
+      orderRef: 'ORD-9876', 
+      items: 12, 
+      status: 'Ready', 
+      priority: 'Normal', 
+      customer: 'ABC Corp',
+      assignedTo: 'John Smith',
+      createdAt: '2023-05-15',
+      dueDate: '2023-05-16',
+      products: [
+        { id: 'PROD-001', name: 'Premium Dog Food', quantity: 5, bin: 'A-101', packed: false },
+        { id: 'PROD-003', name: 'Cat Toy Mouse', quantity: 7, bin: 'B-205', packed: false }
+      ]
+    },
+    { 
+      id: 'PACK-2344', 
+      orderRef: 'ORD-9875', 
+      items: 8, 
+      status: 'In Progress', 
+      priority: 'Rush', 
+      customer: 'XYZ Ltd',
+      assignedTo: 'Sarah Johnson',
+      createdAt: '2023-05-14',
+      dueDate: '2023-05-15',
+      products: [
+        { id: 'PROD-002', name: 'Standard Dog Food', quantity: 3, bin: 'A-102', packed: true },
+        { id: 'PROD-007', name: 'Dog Collar - Large', quantity: 5, bin: 'D-405', packed: false }
+      ]
+    },
+    { 
+      id: 'PACK-2343', 
+      orderRef: 'ORD-9874', 
+      items: 15, 
+      status: 'Complete', 
+      priority: 'Normal', 
+      customer: 'Acme Inc',
+      assignedTo: 'Mike Brown',
+      createdAt: '2023-05-13',
+      dueDate: '2023-05-14',
+      products: [
+        { id: 'PROD-001', name: 'Premium Dog Food', quantity: 10, bin: 'A-101', packed: true },
+        { id: 'PROD-006', name: 'Cat Scratching Post', quantity: 5, bin: 'D-401', packed: true }
+      ]
+    },
+    { 
+      id: 'PACK-2342', 
+      orderRef: 'ORD-9873', 
+      items: 5, 
+      status: 'Ready', 
+      priority: 'Low', 
+      customer: '123 Company',
+      assignedTo: 'Lisa Green',
+      createdAt: '2023-05-12',
+      dueDate: '2023-05-17',
+      products: [
+        { id: 'PROD-004', name: 'Premium Cat Food', quantity: 5, bin: 'A-203', packed: false }
+      ]
+    },
+    { 
+      id: 'PACK-2341', 
+      orderRef: 'ORD-9872', 
+      items: 20, 
+      status: 'In Progress', 
+      priority: 'Rush', 
+      customer: 'Big Store',
+      assignedTo: 'David Clark',
+      createdAt: '2023-05-11',
+      dueDate: '2023-05-12',
+      products: [
+        { id: 'PROD-002', name: 'Standard Dog Food', quantity: 15, bin: 'A-102', packed: true },
+        { id: 'PROD-003', name: 'Cat Toy Mouse', quantity: 5, bin: 'B-205', packed: false }
+      ]
+    },
   ];
 
   const ptwTasks = [
-    { id: 'PTW-1234', target: 'Zone A', items: 45, status: 'Pending', assignee: 'John D.' },
-    { id: 'PTW-1233', target: 'Zone B', items: 30, status: 'In Progress', assignee: 'Sarah M.' },
-    { id: 'PTW-1232', target: 'Zone C', items: 25, status: 'Complete', assignee: 'Alex T.' },
-    { id: 'PTW-1231', target: 'Zone A', items: 15, status: 'Pending', assignee: 'Lisa R.' },
-    { id: 'PTW-1230', target: 'Zone D', items: 50, status: 'In Progress', assignee: 'Mike P.' },
+    { 
+      id: 'PTW-1234', 
+      target: 'Zone A', 
+      items: 45, 
+      status: 'Pending', 
+      assignee: 'John D.',
+      createdAt: '2023-05-15',
+      dueDate: '2023-05-16',
+      orders: ['ORD-9870', 'ORD-9871', 'ORD-9872'],
+      products: [
+        { id: 'PROD-001', name: 'Premium Dog Food', quantity: 20, bin: 'A-101' },
+        { id: 'PROD-002', name: 'Standard Dog Food', quantity: 25, bin: 'A-102' }
+      ]
+    },
+    { 
+      id: 'PTW-1233', 
+      target: 'Zone B', 
+      items: 30, 
+      status: 'In Progress', 
+      assignee: 'Sarah M.',
+      createdAt: '2023-05-14',
+      dueDate: '2023-05-15',
+      orders: ['ORD-9873', 'ORD-9874'],
+      products: [
+        { id: 'PROD-003', name: 'Cat Toy Mouse', quantity: 15, bin: 'B-205' },
+        { id: 'PROD-004', name: 'Premium Cat Food', quantity: 15, bin: 'A-203' }
+      ]
+    },
+    { 
+      id: 'PTW-1232', 
+      target: 'Zone C', 
+      items: 25, 
+      status: 'Complete', 
+      assignee: 'Alex T.',
+      createdAt: '2023-05-13',
+      dueDate: '2023-05-14',
+      orders: ['ORD-9875'],
+      products: [
+        { id: 'PROD-005', name: 'Dog Bone Toy', quantity: 25, bin: 'C-305' }
+      ]
+    },
+    { 
+      id: 'PTW-1231', 
+      target: 'Zone A', 
+      items: 15, 
+      status: 'Pending', 
+      assignee: 'Lisa R.',
+      createdAt: '2023-05-12',
+      dueDate: '2023-05-17',
+      orders: ['ORD-9876'],
+      products: [
+        { id: 'PROD-006', name: 'Cat Scratching Post', quantity: 15, bin: 'D-401' }
+      ]
+    },
+    { 
+      id: 'PTW-1230', 
+      target: 'Zone D', 
+      items: 50, 
+      status: 'In Progress', 
+      assignee: 'Mike P.',
+      createdAt: '2023-05-11',
+      dueDate: '2023-05-12',
+      orders: ['ORD-9877', 'ORD-9878', 'ORD-9879'],
+      products: [
+        { id: 'PROD-001', name: 'Premium Dog Food', quantity: 20, bin: 'A-101' },
+        { id: 'PROD-005', name: 'Dog Bone Toy', quantity: 15, bin: 'C-305' },
+        { id: 'PROD-007', name: 'Dog Collar - Large', quantity: 15, bin: 'D-405' }
+      ]
+    },
   ];
+
+  const togglePackingFilter = () => {
+    setIsPackingFilterOpen(!isPackingFilterOpen);
+  };
+
+  const togglePtwFilter = () => {
+    setIsPtwFilterOpen(!isPtwFilterOpen);
+  };
+
+  const showPackingDetail = (job: any) => {
+    setSelectedJob(job);
+    setDetailType('packing');
+    setIsDetailOpen(true);
+  };
+
+  const showPtwDetail = (task: any) => {
+    setSelectedTask(task);
+    setDetailType('ptw');
+    setIsDetailOpen(true);
+  };
 
   const getStatusBadge = (status: string) => {
     switch (status) {
@@ -50,6 +222,23 @@ const PackingPTW = () => {
         return <Badge>{priority}</Badge>;
     }
   };
+
+  // Filter packing jobs based on search term
+  const filteredPackingJobs = packingJobs.filter(job => 
+    job.id.toLowerCase().includes(packingSearchTerm.toLowerCase()) ||
+    job.orderRef.toLowerCase().includes(packingSearchTerm.toLowerCase()) ||
+    job.customer.toLowerCase().includes(packingSearchTerm.toLowerCase()) ||
+    job.status.toLowerCase().includes(packingSearchTerm.toLowerCase()) ||
+    job.priority.toLowerCase().includes(packingSearchTerm.toLowerCase())
+  );
+
+  // Filter PTW tasks based on search term
+  const filteredPtwTasks = ptwTasks.filter(task => 
+    task.id.toLowerCase().includes(ptwSearchTerm.toLowerCase()) ||
+    task.target.toLowerCase().includes(ptwSearchTerm.toLowerCase()) ||
+    task.assignee.toLowerCase().includes(ptwSearchTerm.toLowerCase()) ||
+    task.status.toLowerCase().includes(ptwSearchTerm.toLowerCase())
+  );
 
   return (
     <div className="space-y-6">
@@ -97,41 +286,67 @@ const PackingPTW = () => {
           </div>
 
           <Card>
-            <CardHeader>
-              <CardTitle>Packing Jobs</CardTitle>
-              <CardDescription>
-                Current packing assignments and their status
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="rounded-md border">
-                <div className="grid grid-cols-7 bg-muted/50 p-3">
-                  <div className="font-medium">Job ID</div>
-                  <div className="font-medium">Order Ref</div>
-                  <div className="font-medium">Customer</div>
-                  <div className="font-medium">Priority</div>
-                  <div className="font-medium">Items</div>
-                  <div className="font-medium">Status</div>
-                  <div className="text-right font-medium">Actions</div>
-                </div>
-                <div className="divide-y">
-                  {packingJobs.map((job) => (
-                    <div key={job.id} className="grid grid-cols-7 items-center p-3">
-                      <div className="font-medium">{job.id}</div>
-                      <div>{job.orderRef}</div>
-                      <div>{job.customer}</div>
-                      <div>{getPriorityBadge(job.priority)}</div>
-                      <div>{job.items} items</div>
-                      <div>{getStatusBadge(job.status)}</div>
-                      <div className="flex justify-end space-x-2">
-                        <button className="rounded bg-primary px-2 py-1 text-xs text-white">
-                          View Details
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+            <CardHeader className="flex flex-col sm:flex-row justify-between space-y-2 sm:space-y-0">
+              <div>
+                <CardTitle>Packing Jobs</CardTitle>
+                <CardDescription>
+                  Current packing assignments and their status
+                </CardDescription>
               </div>
+              <Button variant="outline" onClick={togglePackingFilter} className="self-start flex items-center gap-1">
+                <Filter className="h-4 w-4" />
+                Filter
+                {isPackingFilterOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+              </Button>
+            </CardHeader>
+            
+            {isPackingFilterOpen && (
+              <CardContent className="pt-0 pb-3 border-b">
+                <div className="space-y-2">
+                  <div className="relative">
+                    <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder="Search by ID, order reference, customer, status or priority..."
+                      className="pl-8"
+                      value={packingSearchTerm}
+                      onChange={(e) => setPackingSearchTerm(e.target.value)}
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            )}
+            
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Job ID</TableHead>
+                    <TableHead>Order Ref</TableHead>
+                    <TableHead>Customer</TableHead>
+                    <TableHead>Priority</TableHead>
+                    <TableHead>Items</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredPackingJobs.map((job) => (
+                    <TableRow key={job.id}>
+                      <TableCell className="font-medium">{job.id}</TableCell>
+                      <TableCell>{job.orderRef}</TableCell>
+                      <TableCell>{job.customer}</TableCell>
+                      <TableCell>{getPriorityBadge(job.priority)}</TableCell>
+                      <TableCell>{job.items} items</TableCell>
+                      <TableCell>{getStatusBadge(job.status)}</TableCell>
+                      <TableCell className="text-right">
+                        <Button variant="outline" size="sm" onClick={() => showPackingDetail(job)}>
+                          View Details
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </CardContent>
           </Card>
         </TabsContent>
@@ -167,43 +382,230 @@ const PackingPTW = () => {
           </div>
 
           <Card>
-            <CardHeader>
-              <CardTitle>PTW Tasks</CardTitle>
-              <CardDescription>
-                Put-to-wall operations and assignments
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="rounded-md border">
-                <div className="grid grid-cols-6 bg-muted/50 p-3">
-                  <div className="font-medium">Task ID</div>
-                  <div className="font-medium">Target</div>
-                  <div className="font-medium">Items</div>
-                  <div className="font-medium">Assignee</div>
-                  <div className="font-medium">Status</div>
-                  <div className="text-right font-medium">Actions</div>
-                </div>
-                <div className="divide-y">
-                  {ptwTasks.map((task) => (
-                    <div key={task.id} className="grid grid-cols-6 items-center p-3">
-                      <div className="font-medium">{task.id}</div>
-                      <div>{task.target}</div>
-                      <div>{task.items} items</div>
-                      <div>{task.assignee}</div>
-                      <div>{getStatusBadge(task.status)}</div>
-                      <div className="flex justify-end space-x-2">
-                        <button className="rounded bg-primary px-2 py-1 text-xs text-white">
-                          View Details
-                        </button>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+            <CardHeader className="flex flex-col sm:flex-row justify-between space-y-2 sm:space-y-0">
+              <div>
+                <CardTitle>PTW Tasks</CardTitle>
+                <CardDescription>
+                  Put-to-wall operations and assignments
+                </CardDescription>
               </div>
+              <Button variant="outline" onClick={togglePtwFilter} className="self-start flex items-center gap-1">
+                <Filter className="h-4 w-4" />
+                Filter
+                {isPtwFilterOpen ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+              </Button>
+            </CardHeader>
+            
+            {isPtwFilterOpen && (
+              <CardContent className="pt-0 pb-3 border-b">
+                <div className="space-y-2">
+                  <div className="relative">
+                    <Search className="absolute left-2 top-2.5 h-4 w-4 text-muted-foreground" />
+                    <Input
+                      placeholder="Search by ID, target zone, assignee or status..."
+                      className="pl-8"
+                      value={ptwSearchTerm}
+                      onChange={(e) => setPtwSearchTerm(e.target.value)}
+                    />
+                  </div>
+                </div>
+              </CardContent>
+            )}
+            
+            <CardContent>
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Task ID</TableHead>
+                    <TableHead>Target</TableHead>
+                    <TableHead>Items</TableHead>
+                    <TableHead>Assignee</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
+                  </TableRow>
+                </TableHeader>
+                <TableBody>
+                  {filteredPtwTasks.map((task) => (
+                    <TableRow key={task.id}>
+                      <TableCell className="font-medium">{task.id}</TableCell>
+                      <TableCell>{task.target}</TableCell>
+                      <TableCell>{task.items} items</TableCell>
+                      <TableCell>{task.assignee}</TableCell>
+                      <TableCell>{getStatusBadge(task.status)}</TableCell>
+                      <TableCell className="text-right">
+                        <Button variant="outline" size="sm" onClick={() => showPtwDetail(task)}>
+                          View Details
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
             </CardContent>
           </Card>
         </TabsContent>
       </Tabs>
+
+      <Dialog open={isDetailOpen} onOpenChange={setIsDetailOpen}>
+        <DialogContent className="max-w-3xl">
+          <DialogHeader>
+            <DialogTitle>
+              {detailType === 'packing' ? 
+                <>Packing Job: {selectedJob?.id}</> : 
+                <>PTW Task: {selectedTask?.id}</>
+              }
+            </DialogTitle>
+            <DialogDescription>
+              {detailType === 'packing' ? 
+                'Detailed information about the packing job' : 
+                'Detailed information about the put-to-wall task'
+              }
+            </DialogDescription>
+          </DialogHeader>
+          
+          {detailType === 'packing' && selectedJob && (
+            <div className="space-y-6">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <div>
+                  <h3 className="text-sm font-medium text-muted-foreground">Order Reference</h3>
+                  <p>{selectedJob.orderRef}</p>
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium text-muted-foreground">Customer</h3>
+                  <p>{selectedJob.customer}</p>
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium text-muted-foreground">Priority</h3>
+                  <p>{getPriorityBadge(selectedJob.priority)}</p>
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium text-muted-foreground">Status</h3>
+                  <p>{getStatusBadge(selectedJob.status)}</p>
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium text-muted-foreground">Assigned To</h3>
+                  <p>{selectedJob.assignedTo}</p>
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium text-muted-foreground">Due Date</h3>
+                  <p>{new Date(selectedJob.dueDate).toLocaleDateString()}</p>
+                </div>
+              </div>
+              
+              <div>
+                <h3 className="text-sm font-medium mb-2">Items to Pack</h3>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Product ID</TableHead>
+                      <TableHead>Name</TableHead>
+                      <TableHead>Quantity</TableHead>
+                      <TableHead>Bin Location</TableHead>
+                      <TableHead>Status</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {selectedJob.products.map((product: any) => (
+                      <TableRow key={product.id}>
+                        <TableCell className="font-medium">{product.id}</TableCell>
+                        <TableCell>{product.name}</TableCell>
+                        <TableCell>{product.quantity}</TableCell>
+                        <TableCell>{product.bin}</TableCell>
+                        <TableCell>
+                          {product.packed ? 
+                            <Badge className="bg-green-500">Packed</Badge> :
+                            <Badge className="bg-yellow-500">Pending</Badge>
+                          }
+                        </TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+              
+              <div className="flex justify-end space-x-2">
+                <Button variant="outline" onClick={() => setIsDetailOpen(false)}>Close</Button>
+                <Button>
+                  <Box className="mr-2 h-4 w-4" />
+                  {selectedJob.status === 'Complete' ? 'View Completion Report' : 'Start Packing'}
+                </Button>
+              </div>
+            </div>
+          )}
+
+          {detailType === 'ptw' && selectedTask && (
+            <div className="space-y-6">
+              <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+                <div>
+                  <h3 className="text-sm font-medium text-muted-foreground">Target Zone</h3>
+                  <p>{selectedTask.target}</p>
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium text-muted-foreground">Total Items</h3>
+                  <p>{selectedTask.items}</p>
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium text-muted-foreground">Assignee</h3>
+                  <p>{selectedTask.assignee}</p>
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium text-muted-foreground">Status</h3>
+                  <p>{getStatusBadge(selectedTask.status)}</p>
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium text-muted-foreground">Created</h3>
+                  <p>{new Date(selectedTask.createdAt).toLocaleDateString()}</p>
+                </div>
+                <div>
+                  <h3 className="text-sm font-medium text-muted-foreground">Due Date</h3>
+                  <p>{new Date(selectedTask.dueDate).toLocaleDateString()}</p>
+                </div>
+              </div>
+              
+              <div>
+                <h3 className="text-sm font-medium mb-2">Orders Included</h3>
+                <div className="flex flex-wrap gap-2">
+                  {selectedTask.orders.map((order: string) => (
+                    <Badge key={order} variant="outline">{order}</Badge>
+                  ))}
+                </div>
+              </div>
+              
+              <div>
+                <h3 className="text-sm font-medium mb-2">Products to Process</h3>
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Product ID</TableHead>
+                      <TableHead>Name</TableHead>
+                      <TableHead>Quantity</TableHead>
+                      <TableHead>Bin Location</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {selectedTask.products.map((product: any) => (
+                      <TableRow key={product.id}>
+                        <TableCell className="font-medium">{product.id}</TableCell>
+                        <TableCell>{product.name}</TableCell>
+                        <TableCell>{product.quantity}</TableCell>
+                        <TableCell>{product.bin}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+              
+              <div className="flex justify-end space-x-2">
+                <Button variant="outline" onClick={() => setIsDetailOpen(false)}>Close</Button>
+                <Button>
+                  <Users className="mr-2 h-4 w-4" />
+                  {selectedTask.status === 'Complete' ? 'View Completion Report' : 'Start PTW Task'}
+                </Button>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 };

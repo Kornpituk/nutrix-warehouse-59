@@ -1,5 +1,5 @@
 
-import React, { createContext, useState, useContext, ReactNode } from 'react';
+import React, { createContext, useState, useContext, ReactNode, useEffect } from 'react';
 
 type LanguageType = 'en' | 'th';
 
@@ -96,19 +96,199 @@ const translations: Record<string, Record<LanguageType, string>> = {
     en: 'Change Language',
     th: 'เปลี่ยนภาษา',
   },
+  // User Profile
+  'profile.title': {
+    en: 'User Profile',
+    th: 'โปรไฟล์ผู้ใช้',
+  },
+  'profile.editProfile': {
+    en: 'Edit Profile',
+    th: 'แก้ไขโปรไฟล์',
+  },
+  'profile.preferences': {
+    en: 'Preferences',
+    th: 'การตั้งค่า',
+  },
+  'profile.notifications': {
+    en: 'Notifications',
+    th: 'การแจ้งเตือน',
+  },
+  // Receiving page
+  'receiving.pendingReceipts': {
+    en: 'Pending Receipts',
+    th: 'การรับที่รอดำเนินการ',
+  },
+  'receiving.inProgress': {
+    en: 'In Progress',
+    th: 'กำลังดำเนินการ',
+  },
+  'receiving.recentReceipts': {
+    en: 'Recent Receipts',
+    th: 'การรับล่าสุด',
+  },
+  'receiving.receiptManagement': {
+    en: 'Receipts Management',
+    th: 'การจัดการใบรับสินค้า',
+  },
+  'receiving.filter': {
+    en: 'Filter',
+    th: 'ตัวกรอง',
+  },
+  'receiving.approveSelected': {
+    en: 'Approve Selected',
+    th: 'อนุมัติที่เลือก',
+  },
+  'receiving.viewDetails': {
+    en: 'View Details',
+    th: 'ดูรายละเอียด',
+  },
+  'receiving.completed': {
+    en: 'Completed',
+    th: 'เสร็จสิ้นแล้ว',
+  },
+  'receiving.waitingForApproval': {
+    en: 'Waiting for Approval',
+    th: 'รอการอนุมัติ',
+  },
+  // Request for Picking page
+  'picking.allRequests': {
+    en: 'All Requests',
+    th: 'คำขอทั้งหมด',
+  },
+  'picking.pending': {
+    en: 'Pending',
+    th: 'รอดำเนินการ',
+  },
+  'picking.processing': {
+    en: 'Processing',
+    th: 'กำลังดำเนินการ',
+  },
+  'picking.completed': {
+    en: 'Completed',
+    th: 'เสร็จสิ้นแล้ว',
+  },
+  'picking.highPriority': {
+    en: 'High',
+    th: 'ความสำคัญสูง',
+  },
+  'picking.mediumPriority': {
+    en: 'Medium',
+    th: 'ความสำคัญปานกลาง',
+  },
+  'picking.lowPriority': {
+    en: 'Low',
+    th: 'ความสำคัญต่ำ',
+  },
+  // Packing/PTW page
+  'packing.title': {
+    en: 'Packing',
+    th: 'การบรรจุ',
+  },
+  'packing.readyToPack': {
+    en: 'Ready to Pack',
+    th: 'พร้อมบรรจุ',
+  },
+  'packing.completedToday': {
+    en: 'Completed Today',
+    th: 'เสร็จสิ้นวันนี้',
+  },
+  'ptw.title': {
+    en: 'Put-to-Wall (PTW)',
+    th: 'การใส่ผนัง (PTW)',
+  },
+  'ptw.pendingPTW': {
+    en: 'Pending PTW',
+    th: 'PTW ที่รอดำเนินการ',
+  },
+  'ptw.activePTW': {
+    en: 'Active PTW',
+    th: 'PTW ที่ใช้งานอยู่',
+  },
+  'ptw.completedPTW': {
+    en: 'Completed PTW',
+    th: 'PTW ที่เสร็จสิ้น',
+  },
+  // Product Settings
+  'product.addProduct': {
+    en: 'Add Product',
+    th: 'เพิ่มสินค้า',
+  },
+  'product.totalProducts': {
+    en: 'Total Products',
+    th: 'สินค้าทั้งหมด',
+  },
+  'product.categories': {
+    en: 'Categories',
+    th: 'หมวดหมู่',
+  },
+  'product.totalStock': {
+    en: 'Total Stock',
+    th: 'สต็อกทั้งหมด',
+  },
+  'product.productCatalog': {
+    en: 'Product Catalog',
+    th: 'แคตตาล็อกสินค้า',
+  },
+  'product.searchProducts': {
+    en: 'Search products...',
+    th: 'ค้นหาสินค้า...',
+  },
+  // Common UI elements
+  'ui.search': {
+    en: 'Search',
+    th: 'ค้นหา',
+  },
+  'ui.add': {
+    en: 'Add',
+    th: 'เพิ่ม',
+  },
+  'ui.edit': {
+    en: 'Edit',
+    th: 'แก้ไข',
+  },
+  'ui.delete': {
+    en: 'Delete',
+    th: 'ลบ',
+  },
+  'ui.cancel': {
+    en: 'Cancel',
+    th: 'ยกเลิก',
+  },
+  'ui.save': {
+    en: 'Save',
+    th: 'บันทึก',
+  },
+  'ui.close': {
+    en: 'Close',
+    th: 'ปิด',
+  },
+  'ui.update': {
+    en: 'Update',
+    th: 'อัปเดต',
+  },
 };
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
 
 export const LanguageProvider: React.FC<{children: ReactNode}> = ({ children }) => {
   // Get initial language from localStorage or default to 'en'
-  const savedLanguage = localStorage.getItem('language') as LanguageType;
-  const [language, setLanguage] = useState<LanguageType>(savedLanguage || 'en');
+  const [language, setLanguage] = useState<LanguageType>('en');
+  
+  // Load language from localStorage on initial render
+  useEffect(() => {
+    const savedLanguage = localStorage.getItem('language') as LanguageType;
+    if (savedLanguage && (savedLanguage === 'en' || savedLanguage === 'th')) {
+      setLanguage(savedLanguage);
+    }
+  }, []);
 
   // Update language and save to localStorage
   const handleSetLanguage = (newLanguage: LanguageType) => {
     setLanguage(newLanguage);
     localStorage.setItem('language', newLanguage);
+    
+    // Update HTML lang attribute for accessibility
+    document.documentElement.lang = newLanguage;
   };
 
   // Translation function
