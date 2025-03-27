@@ -160,7 +160,7 @@ const LotModelSettings = () => {
                   </div>
                   
                   <div>
-                    <label className="text-sm font-medium">Enable FEFO Picking</label>
+                    <label className="text-sm font-medium">Enable FEMO Picking</label>
                     <div className="mt-1 flex items-center">
                       <input type="checkbox" className="h-4 w-4 rounded border-gray-300" checked={true} readOnly />
                       <span className="ml-2 text-sm">First Expiry, First Out</span>
