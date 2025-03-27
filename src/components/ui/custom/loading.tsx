@@ -9,7 +9,7 @@ interface LoadingProps {
 }
 
 export const Loading = ({
-  text = "Loading 222...",
+  text = "Loading ...",
   size = "md",
   className = "",
 }: LoadingProps) => {

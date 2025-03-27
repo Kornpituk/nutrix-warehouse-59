@@ -44,6 +44,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { useToast } from '@/hooks/use-toast';
 
 import { Loading } from "@/components/ui/custom/loading";
 
@@ -248,6 +249,7 @@ const categories = [
 ];
 
 const StockUpdate = () => {
+  const { toast } = useToast();
   const navigate = useNavigate();
   const [selectedItems, setSelectedItems] = useState<number[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
@@ -264,8 +266,6 @@ const StockUpdate = () => {
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(true);
-
-
 
   useEffect(() => {
     const isAuthenticated = localStorage.getItem("isAuthenticated");
@@ -390,7 +390,10 @@ const StockUpdate = () => {
   };
 
   const handleExport = () => {
-    alert("Exporting data...");
+    toast({
+      title: "Export Started",
+      description: "Your shipment plans are being exported to Excel.",
+    });
   };
 
   const toggleFilters = () => {
@@ -426,8 +429,8 @@ const StockUpdate = () => {
   if (isLoading) {
     return (
       <div className="flex h-screen items-center justify-center">
-      <Loading text="Loading stock update..."  />
-    </div>
+        <Loading text="Loading stock update..." />
+      </div>
     );
   }
 

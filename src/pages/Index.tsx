@@ -50,7 +50,7 @@ const Index = () => {
                 transition={{ repeat: Infinity, duration: 2 }}
               />
             </svg> */}
-            <Loading />
+            <Loading text=" " />
           </motion.div>
           <motion.p
             initial={{ opacity: 0 }}
