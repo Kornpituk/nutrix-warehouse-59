@@ -14,7 +14,8 @@ import {
   Globe,
   DownloadCloud,
   FileHeart,
-  Box
+  Box,
+  UserCheck
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
@@ -61,6 +62,7 @@ const SidebarNav: React.FC<SidebarNavProps> = ({ children }) => {
     { path: '/settings/vendor', name: t('settings.vendor') },
     { path: '/settings/transaction-model', name: t('settings.transactionModel') },
     { path: '/settings/lot-model', name: t('settings.lotModel') },
+    { path: '/settings/permission', name: t('settings.permission') },
   ];
 
   const warehouses = [

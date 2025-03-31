@@ -27,6 +27,7 @@ import CustomerSettings from "./pages/settings/Customer";
 import VendorSettings from "./pages/settings/Vendor";
 import TransactionModelSettings from "./pages/settings/TransactionModel";
 import LotModelSettings from "./pages/settings/LotModel";
+import PermissionSettings from "./pages/settings/Permission";
 
 const queryClient = new QueryClient();
 
@@ -131,6 +132,11 @@ const App = () => (
             <Route path="/settings/lot-model" element={
               <ProtectedRoute>
                 <LotModelSettings />
+              </ProtectedRoute>
+            } />
+            <Route path="/settings/permission" element={
+              <ProtectedRoute>
+                <PermissionSettings />
               </ProtectedRoute>
             } />
             
