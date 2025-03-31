@@ -37,7 +37,7 @@ const PermissionSettings: React.FC = () => {
   const formSchema = z.object({
     name: z.string().min(1, { message: t('validation.required') }),
     email: z.string().email({ message: t('validation.email') }),
-    password: z.string().min(6, { message: t('validation.minLength', { length: 6 }) }),
+    password: z.string().min(6, { message: t('validation.minLength', { length: 6 }).toString() }),
     position: z.string().min(1, { message: t('validation.required') }),
     department: z.string().min(1, { message: t('validation.required') }),
     isActive: z.boolean().default(true),
