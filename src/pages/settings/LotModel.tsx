@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Search, Filter, X, Edit, Trash2, Plus } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -43,6 +42,24 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 
+interface LotConfiguration {
+  id: string;
+  name: string;
+  prefix: string;
+  dateFormat: string;
+  separator: string;
+  sequence: number;
+  example: string;
+}
+
+interface LotItem {
+  lotNumber: string;
+  product: string;
+  quantity: number;
+  received: string;
+  expiry: string;
+}
+
 const LotModelSettings = () => {
   const { t } = useLanguage();
   const { toast } = useToast();
@@ -51,18 +68,18 @@ const LotModelSettings = () => {
   const [activeTab, setActiveTab] = useState('configuration');
   const [isAddDialogOpen, setIsAddDialogOpen] = useState(false);
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
-  const [selectedConfig, setSelectedConfig] = useState<any>(null);
+  const [selectedConfig, setSelectedConfig] = useState<LotConfiguration | null>(null);
   const [showDeleteAlert, setShowDeleteAlert] = useState(false);
-  const [configToDelete, setConfigToDelete] = useState<any>(null);
+  const [configToDelete, setConfigToDelete] = useState<LotConfiguration | null>(null);
 
-  const [lotConfigurations, setLotConfigurations] = useState([
+  const [lotConfigurations, setLotConfigurations] = useState<LotConfiguration[]>([
     { id: 'LOT-CFG-1', name: 'Standard Lot', prefix: 'LOT', dateFormat: 'YYMMDD', separator: '-', sequence: 3, example: 'LOT-230512-001' },
     { id: 'LOT-CFG-2', name: 'Bulk Products', prefix: 'BLK', dateFormat: 'YYMMDD', separator: '-', sequence: 3, example: 'BLK-230512-001' },
     { id: 'LOT-CFG-3', name: 'Pet Food', prefix: 'FOOD', dateFormat: 'YYMMDD', separator: '-', sequence: 3, example: 'FOOD-230512-001' },
     { id: 'LOT-CFG-4', name: 'Accessories', prefix: 'ACC', dateFormat: 'YYMMDD', separator: '-', sequence: 3, example: 'ACC-230512-001' },
   ]);
 
-  const [recentLots, setRecentLots] = useState([
+  const [recentLots, setRecentLots] = useState<LotItem[]>([
     { lotNumber: 'LOT-230518-042', product: 'Premium Dog Food', quantity: 500, received: '2023-05-18', expiry: '2024-05-18' },
     { lotNumber: 'LOT-230517-056', product: 'Cat Litter', quantity: 200, received: '2023-05-17', expiry: '2025-05-17' },
     { lotNumber: 'FOOD-230516-023', product: 'Organic Cat Food', quantity: 300, received: '2023-05-16', expiry: '2024-02-16' },
@@ -70,7 +87,6 @@ const LotModelSettings = () => {
     { lotNumber: 'ACC-230514-005', product: 'Cat Collars', quantity: 150, received: '2023-05-14', expiry: 'N/A' },
   ]);
 
-  // Schema for lot configuration form
   const lotConfigSchema = z.object({
     name: z.string().min(2, { message: "Name must be at least 2 characters." }),
     prefix: z.string().min(1, { message: "Prefix is required." }).max(5, { message: "Prefix must be 5 characters or less." }),
@@ -79,8 +95,9 @@ const LotModelSettings = () => {
     sequence: z.coerce.number().min(1, { message: "Sequence length must be at least 1." }).max(10, { message: "Sequence length can't exceed 10." }),
   });
 
-  // Set up form
-  const form = useForm<z.infer<typeof lotConfigSchema>>({
+  type LotConfigFormValues = z.infer<typeof lotConfigSchema>;
+
+  const form = useForm<LotConfigFormValues>({
     resolver: zodResolver(lotConfigSchema),
     defaultValues: {
       name: '',
@@ -91,14 +108,12 @@ const LotModelSettings = () => {
     },
   });
 
-  // Filter lot configurations based on search query
   const filteredConfigurations = lotConfigurations.filter(config => 
     config.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
     config.prefix.toLowerCase().includes(searchQuery.toLowerCase()) ||
     config.id.toLowerCase().includes(searchQuery.toLowerCase())
   );
 
-  // Filter recent lots based on search query
   const filteredLots = recentLots.filter(lot => 
     lot.lotNumber.toLowerCase().includes(searchQuery.toLowerCase()) || 
     lot.product.toLowerCase().includes(searchQuery.toLowerCase())
@@ -115,7 +130,7 @@ const LotModelSettings = () => {
     setIsAddDialogOpen(true);
   };
 
-  const handleEditConfiguration = (config: any) => {
+  const handleEditConfiguration = (config: LotConfiguration) => {
     setSelectedConfig(config);
     form.reset({
       name: config.name,
@@ -127,7 +142,7 @@ const LotModelSettings = () => {
     setIsEditDialogOpen(true);
   };
 
-  const handleDeleteConfiguration = (config: any) => {
+  const handleDeleteConfiguration = (config: LotConfiguration) => {
     setConfigToDelete(config);
     setShowDeleteAlert(true);
   };
@@ -144,14 +159,17 @@ const LotModelSettings = () => {
     setConfigToDelete(null);
   };
 
-  const onSubmit = (data: z.infer<typeof lotConfigSchema>) => {
+  const onSubmit = (data: LotConfigFormValues) => {
     const example = `${data.prefix}${data.separator}${new Date().toISOString().slice(2, 8)}${data.separator}${'0'.repeat(data.sequence)}`.replace(/0+$/, '001');
     
     if (isAddDialogOpen) {
-      // Create new configuration
-      const newConfig = {
+      const newConfig: LotConfiguration = {
         id: `LOT-CFG-${lotConfigurations.length + 1}`,
-        ...data,
+        name: data.name,
+        prefix: data.prefix,
+        dateFormat: data.dateFormat,
+        separator: data.separator,
+        sequence: data.sequence,
         example
       };
       
@@ -162,12 +180,15 @@ const LotModelSettings = () => {
       });
       setIsAddDialogOpen(false);
     } else if (isEditDialogOpen && selectedConfig) {
-      // Update existing configuration
       const updatedConfigurations = lotConfigurations.map(config => {
         if (config.id === selectedConfig.id) {
           return {
             ...config,
-            ...data,
+            name: data.name,
+            prefix: data.prefix,
+            dateFormat: data.dateFormat,
+            separator: data.separator,
+            sequence: data.sequence,
             example
           };
         }
@@ -457,7 +478,6 @@ const LotModelSettings = () => {
         </TabsContent>
       </Tabs>
 
-      {/* Add Configuration Dialog */}
       <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
@@ -554,7 +574,6 @@ const LotModelSettings = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Edit Configuration Dialog */}
       <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
         <DialogContent className="sm:max-w-[500px]">
           <DialogHeader>
@@ -654,7 +673,6 @@ const LotModelSettings = () => {
         </DialogContent>
       </Dialog>
 
-      {/* Delete Confirmation Alert */}
       <AlertDialog open={showDeleteAlert} onOpenChange={setShowDeleteAlert}>
         <AlertDialogContent>
           <AlertDialogHeader>
