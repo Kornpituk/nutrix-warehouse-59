@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
@@ -37,7 +36,7 @@ const PermissionSettings: React.FC = () => {
   const formSchema = z.object({
     name: z.string().min(1, { message: t('validation.required') }),
     email: z.string().email({ message: t('validation.email') }),
-    password: z.string().min(6, { message: t('validation.minLength', { length: 6 }).toString() }),
+    password: z.string().min(6, { message: t('validation.minLength') }),
     position: z.string().min(1, { message: t('validation.required') }),
     department: z.string().min(1, { message: t('validation.required') }),
     isActive: z.boolean().default(true),
@@ -59,7 +58,6 @@ const PermissionSettings: React.FC = () => {
     }
   });
 
-  // Reset form with user data when selectedUser or isEditMode changes
   useEffect(() => {
     if (selectedUser && isEditMode) {
       form.reset({
@@ -87,7 +85,6 @@ const PermissionSettings: React.FC = () => {
   }, [selectedUser, isEditMode, form]);
 
   useEffect(() => {
-    // Simulate API call to fetch users and modules
     setTimeout(() => {
       setUsers(mockUsers);
       setFilteredUsers(mockUsers);
@@ -160,7 +157,6 @@ const PermissionSettings: React.FC = () => {
 
   const handleSaveUser = (formData: z.infer<typeof formSchema>) => {
     const permissionObjects = formData.permissions.map(id => {
-      // Find the permission in modules
       for (const module of modules) {
         const permission = module.permissions.find(p => p.id === id);
         if (permission) return permission;
@@ -181,7 +177,6 @@ const PermissionSettings: React.FC = () => {
     };
     
     if (isEditMode) {
-      // Update existing user
       setUsers(prevUsers => prevUsers.map(u => u.id === user.id ? user : u));
       setFilteredUsers(prevUsers => prevUsers.map(u => u.id === user.id ? user : u));
       toast({
@@ -189,7 +184,6 @@ const PermissionSettings: React.FC = () => {
         description: t('permission.userUpdated'),
       });
     } else {
-      // Add new user
       setUsers(prevUsers => [...prevUsers, user]);
       setFilteredUsers(prevUsers => [...prevUsers, user]);
       toast({

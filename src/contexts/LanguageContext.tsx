@@ -1,4 +1,3 @@
-
 import React, { createContext, useContext, useState, ReactNode } from 'react';
 
 type Language = 'en' | 'th';
@@ -288,6 +287,54 @@ const translations: Translations = {
   'validation.departmentRequired': {
     en: 'Department is required',
     th: 'จำเป็นต้องระบุแผนก'
+  },
+  'validation.required': {
+    en: 'This field is required',
+    th: 'จำเป็นต้องกรอกข้อมูลนี้'
+  },
+  'validation.email': {
+    en: 'Please enter a valid email address',
+    th: 'กรุณาใส่อีเมลที่ถูกต้อง'
+  },
+  'validation.minLength': {
+    en: 'Must be at least 6 characters',
+    th: 'ต้องมีอย่างน้อย 6 ตัวอักษร'
+  },
+  'permission.isAdmin': {
+    en: 'Admin Status',
+    th: 'สถานะผู้ดูแลระบบ'
+  },
+  'permission.yes': {
+    en: 'Yes',
+    th: 'ใช่'
+  },
+  'permission.no': {
+    en: 'No',
+    th: 'ไม่'
+  },
+  'permission.title': {
+    en: 'User Permissions',
+    th: 'สิทธิ์การใช้งานของผู้ใช้'
+  },
+  'permission.description': {
+    en: 'Manage user access and permissions',
+    th: 'จัดการการเข้าถึงและสิทธิ์ของผู้ใช้'
+  },
+  'permission.userDetails': {
+    en: 'User Details',
+    th: 'รายละเอียดผู้ใช้'
+  },
+  'permission.userDetailsDesc': {
+    en: 'View detailed information about this user',
+    th: 'ดูข้อมูลโดยละเอียดเกี่ยวกับผู้ใช้นี้'
+  },
+  'permission.deleteUser': {
+    en: 'Delete User',
+    th: 'ลบผู้ใช้'
+  },
+  'permission.deleteUserConfirmation': {
+    en: 'Are you sure you want to delete this user? This action cannot be undone.',
+    th: 'คุณแน่ใจหรือไม่ว่าต้องการลบผู้ใช้นี้? การกระทำนี้ไม่สามารถยกเลิกได้'
   },
 };
 
