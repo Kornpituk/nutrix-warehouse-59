@@ -1,3 +1,4 @@
+
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
@@ -5,11 +6,15 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Home } from "lucide-react";
+import { ArrowLeft, Key, User } from "lucide-react";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
 
 import imageTop from "@/assets/Group 3.png";
 import imageBop from "@/assets/Group 6.png";
 import logo from "@/assets/Nutrix 1.png";
+
+// Import sample users for authentication
+import { mockUsers } from "../pages/settings/permission/mockData";
 
 const Login = () => {
   const navigate = useNavigate();
@@ -17,28 +22,45 @@ const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleLogin = (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setError("");
 
-    // Simulate API call
+    // Authentication logic
     setTimeout(() => {
       setLoading(false);
 
-      // Simple validation
-      if (username.length > 0 && password.length > 0) {
+      // Check from our mock users
+      const foundUser = mockUsers.find(
+        (user) => user.email === username && user.password === password && user.isActive
+      );
+
+      if (foundUser) {
         toast({
           title: "Login successful",
-          description: "Welcome back to PetFeed WMS!",
+          description: `Welcome back, ${foundUser.name}!`,
         });
-        // Store authentication status (in a real app, you would store a token)
+        
+        // Store authentication status and user info
         localStorage.setItem("isAuthenticated", "true");
+        localStorage.setItem("currentUser", JSON.stringify({
+          id: foundUser.id,
+          name: foundUser.name,
+          email: foundUser.email,
+          position: foundUser.position,
+          department: foundUser.department,
+          isAdmin: foundUser.isAdmin || false
+        }));
+        
         navigate("/select-warehouse");
       } else {
+        setError("Invalid email or password. Please try again.");
         toast({
           title: "Login failed",
-          description: "Please check your credentials and try again.",
+          description: "Invalid email or password.",
           variant: "destructive",
         });
       }
@@ -77,13 +99,7 @@ const Login = () => {
             transition={{ delay: 0.2, duration: 0.5 }}
           >
             <div className="flex h-32 w-32 items-center justify-center rounded-full bg-white p-2 shadow-lg">
-              {/* <svg width="64" height="64" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M16 4C9.4 4 4 9.4 4 16C4 22.6 9.4 28 16 28C22.6 28 28 22.6 28 16C28 9.4 22.6 4 16 4ZM16 26C10.5 26 6 21.5 6 16C6 10.5 10.5 6 16 6C21.5 6 26 10.5 26 16C26 21.5 21.5 26 16 26Z" fill="#AB0006"/>
-                <path d="M16 10C13.8 10 12 11.8 12 14C12 16.2 13.8 18 16 18C18.2 18 20 16.2 20 14C20 11.8 18.2 10 16 10Z" fill="#AB0006"/>
-                <path d="M13 20C11 20 10 22 10 23C10 24 10.5 25 12 25C13.5 25 14.5 24 15 23C15.5 22 15 20 13 20Z" fill="#AB0006"/>
-                <path d="M19 20C21 20 22 22 22 23C22 24 21.5 25 20 25C18.5 25 17.5 24 17 23C16.5 22 17 20 19 20Z" fill="#AB0006"/>
-              </svg> */}
-              <img src={logo} alt="Loading animation" className="w-30 h-30" />
+              <img src={logo} alt="Logo" className="w-30 h-30" />
             </div>
           </motion.div>
         </div>
@@ -101,31 +117,48 @@ const Login = () => {
               Sign in to your account
             </p>
 
+            {error && (
+              <Alert variant="destructive" className="mb-4">
+                <AlertTitle>Error</AlertTitle>
+                <AlertDescription>{error}</AlertDescription>
+              </Alert>
+            )}
+
             <form onSubmit={handleLogin}>
               <div className="mb-4">
-                <Label htmlFor="username">Username</Label>
-                <Input
-                  id="username"
-                  type="text"
-                  placeholder="Enter your username"
-                  value={username}
-                  onChange={(e) => setUsername(e.target.value)}
-                  className="mt-1"
-                  required
-                />
+                <Label htmlFor="username">Email</Label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
+                    <User size={16} />
+                  </div>
+                  <Input
+                    id="username"
+                    type="text"
+                    placeholder="Enter your email"
+                    value={username}
+                    onChange={(e) => setUsername(e.target.value)}
+                    className="pl-10"
+                    required
+                  />
+                </div>
               </div>
 
               <div className="mb-6">
                 <Label htmlFor="password">Password</Label>
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="Enter your password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  className="mt-1"
-                  required
-                />
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
+                    <Key size={16} />
+                  </div>
+                  <Input
+                    id="password"
+                    type="password"
+                    placeholder="Enter your password"
+                    value={password}
+                    onChange={(e) => setPassword(e.target.value)}
+                    className="pl-10"
+                    required
+                  />
+                </div>
               </div>
 
               <Button
@@ -163,6 +196,22 @@ const Login = () => {
               </Button>
             </form>
 
+            <div className="mt-6">
+              <h3 className="text-sm font-medium text-gray-700 mb-2">Example Accounts:</h3>
+              <div className="bg-gray-50 p-3 rounded-md border border-gray-200 text-sm space-y-2">
+                <div className="flex flex-col">
+                  <span className="font-medium">Regular User:</span>
+                  <span className="text-gray-600">Email: sarah@example.com</span>
+                  <span className="text-gray-600">Password: user123</span>
+                </div>
+                <div className="flex flex-col">
+                  <span className="font-medium">Admin User:</span>
+                  <span className="text-gray-600">Email: john@example.com</span>
+                  <span className="text-gray-600">Password: admin123</span>
+                </div>
+              </div>
+            </div>
+
             <div className="mt-6 text-center">
               <p className="text-sm text-gray-600">
                 Don't have an account?{" "}
@@ -175,47 +224,6 @@ const Login = () => {
               </p>
             </div>
           </motion.div>
-
-          {/* <motion.div
-            className="mt-8 flex justify-center space-x-4"
-            initial={{ opacity: 0, y: 10 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.5, duration: 0.5 }}
-          >
-            <motion.div
-              className="pet-container"
-              animate={{ y: [0, -5, 0] }}
-              transition={{ repeat: Infinity, duration: 2 }}
-            >
-              <img
-                src="https://images.unsplash.com/photo-1514888286974-6c03e2ca1dba?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80"
-                alt="Cat"
-                className="h-10 w-10 rounded-full object-cover shadow-sm border border-gray-200"
-              />
-            </motion.div>
-            <motion.div
-              className="pet-container"
-              animate={{ y: [0, -5, 0] }}
-              transition={{ repeat: Infinity, duration: 2, delay: 0.3 }}
-            >
-              <img
-                src="https://images.unsplash.com/photo-1517849845537-4d257902454a?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80"
-                alt="Dog"
-                className="h-10 w-10 rounded-full object-cover shadow-sm border border-gray-200"
-              />
-            </motion.div>
-            <motion.div
-              className="pet-container"
-              animate={{ y: [0, -5, 0] }}
-              transition={{ repeat: Infinity, duration: 2, delay: 0.6 }}
-            >
-              <img
-                src="https://images.unsplash.com/photo-1425082661705-1834bfd09dca?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80"
-                alt="Bird"
-                className="h-10 w-10 rounded-full object-cover shadow-sm border border-gray-200"
-              />
-            </motion.div>
-          </motion.div> */}
         </div>
         <div className="bottom-0 right-0 w-full flex justify-end">
           <img src={imageBop} alt="Bottom decoration" className="w-10 h-10" />

@@ -7,6 +7,8 @@ export interface User {
   department: string;
   permissions: Permission[];
   isActive: boolean;
+  password: string;
+  isAdmin?: boolean;
 }
 
 export interface Permission {

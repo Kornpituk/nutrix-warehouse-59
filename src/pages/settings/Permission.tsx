@@ -1,7 +1,7 @@
-
-import React, { useState, useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import { Plus } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Loading } from "@/components/ui/custom/loading";
@@ -15,25 +15,20 @@ import UserDetailsDialog from './permission/UserDetailsDialog';
 import UserFormDialog from './permission/UserFormDialog';
 import DeleteConfirmationDialog from './permission/DeleteConfirmationDialog';
 import SearchFilterBar from './permission/SearchFilterBar';
-import { User, Permission, Module } from './permission/types';
+import { User, Module } from './permission/types';
+import { mockUsers, mockModules } from './permission/mockData';
 
-const PermissionSettings = () => {
-  const { t } = useLanguage();
+const PermissionSettings: React.FC = () => {
   const { toast } = useToast();
-  const [isLoading, setIsLoading] = useState(true);
+  const { t } = useLanguage();
+  const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState<User[]>([]);
   const [modules, setModules] = useState<Module[]>([]);
   const [filteredUsers, setFilteredUsers] = useState<User[]>([]);
-  const [searchQuery, setSearchQuery] = useState('');
-  const [isFilterOpen, setIsFilterOpen] = useState(false);
-  
-  // Dialog states
+  const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [userDetailsOpen, setUserDetailsOpen] = useState(false);
   const [userFormOpen, setUserFormOpen] = useState(false);
-  const [deleteConfirmationOpen, setDeleteConfirmationOpen] = useState(false);
-  
-  // Selected user states
-  const [selectedUser, setSelectedUser] = useState<User | null>(null);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [userToDelete, setUserToDelete] = useState<User | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
 
@@ -41,9 +36,11 @@ const PermissionSettings = () => {
   const formSchema = z.object({
     name: z.string().min(1, { message: t('validation.required') }),
     email: z.string().email({ message: t('validation.email') }),
+    password: z.string().min(6, { message: t('validation.minLength', { length: 6 }) }),
     position: z.string().min(1, { message: t('validation.required') }),
     department: z.string().min(1, { message: t('validation.required') }),
     isActive: z.boolean().default(true),
+    isAdmin: z.boolean().default(false),
     permissions: z.array(z.string()).default([])
   });
 
@@ -52,9 +49,11 @@ const PermissionSettings = () => {
     defaultValues: {
       name: '',
       email: '',
+      password: '',
       position: '',
       department: '',
       isActive: true,
+      isAdmin: false,
       permissions: []
     }
   });
@@ -65,18 +64,22 @@ const PermissionSettings = () => {
       form.reset({
         name: selectedUser.name,
         email: selectedUser.email,
+        password: selectedUser.password || '',
         position: selectedUser.position,
         department: selectedUser.department,
         isActive: selectedUser.isActive,
+        isAdmin: selectedUser.isAdmin || false,
         permissions: selectedUser.permissions.map(p => p.id)
       });
     } else if (!isEditMode) {
       form.reset({
         name: '',
         email: '',
+        password: '',
         position: '',
         department: '',
         isActive: true,
+        isAdmin: false,
         permissions: []
       });
     }
@@ -85,113 +88,39 @@ const PermissionSettings = () => {
   useEffect(() => {
     // Simulate API call to fetch users and modules
     setTimeout(() => {
-      // Mock data
-      const mockUsers: User[] = [
-        {
-          id: '1',
-          name: 'John Doe',
-          email: 'john.doe@example.com',
-          position: 'Admin',
-          department: 'IT',
-          isActive: true,
-          permissions: [
-            { id: '1', name: 'View Dashboard', description: 'Can view the dashboard' },
-            { id: '2', name: 'Manage Users', description: 'Can create, edit, and delete users' },
-            { id: '3', name: 'View Reports', description: 'Can view all reports' }
-          ]
-        },
-        {
-          id: '2',
-          name: 'Jane Smith',
-          email: 'jane.smith@example.com',
-          position: 'Manager',
-          department: 'Operations',
-          isActive: true,
-          permissions: [
-            { id: '1', name: 'View Dashboard', description: 'Can view the dashboard' },
-            { id: '4', name: 'Edit Products', description: 'Can edit product information' }
-          ]
-        },
-        {
-          id: '3',
-          name: 'Bob Johnson',
-          email: 'bob.johnson@example.com',
-          position: 'Warehouse Staff',
-          department: 'Warehouse',
-          isActive: false,
-          permissions: [
-            { id: '5', name: 'View Inventory', description: 'Can view inventory levels' }
-          ]
-        }
-      ];
-
-      const mockModules: Module[] = [
-        {
-          id: '1',
-          name: 'Dashboard',
-          permissions: [
-            { id: '1', name: 'View Dashboard', description: 'Can view the dashboard' }
-          ]
-        },
-        {
-          id: '2',
-          name: 'User Management',
-          permissions: [
-            { id: '2', name: 'Manage Users', description: 'Can create, edit, and delete users' }
-          ]
-        },
-        {
-          id: '3',
-          name: 'Reports',
-          permissions: [
-            { id: '3', name: 'View Reports', description: 'Can view all reports' }
-          ]
-        },
-        {
-          id: '4',
-          name: 'Products',
-          permissions: [
-            { id: '4', name: 'Edit Products', description: 'Can edit product information' }
-          ]
-        },
-        {
-          id: '5',
-          name: 'Inventory',
-          permissions: [
-            { id: '5', name: 'View Inventory', description: 'Can view inventory levels' }
-          ]
-        }
-      ];
-
       setUsers(mockUsers);
       setFilteredUsers(mockUsers);
       setModules(mockModules);
-      setIsLoading(false);
+      setLoading(false);
     }, 1000);
   }, []);
 
-  useEffect(() => {
-    // Filter users based on search query
-    if (searchQuery.trim() === '') {
+  const handleSearch = (searchTerm: string) => {
+    if (!searchTerm.trim()) {
       setFilteredUsers(users);
-    } else {
-      const filtered = users.filter(user => 
-        user.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        user.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        user.position.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        user.department.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-      setFilteredUsers(filtered);
+      return;
     }
-  }, [searchQuery, users]);
-
-  const handleAddUser = () => {
-    setSelectedUser(null);
-    setIsEditMode(false);
-    setUserFormOpen(true);
+    
+    const lowercaseSearchTerm = searchTerm.toLowerCase();
+    const filtered = users.filter(user => 
+      user.name.toLowerCase().includes(lowercaseSearchTerm) ||
+      user.email.toLowerCase().includes(lowercaseSearchTerm) ||
+      user.position.toLowerCase().includes(lowercaseSearchTerm) ||
+      user.department.toLowerCase().includes(lowercaseSearchTerm)
+    );
+    
+    setFilteredUsers(filtered);
   };
 
-  const handleViewDetails = (user: User) => {
+  const handleFilterChange = (activeOnly: boolean) => {
+    if (activeOnly) {
+      setFilteredUsers(users.filter(user => user.isActive));
+    } else {
+      setFilteredUsers(users);
+    }
+  };
+
+  const handleViewUser = (user: User) => {
     setSelectedUser(user);
     setUserDetailsOpen(true);
   };
@@ -202,19 +131,30 @@ const PermissionSettings = () => {
     setUserFormOpen(true);
   };
 
+  const handleAddUser = () => {
+    setSelectedUser(null);
+    setIsEditMode(false);
+    setUserFormOpen(true);
+  };
+
   const handleDeleteUser = (user: User) => {
     setUserToDelete(user);
-    setDeleteConfirmationOpen(true);
+    setDeleteDialogOpen(true);
   };
 
-  const handleCloseDetails = () => {
-    setUserDetailsOpen(false);
-  };
-
-  const handleEditFromDetails = () => {
-    setUserDetailsOpen(false);
-    setIsEditMode(true);
-    setUserFormOpen(true);
+  const confirmDeleteUser = () => {
+    if (userToDelete) {
+      setUsers(prevUsers => prevUsers.filter(u => u.id !== userToDelete.id));
+      setFilteredUsers(prevUsers => prevUsers.filter(u => u.id !== userToDelete.id));
+      
+      toast({
+        title: t('common.deleted'),
+        description: t('permission.userDeleted'),
+      });
+      
+      setDeleteDialogOpen(false);
+      setUserToDelete(null);
+    }
   };
 
   const handleSaveUser = (formData: z.infer<typeof formSchema>) => {
@@ -231,15 +171,18 @@ const PermissionSettings = () => {
       id: selectedUser?.id || String(Date.now()),
       name: formData.name,
       email: formData.email,
+      password: formData.password,
       position: formData.position,
       department: formData.department,
       isActive: formData.isActive,
+      isAdmin: formData.isAdmin,
       permissions: permissionObjects
     };
     
     if (isEditMode) {
       // Update existing user
       setUsers(prevUsers => prevUsers.map(u => u.id === user.id ? user : u));
+      setFilteredUsers(prevUsers => prevUsers.map(u => u.id === user.id ? user : u));
       toast({
         title: t('common.updated'),
         description: t('permission.userUpdated'),
@@ -247,70 +190,57 @@ const PermissionSettings = () => {
     } else {
       // Add new user
       setUsers(prevUsers => [...prevUsers, user]);
+      setFilteredUsers(prevUsers => [...prevUsers, user]);
       toast({
         title: t('common.added'),
         description: t('permission.userAdded'),
       });
     }
+    
     setUserFormOpen(false);
   };
 
-  const handleConfirmDelete = () => {
-    if (userToDelete) {
-      setUsers(prevUsers => prevUsers.filter(user => user.id !== userToDelete.id));
-      toast({
-        title: t('common.deleted'),
-        description: t('permission.userDeleted'),
-      });
-      setDeleteConfirmationOpen(false);
-      setUserToDelete(null);
-    }
-  };
-
-  if (isLoading) {
-    return (
-      <div className="flex h-screen items-center justify-center">
-        <Loading text={t('common.loading')} />
-      </div>
-    );
+  if (loading) {
+    return <Loading />;
   }
 
   return (
-    <div className="container mx-auto px-4 py-8">
-      <header className="mb-8">
-        <h1 className="text-2xl font-bold text-gray-900">{t('permission.title')}</h1>
-        <p className="text-gray-600">{t('permission.subtitle')}</p>
-      </header>
-
-      <div className="flex justify-between items-center mb-6">
-        <SearchFilterBar
-          searchQuery={searchQuery}
-          setSearchQuery={setSearchQuery}
-          isFilterOpen={isFilterOpen}
-          setIsFilterOpen={setIsFilterOpen}
-        />
-        <Button onClick={handleAddUser} className="bg-primary">
-          <Plus className="mr-2 h-4 w-4" />
-          {t('permission.addUser')}
+    <div className="container mx-auto py-6">
+      <div className="mb-6 flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold tracking-tight">{t('permission.title')}</h1>
+          <p className="text-muted-foreground">{t('permission.description')}</p>
+        </div>
+        <Button 
+          onClick={handleAddUser}
+          className="gap-1 bg-primary"
+        >
+          <Plus className="size-4" /> {t('permission.addUser')}
         </Button>
       </div>
-
-      <UserListTable
-        users={filteredUsers}
-        handleViewDetails={handleViewDetails}
-        handleEditUser={handleEditUser}
-        handleDeleteUser={handleDeleteUser}
-      />
-
+      
+      <div className="rounded-md border bg-white">
+        <div className="p-4">
+          <SearchFilterBar 
+            onSearch={handleSearch} 
+            onFilterChange={handleFilterChange} 
+          />
+        </div>
+        
+        <UserListTable 
+          users={filteredUsers}
+          onViewUser={handleViewUser}
+          onEditUser={handleEditUser}
+          onDeleteUser={handleDeleteUser}
+        />
+      </div>
+      
       <UserDetailsDialog
         open={userDetailsOpen}
         onOpenChange={setUserDetailsOpen}
-        selectedUser={selectedUser}
-        modules={modules}
-        onClose={handleCloseDetails}
-        onEdit={handleEditFromDetails}
+        user={selectedUser}
       />
-
+      
       <UserFormDialog
         open={userFormOpen}
         onOpenChange={setUserFormOpen}
@@ -323,10 +253,11 @@ const PermissionSettings = () => {
       />
 
       <DeleteConfirmationDialog
-        open={deleteConfirmationOpen}
-        onOpenChange={setDeleteConfirmationOpen}
-        userToDelete={userToDelete}
-        onConfirm={handleConfirmDelete}
+        open={deleteDialogOpen}
+        onOpenChange={setDeleteDialogOpen}
+        onConfirm={confirmDeleteUser}
+        title={t('permission.deleteUser')}
+        description={t('permission.deleteUserConfirmation')}
       />
     </div>
   );
