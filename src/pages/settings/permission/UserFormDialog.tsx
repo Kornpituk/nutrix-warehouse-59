@@ -9,7 +9,6 @@ import { useLanguage } from '@/contexts/LanguageContext';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Module } from './types';
 import { UseFormReturn } from 'react-hook-form';
-import * as z from 'zod';
 
 interface UserFormDialogProps {
   open: boolean;

@@ -5,6 +5,9 @@ import { Button } from '@/components/ui/button';
 import { Plus } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Loading } from "@/components/ui/custom/loading";
+import { useForm } from 'react-hook-form';
+import * as z from 'zod';
+import { zodResolver } from '@hookform/resolvers/zod';
 
 // Import refactored components
 import UserListTable from './permission/UserListTable';
@@ -33,6 +36,51 @@ const PermissionSettings = () => {
   const [selectedUser, setSelectedUser] = useState<User | null>(null);
   const [userToDelete, setUserToDelete] = useState<User | null>(null);
   const [isEditMode, setIsEditMode] = useState(false);
+
+  // Form schema for user form
+  const formSchema = z.object({
+    name: z.string().min(1, { message: t('validation.required') }),
+    email: z.string().email({ message: t('validation.email') }),
+    position: z.string().min(1, { message: t('validation.required') }),
+    department: z.string().min(1, { message: t('validation.required') }),
+    isActive: z.boolean().default(true),
+    permissions: z.array(z.string()).default([])
+  });
+
+  const form = useForm<z.infer<typeof formSchema>>({
+    resolver: zodResolver(formSchema),
+    defaultValues: {
+      name: '',
+      email: '',
+      position: '',
+      department: '',
+      isActive: true,
+      permissions: []
+    }
+  });
+
+  // Reset form with user data when selectedUser or isEditMode changes
+  useEffect(() => {
+    if (selectedUser && isEditMode) {
+      form.reset({
+        name: selectedUser.name,
+        email: selectedUser.email,
+        position: selectedUser.position,
+        department: selectedUser.department,
+        isActive: selectedUser.isActive,
+        permissions: selectedUser.permissions.map(p => p.id)
+      });
+    } else if (!isEditMode) {
+      form.reset({
+        name: '',
+        email: '',
+        position: '',
+        department: '',
+        isActive: true,
+        permissions: []
+      });
+    }
+  }, [selectedUser, isEditMode, form]);
 
   useEffect(() => {
     // Simulate API call to fetch users and modules
@@ -169,7 +217,26 @@ const PermissionSettings = () => {
     setUserFormOpen(true);
   };
 
-  const handleSaveUser = (user: User) => {
+  const handleSaveUser = (formData: z.infer<typeof formSchema>) => {
+    const permissionObjects = formData.permissions.map(id => {
+      // Find the permission in modules
+      for (const module of modules) {
+        const permission = module.permissions.find(p => p.id === id);
+        if (permission) return permission;
+      }
+      return { id, name: 'Unknown', description: 'Unknown permission' };
+    });
+  
+    const user: User = {
+      id: selectedUser?.id || String(Date.now()),
+      name: formData.name,
+      email: formData.email,
+      position: formData.position,
+      department: formData.department,
+      isActive: formData.isActive,
+      permissions: permissionObjects
+    };
+    
     if (isEditMode) {
       // Update existing user
       setUsers(prevUsers => prevUsers.map(u => u.id === user.id ? user : u));
@@ -179,7 +246,7 @@ const PermissionSettings = () => {
       });
     } else {
       // Add new user
-      setUsers(prevUsers => [...prevUsers, { ...user, id: String(Date.now()) }]);
+      setUsers(prevUsers => [...prevUsers, user]);
       toast({
         title: t('common.added'),
         description: t('permission.userAdded'),
@@ -247,10 +314,12 @@ const PermissionSettings = () => {
       <UserFormDialog
         open={userFormOpen}
         onOpenChange={setUserFormOpen}
-        selectedUser={selectedUser}
-        isEditMode={isEditMode}
+        title={isEditMode ? t('permission.editUser') : t('permission.addUser')}
+        description={isEditMode ? t('permission.editUserDesc') : t('permission.addUserDesc')}
+        form={form}
         modules={modules}
-        onSave={handleSaveUser}
+        onSubmit={handleSaveUser}
+        onCancel={() => setUserFormOpen(false)}
       />
 
       <DeleteConfirmationDialog

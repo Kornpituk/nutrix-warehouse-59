@@ -12,8 +12,8 @@ export interface User {
 export interface Permission {
   id: string;
   name: string;
-  category: string;
   description: string;
+  category?: string; // Make category optional
 }
 
 export interface Module {
