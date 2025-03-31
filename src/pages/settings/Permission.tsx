@@ -25,6 +25,7 @@ import {
   DialogFooter,
   DialogHeader,
   DialogTitle,
+  DialogClose,
 } from '@/components/ui/dialog';
 import {
   Form,
@@ -99,6 +100,7 @@ const PermissionSettings = () => {
   const [isEditDialogOpen, setIsEditDialogOpen] = useState(false);
   const [showDeleteAlert, setShowDeleteAlert] = useState(false);
   const [userToDelete, setUserToDelete] = useState<User | null>(null);
+  const [viewDetailsOpen, setViewDetailsOpen] = useState(false);
   
   // Mock data for users
   const [users, setUsers] = useState<User[]>([
@@ -271,6 +273,12 @@ const PermissionSettings = () => {
   
   const handleViewDetails = (user: User) => {
     setSelectedUser(user);
+    setViewDetailsOpen(true);
+  };
+  
+  const handleCloseDetails = () => {
+    setViewDetailsOpen(false);
+    setSelectedUser(null);
   };
   
   const handleAddUser = () => {
@@ -445,7 +453,7 @@ const PermissionSettings = () => {
                     <Filter className="h-4 w-4" />
                   </Button>
                 </CollapsibleTrigger>
-                <CollapsibleContent className="absolute right-0 mt-2 w-64 rounded-md border bg-white p-4 shadow-md">
+                <CollapsibleContent className="absolute right-0 mt-2 w-64 rounded-md border bg-white p-4 shadow-md z-50">
                   <div className="flex justify-between">
                     <p className="font-medium">{t('common.filters')}</p>
                     <Button
@@ -556,7 +564,7 @@ const PermissionSettings = () => {
                               {t('common.actions')}
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end">
+                          <DropdownMenuContent align="end" className="bg-white">
                             <DropdownMenuItem onClick={() => handleViewDetails(user)}>
                               {t('common.viewDetails')}
                             </DropdownMenuItem>
@@ -584,83 +592,93 @@ const PermissionSettings = () => {
       </motion.div>
       
       {/* User Details Dialog */}
-      {selectedUser && (
-        <Dialog open={!!selectedUser && !isEditDialogOpen} onOpenChange={() => setSelectedUser(null)}>
-          <DialogContent className="sm:max-w-[600px]">
-            <DialogHeader>
-              <DialogTitle>{selectedUser.name}</DialogTitle>
-              <DialogDescription>
-                {selectedUser.email} • {selectedUser.position} • {selectedUser.department}
-              </DialogDescription>
-            </DialogHeader>
-            <div className="space-y-4 py-4">
-              <div>
-                <h3 className="mb-2 text-sm font-medium">{t('permission.status')}</h3>
-                {selectedUser.isActive ? (
-                  <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
-                    <CheckCircle className="mr-1 h-3 w-3" />
-                    {t('permission.active')}
-                  </span>
-                ) : (
-                  <span className="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">
-                    <XCircle className="mr-1 h-3 w-3" />
-                    {t('permission.inactive')}
-                  </span>
-                )}
-              </div>
-              
-              <div>
-                <h3 className="mb-2 text-sm font-medium">{t('permission.assignedPermissions')}</h3>
-                {selectedUser.permissions.length === 0 ? (
-                  <p className="text-sm text-gray-500">{t('permission.noPermissions')}</p>
-                ) : (
-                  <div className="space-y-3">
-                    {modules.map((module) => {
-                      const modulePermissions = selectedUser.permissions.filter(
-                        p => module.permissions.some(mp => mp.id === p.id)
-                      );
-                      
-                      if (modulePermissions.length === 0) return null;
-                      
-                      return (
-                        <div key={module.id} className="rounded-md border p-3">
-                          <h4 className="mb-2 font-medium">{module.name}</h4>
-                          <div className="space-y-2">
-                            {modulePermissions.map((permission) => (
-                              <div key={permission.id} className="flex items-start">
-                                <CheckCircle className="mr-2 h-4 w-4 text-green-600" />
-                                <div>
-                                  <p className="text-sm font-medium">{permission.name}</p>
-                                  <p className="text-xs text-gray-500">{permission.description}</p>
-                                </div>
-                              </div>
-                            ))}
-                          </div>
-                        </div>
-                      );
-                    })}
-                  </div>
-                )}
-              </div>
+      <Dialog 
+        open={viewDetailsOpen} 
+        onOpenChange={(open) => {
+          if (!open) handleCloseDetails();
+        }}
+      >
+        <DialogContent className="sm:max-w-[600px] bg-white">
+          <DialogHeader>
+            <DialogTitle>{selectedUser?.name}</DialogTitle>
+            <DialogDescription>
+              {selectedUser?.email} • {selectedUser?.position} • {selectedUser?.department}
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div>
+              <h3 className="mb-2 text-sm font-medium">{t('permission.status')}</h3>
+              {selectedUser?.isActive ? (
+                <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
+                  <CheckCircle className="mr-1 h-3 w-3" />
+                  {t('permission.active')}
+                </span>
+              ) : (
+                <span className="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">
+                  <XCircle className="mr-1 h-3 w-3" />
+                  {t('permission.inactive')}
+                </span>
+              )}
             </div>
-            <DialogFooter>
-              <Button variant="outline" onClick={() => setSelectedUser(null)}>
-                {t('common.close')}
-              </Button>
-              <Button onClick={() => {
-                setIsEditDialogOpen(true);
-              }}>
-                <Edit className="mr-2 h-4 w-4" />
-                {t('common.edit')}
-              </Button>
-            </DialogFooter>
-          </DialogContent>
-        </Dialog>
-      )}
+            
+            <div>
+              <h3 className="mb-2 text-sm font-medium">{t('permission.assignedPermissions')}</h3>
+              {selectedUser?.permissions.length === 0 ? (
+                <p className="text-sm text-gray-500">{t('permission.noPermissions')}</p>
+              ) : (
+                <div className="space-y-3">
+                  {modules.map((module) => {
+                    const modulePermissions = selectedUser?.permissions.filter(
+                      p => module.permissions.some(mp => mp.id === p.id)
+                    ) || [];
+                    
+                    if (modulePermissions.length === 0) return null;
+                    
+                    return (
+                      <div key={module.id} className="rounded-md border p-3">
+                        <h4 className="mb-2 font-medium">{module.name}</h4>
+                        <div className="space-y-2">
+                          {modulePermissions.map((permission) => (
+                            <div key={permission.id} className="flex items-start">
+                              <CheckCircle className="mr-2 h-4 w-4 text-green-600" />
+                              <div>
+                                <p className="text-sm font-medium">{permission.name}</p>
+                                <p className="text-xs text-gray-500">{permission.description}</p>
+                              </div>
+                            </div>
+                          ))}
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
+          </div>
+          <DialogFooter>
+            <Button variant="outline" onClick={handleCloseDetails}>
+              {t('common.close')}
+            </Button>
+            <Button onClick={() => {
+              setViewDetailsOpen(false);
+              setIsEditDialogOpen(true);
+            }}>
+              <Edit className="mr-2 h-4 w-4" />
+              {t('common.edit')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
       
       {/* Add User Dialog */}
-      <Dialog open={isAddDialogOpen} onOpenChange={setIsAddDialogOpen}>
-        <DialogContent className="sm:max-w-[600px]">
+      <Dialog 
+        open={isAddDialogOpen} 
+        onOpenChange={(open) => {
+          setIsAddDialogOpen(open);
+          if (!open) form.reset();
+        }}
+      >
+        <DialogContent className="sm:max-w-[600px] bg-white">
           <DialogHeader>
             <DialogTitle>{t('permission.addUser')}</DialogTitle>
             <DialogDescription>
@@ -711,7 +729,7 @@ const PermissionSettings = () => {
                             <SelectValue placeholder={t('permission.selectPosition')} />
                           </SelectTrigger>
                         </FormControl>
-                        <SelectContent>
+                        <SelectContent className="bg-white">
                           <SelectItem value="Admin">Admin</SelectItem>
                           <SelectItem value="Manager">Manager</SelectItem>
                           <SelectItem value="Warehouse Staff">Warehouse Staff</SelectItem>
@@ -737,7 +755,7 @@ const PermissionSettings = () => {
                             <SelectValue placeholder={t('permission.selectDepartment')} />
                           </SelectTrigger>
                         </FormControl>
-                        <SelectContent>
+                        <SelectContent className="bg-white">
                           <SelectItem value="IT">IT</SelectItem>
                           <SelectItem value="Operations">Operations</SelectItem>
                           <SelectItem value="Warehouse">Warehouse</SelectItem>
@@ -819,7 +837,7 @@ const PermissionSettings = () => {
               </div>
               
               <DialogFooter>
-                <Button variant="outline" onClick={() => setIsAddDialogOpen(false)}>
+                <Button type="button" variant="outline" onClick={() => setIsAddDialogOpen(false)}>
                   {t('common.cancel')}
                 </Button>
                 <Button type="submit" className="bg-primary">
@@ -832,11 +850,17 @@ const PermissionSettings = () => {
       </Dialog>
       
       {/* Edit User Dialog */}
-      <Dialog open={isEditDialogOpen} onOpenChange={(open) => {
-        setIsEditDialogOpen(open);
-        if (!open) setSelectedUser(null);
-      }}>
-        <DialogContent className="sm:max-w-[600px]">
+      <Dialog 
+        open={isEditDialogOpen} 
+        onOpenChange={(open) => {
+          setIsEditDialogOpen(open);
+          if (!open) {
+            setSelectedUser(null);
+            form.reset();
+          }
+        }}
+      >
+        <DialogContent className="sm:max-w-[600px] bg-white">
           <DialogHeader>
             <DialogTitle>{t('permission.editUser')}</DialogTitle>
             <DialogDescription>
@@ -887,7 +911,7 @@ const PermissionSettings = () => {
                             <SelectValue placeholder={t('permission.selectPosition')} />
                           </SelectTrigger>
                         </FormControl>
-                        <SelectContent>
+                        <SelectContent className="bg-white">
                           <SelectItem value="Admin">Admin</SelectItem>
                           <SelectItem value="Manager">Manager</SelectItem>
                           <SelectItem value="Warehouse Staff">Warehouse Staff</SelectItem>
@@ -913,7 +937,7 @@ const PermissionSettings = () => {
                             <SelectValue placeholder={t('permission.selectDepartment')} />
                           </SelectTrigger>
                         </FormControl>
-                        <SelectContent>
+                        <SelectContent className="bg-white">
                           <SelectItem value="IT">IT</SelectItem>
                           <SelectItem value="Operations">Operations</SelectItem>
                           <SelectItem value="Warehouse">Warehouse</SelectItem>
@@ -995,7 +1019,7 @@ const PermissionSettings = () => {
               </div>
               
               <DialogFooter>
-                <Button variant="outline" onClick={() => {
+                <Button type="button" variant="outline" onClick={() => {
                   setIsEditDialogOpen(false);
                   setSelectedUser(null);
                 }}>
@@ -1011,8 +1035,14 @@ const PermissionSettings = () => {
       </Dialog>
       
       {/* Delete Confirmation Dialog */}
-      <AlertDialog open={showDeleteAlert} onOpenChange={setShowDeleteAlert}>
-        <AlertDialogContent>
+      <AlertDialog 
+        open={showDeleteAlert} 
+        onOpenChange={(open) => {
+          setShowDeleteAlert(open);
+          if (!open) setUserToDelete(null);
+        }}
+      >
+        <AlertDialogContent className="bg-white">
           <AlertDialogHeader>
             <AlertDialogTitle>{t('permission.confirmDelete')}</AlertDialogTitle>
             <AlertDialogDescription>
