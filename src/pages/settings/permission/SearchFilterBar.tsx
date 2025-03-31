@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import { Input } from '@/components/ui/input';
 import { Button } from '@/components/ui/button';
 import { Search, Filter, X } from 'lucide-react';
@@ -8,19 +8,23 @@ import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/component
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 interface SearchFilterBarProps {
-  searchQuery: string;
-  setSearchQuery: (query: string) => void;
-  isFilterOpen: boolean;
-  setIsFilterOpen: (isOpen: boolean) => void;
+  onSearch: (searchTerm: string) => void;
+  onFilterChange: (activeOnly: boolean) => void;
 }
 
 const SearchFilterBar: React.FC<SearchFilterBarProps> = ({
-  searchQuery,
-  setSearchQuery,
-  isFilterOpen,
-  setIsFilterOpen
+  onSearch,
+  onFilterChange
 }) => {
   const { t } = useLanguage();
+  const [searchQuery, setSearchQuery] = useState('');
+  const [isFilterOpen, setIsFilterOpen] = useState(false);
+
+  const handleSearchChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const value = e.target.value;
+    setSearchQuery(value);
+    onSearch(value);
+  };
 
   return (
     <div className="mb-4 flex items-center justify-between">
@@ -29,7 +33,7 @@ const SearchFilterBar: React.FC<SearchFilterBarProps> = ({
         <Input
           placeholder={t('common.search')}
           value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
+          onChange={handleSearchChange}
           className="pl-8"
         />
       </div>
@@ -87,7 +91,7 @@ const SearchFilterBar: React.FC<SearchFilterBarProps> = ({
             </div>
             <div>
               <p className="mb-1 text-sm font-medium">{t('permission.status')}</p>
-              <Select>
+              <Select onValueChange={(value) => onFilterChange(value === 'active')}>
                 <SelectTrigger className="w-full">
                   <SelectValue placeholder={t('common.all')} />
                 </SelectTrigger>

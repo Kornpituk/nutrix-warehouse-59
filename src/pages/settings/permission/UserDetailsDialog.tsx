@@ -55,7 +55,7 @@ const UserDetailsDialog: React.FC<UserDetailsDialogProps> = ({
           
           <div className="flex flex-col space-y-1">
             <span className="text-sm font-medium text-gray-500">{t('permission.status')}</span>
-            <Badge variant={user.isActive ? "success" : "destructive"} className="w-fit">
+            <Badge variant={user.isActive ? "default" : "destructive"} className="w-fit">
               {user.isActive ? t('permission.active') : t('permission.inactive')}
             </Badge>
           </div>

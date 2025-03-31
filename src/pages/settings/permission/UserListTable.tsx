@@ -8,16 +8,16 @@ import { User } from './types';
 
 interface UserListTableProps {
   users: User[];
-  handleViewDetails: (user: User) => void;
-  handleEditUser: (user: User) => void;
-  handleDeleteUser: (user: User) => void;
+  onViewUser: (user: User) => void;
+  onEditUser: (user: User) => void;
+  onDeleteUser: (user: User) => void;
 }
 
 const UserListTable: React.FC<UserListTableProps> = ({
   users,
-  handleViewDetails,
-  handleEditUser,
-  handleDeleteUser
+  onViewUser,
+  onEditUser,
+  onDeleteUser
 }) => {
   const { t } = useLanguage();
 
@@ -66,15 +66,15 @@ const UserListTable: React.FC<UserListTableProps> = ({
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="bg-white">
-                    <DropdownMenuItem onClick={() => handleViewDetails(user)}>
+                    <DropdownMenuItem onClick={() => onViewUser(user)}>
                       {t('common.viewDetails')}
                     </DropdownMenuItem>
-                    <DropdownMenuItem onClick={() => handleEditUser(user)}>
+                    <DropdownMenuItem onClick={() => onEditUser(user)}>
                       <Edit className="mr-2 h-4 w-4" />
                       {t('common.edit')}
                     </DropdownMenuItem>
                     <DropdownMenuItem 
-                      onClick={() => handleDeleteUser(user)}
+                      onClick={() => onDeleteUser(user)}
                       className="text-red-600 focus:bg-red-50 focus:text-red-600"
                     >
                       <Trash2 className="mr-2 h-4 w-4" />
