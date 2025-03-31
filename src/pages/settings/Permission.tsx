@@ -39,9 +39,9 @@ const PermissionSettings: React.FC = () => {
     password: z.string().min(6, { message: t('validation.minLength') }),
     position: z.string().min(1, { message: t('validation.required') }),
     department: z.string().min(1, { message: t('validation.required') }),
-    isActive: z.boolean().default(true),
-    isAdmin: z.boolean().default(false),
-    permissions: z.array(z.string()).default([])
+    isActive: z.boolean(),
+    isAdmin: z.boolean(),
+    permissions: z.array(z.string())
   });
 
   const form = useForm<z.infer<typeof formSchema>>({

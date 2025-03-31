@@ -1,4 +1,3 @@
-
 import React from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -7,17 +6,28 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Module } from './types';
+import { Module, User } from './types';
 import { UseFormReturn } from 'react-hook-form';
+
+type UserFormData = {
+  name?: string;
+  email?: string;
+  password?: string;
+  position?: string;
+  department?: string;
+  isActive?: boolean;
+  isAdmin?: boolean;
+  permissions?: string[];
+};
 
 interface UserFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   title: string;
   description: string;
-  form: UseFormReturn<any>;
+  form: UseFormReturn<UserFormData>;
   modules: Module[];
-  onSubmit: (data: any) => void;
+  onSubmit: (data: UserFormData) => void;
   onCancel: () => void;
 }
 
@@ -41,7 +51,7 @@ const UserFormDialog: React.FC<UserFormDialogProps> = ({
         if (!open) form.reset();
       }}
     >
-      <DialogContent className="sm:max-w-[600px] bg-white">
+      <DialogContent className="sm:max-w-[700px] bg-white">
         <DialogHeader>
           <DialogTitle>{title}</DialogTitle>
           <DialogDescription>
