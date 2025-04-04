@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { NavLink, useNavigate, useLocation } from 'react-router-dom';
 import { motion, AnimatePresence } from 'framer-motion';
 import { 
@@ -20,6 +20,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
+import { Location } from '@/utils/auth';
 
 interface SidebarNavProps {
   children: React.ReactNode;
@@ -34,14 +35,28 @@ const SidebarNav: React.FC<SidebarNavProps> = ({ children }) => {
   
   const { language, setLanguage, t } = useLanguage();
   
-  const selectedWarehouse = localStorage.getItem('selectedWarehouse') || '1';
-  const warehouseName = selectedWarehouse === '1' ? 'Bangkok Central' : 
-                        selectedWarehouse === '2' ? 'Chiang Mai Distribution' : 
-                        selectedWarehouse === '3' ? 'Phuket Storage' : 
-                        'Pattaya Facility';
+  // State for selected warehouse
+  const [selectedWarehouse, setSelectedWarehouse] = useState<Location | null>(null);
+  
+  // Load the selected warehouse from localStorage on component mount
+  useEffect(() => {
+    const storedWarehouse = localStorage.getItem('selectedWarehouse');
+    if (storedWarehouse) {
+      try {
+        const parsedWarehouse = JSON.parse(storedWarehouse);
+        setSelectedWarehouse(parsedWarehouse);
+      } catch (error) {
+        console.error('Error parsing stored warehouse:', error);
+      }
+    }
+  }, []);
 
   const handleSignOut = () => {
+    localStorage.removeItem('accessToken');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('tokenExpiry');
     localStorage.removeItem('isAuthenticated');
+    localStorage.removeItem('currentUser');
     localStorage.removeItem('selectedWarehouse');
     navigate('/login');
   };
@@ -65,16 +80,8 @@ const SidebarNav: React.FC<SidebarNavProps> = ({ children }) => {
     { path: '/settings/permission', name: t('settings.permission') },
   ];
 
-  const warehouses = [
-    { id: '1', name: 'Bangkok Central' },
-    { id: '2', name: 'Chiang Mai Distribution' },
-    { id: '3', name: 'Phuket Storage' },
-    { id: '4', name: 'Pattaya Facility' },
-  ];
-
-  const changeWarehouse = (warehouseId: string) => {
-    localStorage.setItem('selectedWarehouse', warehouseId);
-    window.location.reload(); // In a real app, you might use a more elegant state management solution
+  const changeWarehouse = () => {
+    navigate('/select-warehouse');
   };
 
   const toggleLanguage = () => {
@@ -141,8 +148,8 @@ const SidebarNav: React.FC<SidebarNavProps> = ({ children }) => {
               <div className="flex items-center space-x-2">
                 <Store size={18} className="text-primary" />
                 <div>
-                  <div className="text-sm font-medium">{warehouseName}</div>
-                  <div className="text-xs text-gray-500">{t('warehouse.current')}</div>
+                  <div className="text-sm font-medium">{selectedWarehouse?.name || t('warehouse.select')}</div>
+                  <div className="text-xs text-gray-500">{selectedWarehouse ? t('warehouse.current') : t('warehouse.none')}</div>
                 </div>
               </div>
               <ChevronDown 
@@ -161,21 +168,14 @@ const SidebarNav: React.FC<SidebarNavProps> = ({ children }) => {
                   className="mt-3 overflow-hidden"
                 >
                   <div className="border-t border-gray-200 pt-2">
-                    <div className="py-1 text-xs font-medium text-gray-500">{t('warehouse.select')}</div>
+                    <div className="py-1 text-xs font-medium text-gray-500">{t('warehouse.manage')}</div>
                     <div className="space-y-1">
-                      {warehouses.map((warehouse) => (
-                        <button
-                          key={warehouse.id}
-                          onClick={() => changeWarehouse(warehouse.id)}
-                          className={`w-full rounded-md px-2 py-1.5 text-left text-sm ${
-                            selectedWarehouse === warehouse.id 
-                              ? 'bg-primary-50 text-primary' 
-                              : 'text-gray-700 hover:bg-gray-100'
-                          }`}
-                        >
-                          {warehouse.name}
-                        </button>
-                      ))}
+                      <button
+                        onClick={changeWarehouse}
+                        className="w-full rounded-md px-2 py-1.5 text-left text-sm text-gray-700 hover:bg-gray-100"
+                      >
+                        {t('warehouse.change')}
+                      </button>
                     </div>
                   </div>
                 </motion.div>
