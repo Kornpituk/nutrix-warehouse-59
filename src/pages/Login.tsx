@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 import { motion } from "framer-motion";
 import { useNavigate } from "react-router-dom";
@@ -13,8 +12,13 @@ import imageTop from "@/assets/Group 3.png";
 import imageBop from "@/assets/Group 6.png";
 import logo from "@/assets/Nutrix 1.png";
 
-// Import sample users for authentication
-import { mockUsers } from "../pages/settings/permission/mockData";
+// Auth types
+interface AuthResponse {
+  access_token: string;
+  refresh_token: string;
+  expires_in: number;
+  expires_at: string;
+}
 
 const Login = () => {
   const navigate = useNavigate();
@@ -24,47 +28,66 @@ const Login = () => {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
     setError("");
 
-    // Authentication logic
-    setTimeout(() => {
-      setLoading(false);
+    try {
+      const response = await fetch("https://webapiorg.easetrackwms.com/api/Auth", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "accept": "*/*"
+        },
+        body: JSON.stringify({
+          username,
+          password,
+          grantType: "password",
+          audience: "string",
+          serialNo: "string",
+          refreshToken: "string"
+        })
+      });
 
-      // Check from our mock users
-      const foundUser = mockUsers.find(
-        (user) => user.email === username && user.password === password && user.isActive
-      );
-
-      if (foundUser) {
-        toast({
-          title: "Login successful",
-          description: `Welcome back, ${foundUser.name}!`,
-        });
-        
-        // Store authentication status and user info
-        localStorage.setItem("isAuthenticated", "true");
-        localStorage.setItem("currentUser", JSON.stringify({
-          id: foundUser.id,
-          name: foundUser.name,
-          email: foundUser.email,
-          position: foundUser.position,
-          department: foundUser.department,
-          isAdmin: foundUser.isAdmin || false
-        }));
-        
-        navigate("/select-warehouse");
-      } else {
-        setError("Invalid email or password. Please try again.");
-        toast({
-          title: "Login failed",
-          description: "Invalid email or password.",
-          variant: "destructive",
-        });
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.message || "Authentication failed");
       }
-    }, 1000);
+
+      const authData: AuthResponse = await response.json();
+      
+      // Store tokens and expiration in localStorage
+      localStorage.setItem("accessToken", authData.access_token);
+      localStorage.setItem("refreshToken", authData.refresh_token);
+      localStorage.setItem("tokenExpiry", authData.expires_at);
+      localStorage.setItem("isAuthenticated", "true");
+      
+      // Extract user data from token (JWT payload)
+      const tokenPayload = JSON.parse(atob(authData.access_token.split('.')[1]));
+      localStorage.setItem("currentUser", JSON.stringify({
+        id: tokenPayload.nameid,
+        name: tokenPayload.name,
+        // Other user data as needed
+      }));
+
+      toast({
+        title: "Login successful",
+        description: `Welcome back, ${tokenPayload.name}!`,
+      });
+      
+      navigate("/select-warehouse");
+    } catch (err) {
+      console.error("Login error:", err);
+      setError("Failed to authenticate. Please check your credentials and try again.");
+      toast({
+        title: "Login failed",
+        description: "Invalid username or password.",
+        variant: "destructive",
+      });
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleBackToHome = () => {
@@ -126,7 +149,7 @@ const Login = () => {
 
             <form onSubmit={handleLogin}>
               <div className="mb-4">
-                <Label htmlFor="username">Email</Label>
+                <Label htmlFor="username">Username</Label>
                 <div className="relative">
                   <div className="absolute inset-y-0 left-0 flex items-center pl-3 pointer-events-none text-gray-400">
                     <User size={16} />
@@ -134,7 +157,7 @@ const Login = () => {
                   <Input
                     id="username"
                     type="text"
-                    placeholder="Enter your email"
+                    placeholder="Enter your username"
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                     className="pl-10"
@@ -197,17 +220,11 @@ const Login = () => {
             </form>
 
             <div className="mt-6">
-              <h3 className="text-sm font-medium text-gray-700 mb-2">Example Accounts:</h3>
+              <h3 className="text-sm font-medium text-gray-700 mb-2">Example Account:</h3>
               <div className="bg-gray-50 p-3 rounded-md border border-gray-200 text-sm space-y-2">
                 <div className="flex flex-col">
-                  <span className="font-medium">Regular User:</span>
-                  <span className="text-gray-600">Email: sarah@example.com</span>
-                  <span className="text-gray-600">Password: user123</span>
-                </div>
-                <div className="flex flex-col">
-                  <span className="font-medium">Admin User:</span>
-                  <span className="text-gray-600">Email: john@example.com</span>
-                  <span className="text-gray-600">Password: admin123</span>
+                  <span className="text-gray-600">Username: air</span>
+                  <span className="text-gray-600">Password: air</span>
                 </div>
               </div>
             </div>

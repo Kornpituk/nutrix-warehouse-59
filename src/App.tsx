@@ -4,8 +4,8 @@ import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
-import SidebarNav from "./components/SidebarNav";
 import { LanguageProvider } from "./contexts/LanguageContext";
+import ProtectedRoute from "./components/ProtectedRoute";
 import Index from "./pages/Index";
 import Login from "./pages/Login";
 import SelectWarehouse from "./pages/SelectWarehouse";
@@ -30,26 +30,6 @@ import LotModelSettings from "./pages/settings/LotModel";
 import PermissionSettings from "./pages/settings/Permission";
 
 const queryClient = new QueryClient();
-
-// Protected route component
-const ProtectedRoute = ({ children }: { children: React.ReactNode }) => {
-  const isAuthenticated = localStorage.getItem('isAuthenticated');
-  const selectedWarehouse = localStorage.getItem('selectedWarehouse');
-  
-  if (!isAuthenticated) {
-    return <Navigate to="/login" replace />;
-  }
-  
-  if (!selectedWarehouse) {
-    return <Navigate to="/select-warehouse" replace />;
-  }
-  
-  return (
-    <SidebarNav>
-      {children}
-    </SidebarNav>
-  );
-};
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
