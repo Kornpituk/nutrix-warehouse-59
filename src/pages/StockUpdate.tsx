@@ -163,11 +163,14 @@ const StockUpdate = () => {
       }
 
       const data: StockResponse = await response.json();
-      setStockItems(data.items);
-      setFilteredItems(data.items);
-      setTotalPages(data.totalPages);
-      setTotalCount(data.totalCount);
-      setPerPage(data.perPage);
+      
+      // Handle null items from API response
+      const items = data.items || [];
+      setStockItems(items);
+      setFilteredItems(items);
+      setTotalPages(data.totalPages || 1);
+      setTotalCount(data.totalCount || 0);
+      setPerPage(data.perPage || 10);
     } catch (error) {
       console.error("Error fetching stock data:", error);
       setError("Failed to load stock data. Please try again.");
@@ -483,7 +486,7 @@ const StockUpdate = () => {
                     <TableHead className="w-12">
                       <Checkbox
                         checked={
-                          selectedItems.length > 0 &&
+                          filteredItems.length > 0 &&
                           selectedItems.length === filteredItems.length
                         }
                         onCheckedChange={handleSelectAll}
@@ -642,13 +645,13 @@ const StockUpdate = () => {
                   Previous
                 </Button>
                 <span className="text-sm">
-                  Page {currentPage} of {totalPages}
+                  Page {currentPage} of {totalPages || 1}
                 </span>
                 <Button 
                   variant="outline" 
                   size="sm" 
                   onClick={handleNextPage}
-                  disabled={currentPage === totalPages}
+                  disabled={currentPage === totalPages || totalPages === 0}
                 >
                   Next
                 </Button>

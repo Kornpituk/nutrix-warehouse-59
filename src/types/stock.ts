@@ -29,5 +29,5 @@ export interface StockResponse {
   page: number;
   totalCount: number;
   totalPages: number;
-  items: StockItem[];
+  items: StockItem[] | null;
 }
