@@ -1,4 +1,3 @@
-
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -127,27 +126,49 @@ const StockUpdate = () => {
     fetchStockData();
   }, [navigate, currentPage, perPage, locationId]);
 
+  const buildQueryParams = () => {
+    const queryParams = new URLSearchParams({
+      page: currentPage.toString(),
+      perPage: perPage.toString(),
+    });
+
+    // Add search filters if set
+    if (searchTerm) {
+      queryParams.append('searchByProductName', searchTerm);
+      queryParams.append('searchByBarcode', searchTerm);
+      queryParams.append('searchByProductId', searchTerm);
+    }
+
+    // Add category filter if not "All Categories"
+    if (selectedCategory !== "All Categories") {
+      queryParams.append('searchByCategory', selectedCategory);
+    }
+
+    // Add zone filter if not "All Zones"
+    if (selectedZone !== "All Zones") {
+      queryParams.append('zoneId', selectedZone.replace('Zone ', ''));
+    }
+
+    // Add area filter if not "All Areas"
+    if (selectedArea !== "All Areas") {
+      queryParams.append('areaId', selectedArea);
+    }
+
+    // Add sorting parameters if set
+    if (sortColumn) {
+      const sortParam = `sortBy${sortColumn.charAt(0).toUpperCase() + sortColumn.slice(1)}`;
+      queryParams.append(sortParam, sortDirection);
+    }
+
+    return queryParams;
+  };
+
   const fetchStockData = async () => {
     setIsLoading(true);
     setError(null);
 
     try {
-      const queryParams = new URLSearchParams({
-        page: currentPage.toString(),
-        perPage: perPage.toString(),
-      });
-
-      // Add search filters if set
-      if (searchTerm) {
-        queryParams.append('searchByProductName', searchTerm);
-        queryParams.append('searchByBarcode', searchTerm);
-        queryParams.append('searchByProductId', searchTerm);
-      }
-
-      // Add category filter if not "All Categories"
-      if (selectedCategory !== "All Categories") {
-        queryParams.append('searchByCategory', selectedCategory);
-      }
+      const queryParams = buildQueryParams();
 
       const response = await authenticatedFetch(
         `https://webapiorg.easetrackwms.com/api/v1/StockUpdate?${queryParams.toString()}`,
@@ -185,42 +206,13 @@ const StockUpdate = () => {
   };
 
   useEffect(() => {
-    let filtered = [...stockItems];
-
-    // Client-side filtering for additional filters not supported by the API
+    // Client-side filtering is now only used for warehouse selection
+    // Other filters are handled by the API
     if (selectedWarehouse !== "All Warehouses") {
       // This would need to be implemented with actual warehouse data
       // For now, it's just a placeholder
     }
-
-    if (selectedZone !== "All Zones") {
-      // Zone filtering placeholder
-    }
-
-    if (selectedArea !== "All Areas") {
-      // Area filtering placeholder
-    }
-
-    if (sortColumn) {
-      filtered = [...filtered].sort((a, b) => {
-        const aValue = a[sortColumn as keyof StockItem];
-        const bValue = b[sortColumn as keyof StockItem];
-
-        if (typeof aValue === "string" && typeof bValue === "string") {
-          return sortDirection === "asc"
-            ? aValue.localeCompare(bValue)
-            : bValue.localeCompare(aValue);
-        } else if (typeof aValue === "number" && typeof bValue === "number") {
-          return sortDirection === "asc"
-            ? aValue - bValue
-            : bValue - aValue;
-        }
-        return 0;
-      });
-    }
-
-    setFilteredItems(filtered);
-  }, [stockItems, selectedWarehouse, selectedZone, selectedArea, sortColumn, sortDirection]);
+  }, [stockItems, selectedWarehouse]);
 
   const handleSelectAll = () => {
     if (selectedItems.length === filteredItems.length) {
@@ -239,12 +231,12 @@ const StockUpdate = () => {
   };
 
   const handleSort = (column: string) => {
-    if (sortColumn === column) {
-      setSortDirection(sortDirection === "asc" ? "desc" : "asc");
-    } else {
-      setSortColumn(column);
-      setSortDirection("asc");
-    }
+    const newDirection = sortColumn === column && sortDirection === "asc" ? "desc" : "asc";
+    setSortColumn(column);
+    setSortDirection(newDirection);
+    // Re-fetch data with new sort parameters
+    setCurrentPage(1); // Reset to first page when sorting changes
+    fetchStockData();
   };
 
   const handleViewDetail = (item: StockItem) => {
@@ -253,6 +245,7 @@ const StockUpdate = () => {
   };
 
   const handleSearch = () => {
+    setCurrentPage(1); // Reset to first page on new search
     fetchStockData();
   };
 
@@ -265,6 +258,7 @@ const StockUpdate = () => {
     setSortColumn(null);
     setSortDirection("asc");
     setSelectedItems([]);
+    setCurrentPage(1); // Reset to first page
     fetchStockData();
   };
 
