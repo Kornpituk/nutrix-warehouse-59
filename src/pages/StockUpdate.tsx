@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
@@ -47,180 +48,10 @@ import { Label } from "@/components/ui/label";
 import { useToast } from '@/hooks/use-toast';
 
 import { Loading } from "@/components/ui/custom/loading";
+import { StockItem, StockResponse } from "@/types/stock";
+import { authenticatedFetch } from "@/utils/auth";
 
-const stockItems = [
-  {
-    id: 1,
-    image:
-      "https://images.unsplash.com/photo-1568640347023-a616a30bc3bd?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80",
-    itemCode: "DF-1001",
-    itemName: "Premium Dry Dog Food",
-    category: "Dog Food",
-    lot: "LOT-A123",
-    lotQty: 120,
-    totalQty: 1200,
-    uom: "kg",
-    warehouse: "Bangkok Central",
-    zone: "Zone A",
-    area: "Dry Food",
-    shelfLife: 365,
-    expiryDays: 210,
-  },
-  {
-    id: 2,
-    image:
-      "https://images.unsplash.com/photo-1589924691995-400dc9ecc119?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80",
-    itemCode: "CF-2001",
-    itemName: "Gourmet Cat Food",
-    category: "Cat Food",
-    lot: "LOT-B456",
-    lotQty: 80,
-    totalQty: 960,
-    uom: "kg",
-    warehouse: "Bangkok Central",
-    zone: "Zone B",
-    area: "Premium Section",
-    shelfLife: 300,
-    expiryDays: 175,
-  },
-  {
-    id: 3,
-    image:
-      "https://images.unsplash.com/photo-1601758124510-52d02ddb7cbd?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80",
-    itemCode: "DF-1002",
-    itemName: "Puppy Growth Formula",
-    category: "Dog Food",
-    lot: "LOT-C789",
-    lotQty: 100,
-    totalQty: 800,
-    uom: "kg",
-    warehouse: "Bangkok Central",
-    zone: "Zone A",
-    area: "Specialty",
-    shelfLife: 400,
-    expiryDays: 280,
-  },
-  {
-    id: 4,
-    image:
-      "https://images.unsplash.com/photo-1607246749396-c1c289bc2227?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80",
-    itemCode: "CF-2002",
-    itemName: "Senior Cat Formula",
-    category: "Cat Food",
-    lot: "LOT-D012",
-    lotQty: 75,
-    totalQty: 600,
-    uom: "kg",
-    warehouse: "Bangkok Central",
-    zone: "Zone B",
-    area: "Specialty",
-    shelfLife: 280,
-    expiryDays: 150,
-  },
-  {
-    id: 5,
-    image:
-      "https://images.unsplash.com/photo-1603047384516-2658696884a7?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80",
-    itemCode: "BF-3001",
-    itemName: "Premium Bird Seed Mix",
-    category: "Bird Food",
-    lot: "LOT-E345",
-    lotQty: 50,
-    totalQty: 400,
-    uom: "kg",
-    warehouse: "Bangkok Central",
-    zone: "Zone C",
-    area: "Small Pets",
-    shelfLife: 240,
-    expiryDays: 180,
-  },
-  {
-    id: 6,
-    image:
-      "https://images.unsplash.com/photo-1597843786411-a7fa8ad44a95?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80",
-    itemCode: "FF-4001",
-    itemName: "Tropical Fish Flakes",
-    category: "Fish Food",
-    lot: "LOT-F678",
-    lotQty: 30,
-    totalQty: 180,
-    uom: "kg",
-    warehouse: "Bangkok Central",
-    zone: "Zone C",
-    area: "Aquatics",
-    shelfLife: 180,
-    expiryDays: 120,
-  },
-  {
-    id: 7,
-    image:
-      "https://images.unsplash.com/photo-1585846888147-3fe14c130048?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80",
-    itemCode: "DF-1003",
-    itemName: "Grain-Free Dog Food",
-    category: "Dog Food",
-    lot: "LOT-G901",
-    lotQty: 110,
-    totalQty: 880,
-    uom: "kg",
-    warehouse: "Bangkok Central",
-    zone: "Zone A",
-    area: "Specialty",
-    shelfLife: 320,
-    expiryDays: 240,
-  },
-  {
-    id: 8,
-    image:
-      "https://images.unsplash.com/photo-1608408832581-9c2b8c5a41fa?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80",
-    itemCode: "CF-2003",
-    itemName: "Wet Cat Food Variety",
-    category: "Cat Food",
-    lot: "LOT-H234",
-    lotQty: 90,
-    totalQty: 720,
-    uom: "kg",
-    warehouse: "Bangkok Central",
-    zone: "Zone B",
-    area: "Wet Food",
-    shelfLife: 200,
-    expiryDays: 100,
-  },
-  {
-    id: 9,
-    image:
-      "https://images.unsplash.com/photo-1591154669695-5f2a8d20c089?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80",
-    itemCode: "DF-1004",
-    itemName: "Senior Dog Joint Care",
-    category: "Dog Food",
-    lot: "LOT-I567",
-    lotQty: 70,
-    totalQty: 560,
-    uom: "kg",
-    warehouse: "Bangkok Central",
-    zone: "Zone A",
-    area: "Health",
-    shelfLife: 280,
-    expiryDays: 160,
-  },
-  {
-    id: 10,
-    image:
-      "https://images.unsplash.com/photo-1571566882372-1598d88abd90?ixlib=rb-4.0.3&auto=format&fit=crop&w=100&q=80",
-    itemCode: "SF-5001",
-    itemName: "Small Animal Food Mix",
-    category: "Small Animal",
-    lot: "LOT-J890",
-    lotQty: 40,
-    totalQty: 320,
-    uom: "kg",
-    warehouse: "Bangkok Central",
-    zone: "Zone C",
-    area: "Small Pets",
-    shelfLife: 240,
-    expiryDays: 130,
-  },
-];
-
+// Mock data for additional filters
 const warehouses = [
   "All Warehouses",
   "Bangkok Central",
@@ -241,17 +72,16 @@ const areas = [
 ];
 const categories = [
   "All Categories",
-  "Dog Food",
-  "Cat Food",
-  "Bird Food",
-  "Fish Food",
-  "Small Animal",
+  "LADIES WEAR",
+  "MEN WEAR",
+  "KIDS WEAR",
+  "ACCESSORIES",
 ];
 
 const StockUpdate = () => {
   const { toast } = useToast();
   const navigate = useNavigate();
-  const [selectedItems, setSelectedItems] = useState<number[]>([]);
+  const [selectedItems, setSelectedItems] = useState<string[]>([]);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedWarehouse, setSelectedWarehouse] = useState("All Warehouses");
   const [selectedZone, setSelectedZone] = useState("All Zones");
@@ -259,13 +89,18 @@ const StockUpdate = () => {
   const [selectedCategory, setSelectedCategory] = useState("All Categories");
   const [sortColumn, setSortColumn] = useState<string | null>(null);
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("asc");
-  const [filteredItems, setFilteredItems] = useState(stockItems);
-  const [selectedItem, setSelectedItem] = useState<
-    (typeof stockItems)[0] | null
-  >(null);
+  const [stockItems, setStockItems] = useState<StockItem[]>([]);
+  const [filteredItems, setFilteredItems] = useState<StockItem[]>([]);
+  const [selectedItem, setSelectedItem] = useState<StockItem | null>(null);
   const [isDetailOpen, setIsDetailOpen] = useState(false);
   const [isLoading, setIsLoading] = useState(true);
   const [showFilters, setShowFilters] = useState(true);
+  const [currentPage, setCurrentPage] = useState(1);
+  const [totalPages, setTotalPages] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
+  const [perPage, setPerPage] = useState(10);
+  const [error, setError] = useState<string | null>(null);
+  const [locationId, setLocationId] = useState<string>("1");
 
   useEffect(() => {
     const isAuthenticated = localStorage.getItem("isAuthenticated");
@@ -274,87 +109,125 @@ const StockUpdate = () => {
       return;
     }
 
-    const selectedWarehouse = localStorage.getItem("selectedWarehouse");
-    if (!selectedWarehouse) {
+    const storedWarehouse = localStorage.getItem("selectedWarehouse");
+    if (!storedWarehouse) {
       navigate("/select-warehouse");
       return;
+    } else {
+      try {
+        const parsedWarehouse = JSON.parse(storedWarehouse);
+        if (parsedWarehouse && parsedWarehouse.id) {
+          setLocationId(parsedWarehouse.id);
+        }
+      } catch (error) {
+        console.error('Error parsing stored warehouse:', error);
+      }
     }
 
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-    }, 1000);
+    fetchStockData();
+  }, [navigate, currentPage, perPage, locationId]);
 
-    return () => clearTimeout(timer);
-  }, [navigate]);
+  const fetchStockData = async () => {
+    setIsLoading(true);
+    setError(null);
+
+    try {
+      const queryParams = new URLSearchParams({
+        page: currentPage.toString(),
+        perPage: perPage.toString(),
+      });
+
+      // Add search filters if set
+      if (searchTerm) {
+        queryParams.append('searchByProductName', searchTerm);
+        queryParams.append('searchByBarcode', searchTerm);
+        queryParams.append('searchByProductId', searchTerm);
+      }
+
+      // Add category filter if not "All Categories"
+      if (selectedCategory !== "All Categories") {
+        queryParams.append('searchByCategory', selectedCategory);
+      }
+
+      const response = await authenticatedFetch(
+        `https://webapiorg.easetrackwms.com/api/v1/StockUpdate?${queryParams.toString()}`,
+        {
+          headers: {
+            'x-location': locationId,
+          }
+        }
+      );
+
+      if (!response.ok) {
+        throw new Error(`Failed to fetch stock data: ${response.status}`);
+      }
+
+      const data: StockResponse = await response.json();
+      setStockItems(data.items);
+      setFilteredItems(data.items);
+      setTotalPages(data.totalPages);
+      setTotalCount(data.totalCount);
+      setPerPage(data.perPage);
+    } catch (error) {
+      console.error("Error fetching stock data:", error);
+      setError("Failed to load stock data. Please try again.");
+      toast({
+        title: "Error",
+        description: "Failed to load stock data. Please try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsLoading(false);
+    }
+  };
 
   useEffect(() => {
-    let filtered = stockItems;
+    let filtered = [...stockItems];
 
-    if (searchTerm) {
-      const term = searchTerm.toLowerCase();
-      filtered = filtered.filter(
-        (item) =>
-          item.itemCode.toLowerCase().includes(term) ||
-          item.itemName.toLowerCase().includes(term) ||
-          item.lot.toLowerCase().includes(term)
-      );
-    }
-
+    // Client-side filtering for additional filters not supported by the API
     if (selectedWarehouse !== "All Warehouses") {
-      filtered = filtered.filter(
-        (item) => item.warehouse === selectedWarehouse
-      );
+      // This would need to be implemented with actual warehouse data
+      // For now, it's just a placeholder
     }
 
     if (selectedZone !== "All Zones") {
-      filtered = filtered.filter((item) => item.zone === selectedZone);
+      // Zone filtering placeholder
     }
 
     if (selectedArea !== "All Areas") {
-      filtered = filtered.filter((item) => item.area === selectedArea);
-    }
-
-    if (selectedCategory !== "All Categories") {
-      filtered = filtered.filter((item) => item.category === selectedCategory);
+      // Area filtering placeholder
     }
 
     if (sortColumn) {
       filtered = [...filtered].sort((a, b) => {
-        const aValue = a[sortColumn as keyof typeof a];
-        const bValue = b[sortColumn as keyof typeof b];
+        const aValue = a[sortColumn as keyof StockItem];
+        const bValue = b[sortColumn as keyof StockItem];
 
         if (typeof aValue === "string" && typeof bValue === "string") {
           return sortDirection === "asc"
             ? aValue.localeCompare(bValue)
             : bValue.localeCompare(aValue);
-        } else {
+        } else if (typeof aValue === "number" && typeof bValue === "number") {
           return sortDirection === "asc"
-            ? (aValue as number) - (bValue as number)
-            : (bValue as number) - (aValue as number);
+            ? aValue - bValue
+            : bValue - aValue;
         }
+        return 0;
       });
     }
 
     setFilteredItems(filtered);
-  }, [
-    searchTerm,
-    selectedWarehouse,
-    selectedZone,
-    selectedArea,
-    selectedCategory,
-    sortColumn,
-    sortDirection,
-  ]);
+  }, [stockItems, selectedWarehouse, selectedZone, selectedArea, sortColumn, sortDirection]);
 
   const handleSelectAll = () => {
     if (selectedItems.length === filteredItems.length) {
       setSelectedItems([]);
     } else {
-      setSelectedItems(filteredItems.map((item) => item.id));
+      setSelectedItems(filteredItems.map((item) => item.productId));
     }
   };
 
-  const handleSelectItem = (id: number) => {
+  const handleSelectItem = (id: string) => {
     if (selectedItems.includes(id)) {
       setSelectedItems(selectedItems.filter((itemId) => itemId !== id));
     } else {
@@ -371,12 +244,14 @@ const StockUpdate = () => {
     }
   };
 
-  const handleViewDetail = (item: (typeof stockItems)[0]) => {
+  const handleViewDetail = (item: StockItem) => {
     setSelectedItem(item);
     setIsDetailOpen(true);
   };
 
-  const handleSearch = () => {};
+  const handleSearch = () => {
+    fetchStockData();
+  };
 
   const handleClear = () => {
     setSearchTerm("");
@@ -387,17 +262,30 @@ const StockUpdate = () => {
     setSortColumn(null);
     setSortDirection("asc");
     setSelectedItems([]);
+    fetchStockData();
   };
 
   const handleExport = () => {
     toast({
       title: "Export Started",
-      description: "Your shipment plans are being exported to Excel.",
+      description: "Your stock data is being exported to Excel.",
     });
   };
 
   const toggleFilters = () => {
     setShowFilters(!showFilters);
+  };
+
+  const handleNextPage = () => {
+    if (currentPage < totalPages) {
+      setCurrentPage(currentPage + 1);
+    }
+  };
+
+  const handlePreviousPage = () => {
+    if (currentPage > 1) {
+      setCurrentPage(currentPage - 1);
+    }
   };
 
   const renderSortIndicator = (column: string) => {
@@ -430,6 +318,15 @@ const StockUpdate = () => {
     return (
       <div className="flex h-screen items-center justify-center">
         <Loading text="Loading stock update..." />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex h-screen flex-col items-center justify-center">
+        <div className="text-red-500 mb-4">{error}</div>
+        <Button onClick={fetchStockData}>Try Again</Button>
       </div>
     );
   }
@@ -470,7 +367,7 @@ const StockUpdate = () => {
                   <div className="flex w-full items-center space-x-2">
                     <Input
                       type="text"
-                      placeholder="Search by item code, name, or lot"
+                      placeholder="Search by product name, barcode, or ID"
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       className="w-full"
@@ -596,102 +493,75 @@ const StockUpdate = () => {
                     <TableHead className="w-16">Image</TableHead>
                     <TableHead
                       className="cursor-pointer"
-                      onClick={() => handleSort("itemCode")}
+                      onClick={() => handleSort("productId")}
                     >
                       <div className="flex items-center">
-                        Item Code
-                        {renderSortIndicator("itemCode")}
+                        Product ID
+                        {renderSortIndicator("productId")}
                       </div>
                     </TableHead>
                     <TableHead
                       className="cursor-pointer"
-                      onClick={() => handleSort("itemName")}
+                      onClick={() => handleSort("barcode")}
                     >
                       <div className="flex items-center">
-                        Item Name
-                        {renderSortIndicator("itemName")}
+                        Barcode
+                        {renderSortIndicator("barcode")}
                       </div>
                     </TableHead>
                     <TableHead
                       className="cursor-pointer"
-                      onClick={() => handleSort("category")}
+                      onClick={() => handleSort("productName")}
+                    >
+                      <div className="flex items-center">
+                        Product Name
+                        {renderSortIndicator("productName")}
+                      </div>
+                    </TableHead>
+                    <TableHead
+                      className="cursor-pointer"
+                      onClick={() => handleSort("categoryName")}
                     >
                       <div className="flex items-center">
                         Category
-                        {renderSortIndicator("category")}
+                        {renderSortIndicator("categoryName")}
                       </div>
                     </TableHead>
                     <TableHead
                       className="cursor-pointer"
-                      onClick={() => handleSort("lot")}
+                      onClick={() => handleSort("typeName")}
                     >
                       <div className="flex items-center">
-                        Lot
-                        {renderSortIndicator("lot")}
+                        Type
+                        {renderSortIndicator("typeName")}
                       </div>
                     </TableHead>
                     <TableHead
                       className="cursor-pointer text-right"
-                      onClick={() => handleSort("lotQty")}
+                      onClick={() => handleSort("qty")}
                     >
                       <div className="flex items-center justify-end">
-                        Lot Qty
-                        {renderSortIndicator("lotQty")}
+                        Quantity
+                        {renderSortIndicator("qty")}
+                      </div>
+                    </TableHead>
+                    <TableHead>Unit</TableHead>
+                    <TableHead
+                      className="cursor-pointer text-right"
+                      onClick={() => handleSort("tags")}
+                    >
+                      <div className="flex items-center justify-end">
+                        Tags
+                        {renderSortIndicator("tags")}
                       </div>
                     </TableHead>
                     <TableHead
                       className="cursor-pointer text-right"
-                      onClick={() => handleSort("totalQty")}
+                      onClick={() => handleSort("nonTags")}
                     >
                       <div className="flex items-center justify-end">
-                        Total Qty
-                        {renderSortIndicator("totalQty")}
-                      </div>
-                    </TableHead>
-                    <TableHead>UoM</TableHead>
-                    <TableHead
-                      className="cursor-pointer"
-                      onClick={() => handleSort("warehouse")}
-                    >
-                      <div className="flex items-center">
-                        Warehouse
-                        {renderSortIndicator("warehouse")}
-                      </div>
-                    </TableHead>
-                    <TableHead
-                      className="cursor-pointer"
-                      onClick={() => handleSort("zone")}
-                    >
-                      <div className="flex items-center">
-                        Zone
-                        {renderSortIndicator("zone")}
-                      </div>
-                    </TableHead>
-                    <TableHead
-                      className="cursor-pointer"
-                      onClick={() => handleSort("area")}
-                    >
-                      <div className="flex items-center">
-                        Area
-                        {renderSortIndicator("area")}
-                      </div>
-                    </TableHead>
-                    <TableHead
-                      className="cursor-pointer text-right"
-                      onClick={() => handleSort("shelfLife")}
-                    >
-                      <div className="flex items-center justify-end">
-                        Shelf Life (days)
-                        {renderSortIndicator("shelfLife")}
-                      </div>
-                    </TableHead>
-                    <TableHead
-                      className="cursor-pointer text-right"
-                      onClick={() => handleSort("expiryDays")}
-                    >
-                      <div className="flex items-center justify-end">
-                        Expiry Days
-                        {renderSortIndicator("expiryDays")}
+                        Non-Tags
+                        {renderSortIndicator("nonTags")}
                       </div>
                     </TableHead>
                     <TableHead>Action</TableHead>
@@ -700,60 +570,46 @@ const StockUpdate = () => {
                 <TableBody>
                   {filteredItems.length === 0 ? (
                     <TableRow>
-                      <TableCell colSpan={15} className="h-24 text-center">
+                      <TableCell colSpan={12} className="h-24 text-center">
                         No items found.
                       </TableCell>
                     </TableRow>
                   ) : (
                     filteredItems.map((item, index) => (
-                      <TableRow key={item.id}>
+                      <TableRow key={`${item.productId}-${item.barcode}-${item.unitId}`}>
                         <TableCell>
                           <Checkbox
-                            checked={selectedItems.includes(item.id)}
-                            onCheckedChange={() => handleSelectItem(item.id)}
+                            checked={selectedItems.includes(item.productId)}
+                            onCheckedChange={() => handleSelectItem(item.productId)}
                           />
                         </TableCell>
                         <TableCell>{index + 1}</TableCell>
                         <TableCell>
                           <img
-                            src={item.image}
-                            alt={item.itemName}
+                            src={item.image || "/placeholder.svg"}
+                            alt={item.productName}
                             className="h-12 w-12 rounded-md object-cover"
+                            onError={(e) => { (e.target as HTMLImageElement).src = "/placeholder.svg" }}
                           />
                         </TableCell>
-                        <TableCell>{item.itemCode}</TableCell>
-                        <TableCell>{item.itemName}</TableCell>
+                        <TableCell>{item.productId}</TableCell>
+                        <TableCell>{item.barcode}</TableCell>
+                        <TableCell>{item.productName}</TableCell>
                         <TableCell>
                           <Badge variant="outline" className="bg-gray-100">
-                            {item.category}
+                            {item.categoryName}
                           </Badge>
                         </TableCell>
-                        <TableCell>{item.lot}</TableCell>
+                        <TableCell>{item.typeName}</TableCell>
                         <TableCell className="text-right">
-                          {item.lotQty.toLocaleString()}
+                          {item.qty.toLocaleString()}
+                        </TableCell>
+                        <TableCell>{item.unitName}</TableCell>
+                        <TableCell className="text-right">
+                          {item.tags.toLocaleString()}
                         </TableCell>
                         <TableCell className="text-right">
-                          {item.totalQty.toLocaleString()}
-                        </TableCell>
-                        <TableCell>{item.uom}</TableCell>
-                        <TableCell>{item.warehouse}</TableCell>
-                        <TableCell>{item.zone}</TableCell>
-                        <TableCell>{item.area}</TableCell>
-                        <TableCell className="text-right">
-                          {item.shelfLife}
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <span
-                            className={
-                              item.expiryDays < 30
-                                ? "text-red-600"
-                                : item.expiryDays < 90
-                                ? "text-amber-600"
-                                : "text-green-600"
-                            }
-                          >
-                            {item.expiryDays}
-                          </span>
+                          {item.nonTags.toLocaleString()}
                         </TableCell>
                         <TableCell>
                           <Button
@@ -770,6 +626,34 @@ const StockUpdate = () => {
                 </TableBody>
               </Table>
             </div>
+
+            {/* Pagination */}
+            <div className="mt-4 flex items-center justify-between">
+              <div className="text-sm text-muted-foreground">
+                Showing {filteredItems.length} of {totalCount} items
+              </div>
+              <div className="flex items-center space-x-2">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={handlePreviousPage}
+                  disabled={currentPage === 1}
+                >
+                  Previous
+                </Button>
+                <span className="text-sm">
+                  Page {currentPage} of {totalPages}
+                </span>
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={handleNextPage}
+                  disabled={currentPage === totalPages}
+                >
+                  Next
+                </Button>
+              </div>
+            </div>
           </CardContent>
         </Card>
       </motion.div>
@@ -777,26 +661,27 @@ const StockUpdate = () => {
       <Dialog open={isDetailOpen} onOpenChange={setIsDetailOpen}>
         <DialogContent className="sm:max-w-3xl">
           <DialogHeader>
-            <DialogTitle>Item Details</DialogTitle>
+            <DialogTitle>Product Details</DialogTitle>
           </DialogHeader>
 
           {selectedItem && (
             <div className="grid gap-6 md:grid-cols-2">
               <div className="flex items-center justify-center">
                 <img
-                  src={selectedItem.image}
-                  alt={selectedItem.itemName}
+                  src={selectedItem.image || "/placeholder.svg"}
+                  alt={selectedItem.productName}
                   className="h-48 w-48 rounded-lg object-cover"
+                  onError={(e) => { (e.target as HTMLImageElement).src = "/placeholder.svg" }}
                 />
               </div>
 
               <div className="space-y-4">
                 <div>
                   <h3 className="text-xl font-bold text-gray-900">
-                    {selectedItem.itemName}
+                    {selectedItem.productName}
                   </h3>
                   <p className="text-sm text-gray-500">
-                    {selectedItem.itemCode}
+                    {selectedItem.productId}
                   </p>
                 </div>
 
@@ -804,83 +689,73 @@ const StockUpdate = () => {
                   <div className="space-y-1">
                     <p className="text-xs text-gray-500">Category</p>
                     <p className="text-sm font-medium">
-                      {selectedItem.category}
+                      {selectedItem.categoryName}
                     </p>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-xs text-gray-500">Lot</p>
-                    <p className="text-sm font-medium">{selectedItem.lot}</p>
+                    <p className="text-xs text-gray-500">Type</p>
+                    <p className="text-sm font-medium">{selectedItem.typeName}</p>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-xs text-gray-500">Lot Quantity</p>
-                    <p className="text-sm font-medium">
-                      {selectedItem.lotQty} {selectedItem.uom}
-                    </p>
+                    <p className="text-xs text-gray-500">Barcode</p>
+                    <p className="text-sm font-medium">{selectedItem.barcode}</p>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-xs text-gray-500">Total Quantity</p>
+                    <p className="text-xs text-gray-500">Quantity</p>
                     <p className="text-sm font-medium">
-                      {selectedItem.totalQty} {selectedItem.uom}
+                      {selectedItem.qty} {selectedItem.unitName}
                     </p>
                   </div>
                 </div>
 
                 <div className="space-y-2">
                   <div className="flex justify-between">
-                    <p className="text-xs text-gray-500">Warehouse</p>
+                    <p className="text-xs text-gray-500">Brand</p>
                     <p className="text-sm font-medium">
-                      {selectedItem.warehouse}
+                      {selectedItem.brand || "N/A"}
                     </p>
                   </div>
                   <div className="flex justify-between">
-                    <p className="text-xs text-gray-500">Zone</p>
-                    <p className="text-sm font-medium">{selectedItem.zone}</p>
+                    <p className="text-xs text-gray-500">Style No</p>
+                    <p className="text-sm font-medium">{selectedItem.styleNo || "N/A"}</p>
                   </div>
                   <div className="flex justify-between">
-                    <p className="text-xs text-gray-500">Area</p>
-                    <p className="text-sm font-medium">{selectedItem.area}</p>
+                    <p className="text-xs text-gray-500">Color</p>
+                    <p className="text-sm font-medium">{selectedItem.color || "N/A"}</p>
+                  </div>
+                  <div className="flex justify-between">
+                    <p className="text-xs text-gray-500">Size</p>
+                    <p className="text-sm font-medium">{selectedItem.size || "N/A"}</p>
                   </div>
                 </div>
 
                 <div className="space-y-2">
                   <div className="flex justify-between">
-                    <p className="text-xs text-gray-500">Shelf Life</p>
-                    <p className="text-sm font-medium">
-                      {selectedItem.shelfLife} days
-                    </p>
+                    <p className="text-xs text-gray-500">Tags</p>
+                    <p className="text-sm font-medium">{selectedItem.tags}</p>
                   </div>
                   <div className="flex justify-between">
-                    <p className="text-xs text-gray-500">Expiry In</p>
-                    <p
-                      className={`text-sm font-medium ${
-                        selectedItem.expiryDays < 30
-                          ? "text-red-600"
-                          : selectedItem.expiryDays < 90
-                          ? "text-amber-600"
-                          : "text-green-600"
-                      }`}
-                    >
-                      {selectedItem.expiryDays} days
-                    </p>
+                    <p className="text-xs text-gray-500">Non-Tags</p>
+                    <p className="text-sm font-medium">{selectedItem.nonTags}</p>
                   </div>
                 </div>
               </div>
 
               <div className="md:col-span-2">
                 <div className="space-y-2 rounded-lg bg-gray-50 p-4">
-                  <h4 className="font-medium text-gray-900">Stock History</h4>
+                  <h4 className="font-medium text-gray-900">Stock Information</h4>
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">
-                      <span>Last Received</span>
-                      <span>May 10, 2023 (50 {selectedItem.uom})</span>
+                      <span>Category</span>
+                      <span>{selectedItem.categoryName}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>Last Shipped</span>
-                      <span>May 15, 2023 (30 {selectedItem.uom})</span>
+                      <span>Type</span>
+                      <span>{selectedItem.typeName}</span>
                     </div>
                     <div className="flex justify-between">
-                      <span>Last Count</span>
-                      <span>May 1, 2023</span>
+                      <span>Sub Type</span>
+                      <span>{selectedItem.subTypeName}</span>
                     </div>
                   </div>
                 </div>
