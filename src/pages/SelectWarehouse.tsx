@@ -1,193 +1,149 @@
 
-import React, { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
-import { useNavigate } from 'react-router-dom';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Label } from '@/components/ui/label';
-import { useToast } from '@/hooks/use-toast';
-
-// Mock warehouse data
-const warehouses = [
-  { id: 1, name: 'Bangkok Central', location: 'Bangkok, Thailand', items: 5843 },
-  { id: 2, name: 'Chiang Mai Distribution', location: 'Chiang Mai, Thailand', items: 3267 },
-  { id: 3, name: 'Phuket Storage', location: 'Phuket, Thailand', items: 2189 },
-  { id: 4, name: 'Pattaya Facility', location: 'Pattaya, Thailand', items: 1876 },
-];
+import React, { useEffect, useState } from "react";
+import { motion } from "framer-motion";
+import { useNavigate } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { Skeleton } from "@/components/ui/skeleton";
+import { useToast } from "@/hooks/use-toast";
+import { Warehouse } from "lucide-react";
+import { Location, fetchLocations, logout } from "@/utils/auth";
 
 const SelectWarehouse = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
-  const [selectedWarehouse, setSelectedWarehouse] = useState<string>('');
-  const [loading, setLoading] = useState(false);
-  
+  const [loading, setLoading] = useState(true);
+  const [locations, setLocations] = useState<Location[]>([]);
+  const [error, setError] = useState<string | null>(null);
+
   useEffect(() => {
-    // Check if user is authenticated
-    const isAuthenticated = localStorage.getItem('isAuthenticated');
-    if (!isAuthenticated) {
-      navigate('/login');
-    }
-  }, [navigate]);
+    const loadLocations = async () => {
+      try {
+        setLoading(true);
+        const fetchedLocations = await fetchLocations();
+        // Filter out the "All" option if needed
+        const filteredLocations = fetchedLocations.filter(loc => loc.id !== "");
+        setLocations(filteredLocations);
+        setError(null);
+      } catch (err) {
+        console.error("Error loading locations:", err);
+        setError("Failed to load warehouse locations. Please try again.");
+        toast({
+          title: "Error",
+          description: "Failed to load warehouse locations",
+          variant: "destructive",
+        });
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  const handleWarehouseSelection = () => {
-    if (!selectedWarehouse) {
-      toast({
-        title: "No warehouse selected",
-        description: "Please select a warehouse to continue.",
-        variant: "destructive",
-      });
-      return;
-    }
+    loadLocations();
+  }, [toast]);
 
-    setLoading(true);
+  const handleSelectWarehouse = (location: Location) => {
+    // Store the selected warehouse in localStorage
+    localStorage.setItem('selectedWarehouse', JSON.stringify(location));
+    
+    toast({
+      title: "Warehouse Selected",
+      description: `You have selected ${location.name}`,
+    });
+    
+    // Navigate to dashboard
+    navigate("/dashboard");
+  };
 
-    // Simulate API call
-    setTimeout(() => {
-      setLoading(false);
-      
-      // Store selected warehouse
-      localStorage.setItem('selectedWarehouse', selectedWarehouse);
-      
-      toast({
-        title: "Warehouse selected",
-        description: `You've selected ${warehouses.find(w => w.id.toString() === selectedWarehouse)?.name}.`,
-      });
-      
-      navigate('/dashboard');
-    }, 800);
+  const handleLogout = () => {
+    logout();
+    navigate("/login");
   };
 
   return (
-    <div className="flex min-h-screen flex-col bg-gradient-to-br from-gray-50 to-gray-100 px-4 py-12">
+    <div className="flex min-h-screen items-center justify-center bg-gradient-to-br from-gray-50 to-gray-100 p-4">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="container mx-auto max-w-4xl"
+        className="w-full max-w-4xl"
       >
-        <div className="mb-10 text-center">
-          <motion.h1 
-            className="text-3xl font-bold text-gray-900"
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.2, duration: 0.5 }}
-          >
-            Select Warehouse
-          </motion.h1>
-          <motion.p
-            className="mt-2 text-gray-600"
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 0.3, duration: 0.5 }}
-          >
-            Choose your warehouse location to continue
-          </motion.p>
+        <div className="mb-8 text-center">
+          <h1 className="text-3xl font-bold">Select Warehouse</h1>
+          <p className="mt-2 text-gray-600">
+            Choose the warehouse you want to work with
+          </p>
         </div>
 
-        <motion.div
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ delay: 0.4, duration: 0.5 }}
-          className="w-full"
-        >
-          <RadioGroup
-            value={selectedWarehouse}
-            onValueChange={setSelectedWarehouse}
-            className="grid gap-4 md:grid-cols-2"
-          >
-            {warehouses.map((warehouse, index) => (
-              <motion.div
-                key={warehouse.id}
-                initial={{ opacity: 0, x: -20 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.5 + index * 0.1, duration: 0.5 }}
-              >
-                <Label
-                  htmlFor={`warehouse-${warehouse.id}`}
-                  className="cursor-pointer"
-                >
-                  <Card className={`overflow-hidden transition-all duration-200 ${
-                    selectedWarehouse === warehouse.id.toString() 
-                      ? 'border-primary-300 bg-primary-50 shadow-md' 
-                      : 'hover:border-gray-300 hover:shadow-sm'
-                  }`}>
-                    <CardContent className="p-0">
-                      <div className="flex items-start space-x-4 p-6">
-                        <RadioGroupItem
-                          value={warehouse.id.toString()}
-                          id={`warehouse-${warehouse.id}`}
-                          className="mt-1"
-                        />
-                        <div>
-                          <div className="mb-1 font-medium text-gray-900">
-                            {warehouse.name}
-                          </div>
-                          <div className="mb-2 text-sm text-gray-500">
-                            {warehouse.location}
-                          </div>
-                          <div className="text-xs font-medium text-primary">
-                            {warehouse.items} items in inventory
-                          </div>
-                        </div>
-                      </div>
-                      <div
-                        className={`h-1 w-full ${
-                          selectedWarehouse === warehouse.id.toString()
-                            ? 'bg-primary'
-                            : 'bg-gray-100'
-                        }`}
-                      ></div>
-                    </CardContent>
-                  </Card>
-                </Label>
-              </motion.div>
-            ))}
-          </RadioGroup>
-
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ delay: 0.9, duration: 0.5 }}
-            className="mt-8 flex justify-center"
-          >
-            <Button
-              onClick={handleWarehouseSelection}
-              className="bg-primary px-8 py-2 hover:bg-primary-600"
-              disabled={loading}
-              size="lg"
+        {error && (
+          <div className="mb-6 rounded-md bg-red-50 p-4 text-red-800">
+            <p>{error}</p>
+            <Button 
+              variant="outline" 
+              size="sm" 
+              className="mt-2"
+              onClick={() => window.location.reload()}
             >
-              {loading ? (
-                <div className="flex items-center space-x-2">
-                  <svg className="h-5 w-5 animate-spin text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
-                  </svg>
-                  <span>Loading...</span>
-                </div>
-              ) : (
-                'Continue'
-              )}
+              Retry
             </Button>
-          </motion.div>
+          </div>
+        )}
 
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            transition={{ delay: 1, duration: 0.5 }}
-            className="mt-8 text-center"
-          >
-            <button
-              onClick={() => {
-                localStorage.removeItem('isAuthenticated');
-                navigate('/login');
-              }}
-              className="text-sm text-gray-500 hover:text-primary"
-            >
-              Sign out and select different account
-            </button>
-          </motion.div>
-        </motion.div>
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 md:grid-cols-3">
+          {loading ? (
+            // Skeleton loaders
+            Array.from({ length: 9 }).map((_, index) => (
+              <Card key={index} className="overflow-hidden">
+                <CardContent className="p-0">
+                  <div className="p-6">
+                    <Skeleton className="mb-2 h-6 w-3/4" />
+                    <Skeleton className="h-4 w-1/2" />
+                  </div>
+                  <div className="bg-gray-50 p-4">
+                    <Skeleton className="h-9 w-full" />
+                  </div>
+                </CardContent>
+              </Card>
+            ))
+          ) : (
+            // Actual warehouse cards
+            locations.map((location) => (
+              <Card
+                key={location.id}
+                className="overflow-hidden transition-all hover:shadow-md"
+              >
+                <CardContent className="p-0">
+                  <div className="p-6">
+                    <div className="mb-4 flex items-center">
+                      <div className="mr-3 rounded-full bg-primary/10 p-2">
+                        <Warehouse className="h-5 w-5 text-primary" />
+                      </div>
+                      <h3 className="font-medium">
+                        {location.name}
+                      </h3>
+                    </div>
+                    <p className="text-sm text-gray-500">
+                      ID: {location.id}
+                    </p>
+                  </div>
+                  <div className="bg-gray-50 p-4">
+                    <Button
+                      className="w-full"
+                      onClick={() => handleSelectWarehouse(location)}
+                    >
+                      Select
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            ))
+          )}
+        </div>
+
+        <div className="mt-8 text-center">
+          <Button variant="outline" onClick={handleLogout}>
+            Log Out
+          </Button>
+        </div>
       </motion.div>
     </div>
   );

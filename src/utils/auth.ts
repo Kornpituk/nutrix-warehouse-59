@@ -16,6 +16,12 @@ interface AuthResponse {
   expires_at: string;
 }
 
+export interface Location {
+  id: string;
+  name: string;
+  isDefault: boolean | null;
+}
+
 /**
  * Get current authentication tokens from localStorage
  */
@@ -120,6 +126,31 @@ export const authenticatedFetch = async (url: string, options: RequestInit = {})
     ...options,
     headers
   });
+};
+
+/**
+ * Fetch all locations from the API
+ */
+export const fetchLocations = async (): Promise<Location[]> => {
+  try {
+    const response = await authenticatedFetch('https://webapiorg.easetrackwms.com/api/Auth/GetLocation/all', {
+      method: 'GET',
+      headers: {
+        'accept': '*/*',
+        'x-location': '1'
+      }
+    });
+
+    if (!response.ok) {
+      throw new Error('Failed to fetch locations');
+    }
+
+    const locations: Location[] = await response.json();
+    return locations;
+  } catch (error) {
+    console.error('Error fetching locations:', error);
+    throw error;
+  }
 };
 
 /**
