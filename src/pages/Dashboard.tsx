@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
@@ -8,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { Loading } from "@/components/ui/custom/loading";
 import { fetchProductSummary, fetchProductExpireSummary, fetchStockMaxMinSummary } from '@/utils/dashboardApi';
+import { NotificationItem } from '@/types/dashboard';
 
 // Dashboard components
 import DashboardHeader from '@/components/dashboard/DashboardHeader';
@@ -19,7 +19,7 @@ import AlertsTab from '@/components/dashboard/tabs/AlertsTab';
 import MovementTab from '@/components/dashboard/tabs/MovementTab';
 
 // Mock data for notifications
-const notificationsData = [
+const notificationsData: NotificationItem[] = [
   { id: 1, title: 'Low Stock Alert', message: 'Premium Dog Food is below threshold', time: '30 minutes ago', read: false, type: 'warning' },
   { id: 2, title: 'Expiring Products', message: 'Organic Cat Treats expire in 5 days', time: '1 hour ago', read: false, type: 'danger' },
   { id: 3, title: 'Shipment Completed', message: 'Order #12456 has been delivered', time: '3 hours ago', read: true, type: 'success' },

@@ -1,13 +1,9 @@
 
 import React from 'react';
 import { motion } from 'framer-motion';
-import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
-import { ScatterChart, Scatter, XAxis, YAxis, ZAxis, CartesianGrid, Tooltip, Legend } from 'recharts';
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Badge } from "@/components/ui/badge";
-import { MapPin, MoveHorizontal, BarChart2, TrendingUp, Truck } from 'lucide-react';
-import DashboardSummaryCard from '../DashboardSummaryCard';
-import ChartCard from '../ChartCard';
+import WarehouseMovementChart from '../movement/WarehouseMovementChart';
+import InventoryMovementTable from '../movement/InventoryMovementTable';
+import MovementSummaryCards from '../movement/MovementSummaryCards';
 
 const containerVariants = {
   hidden: { opacity: 0 },
@@ -17,11 +13,6 @@ const containerVariants = {
       staggerChildren: 0.1
     }
   }
-};
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: { opacity: 1, y: 0 }
 };
 
 const warehouseMovementData = [
@@ -44,109 +35,9 @@ const inventoryMovementData = [
 const MovementTab = () => {
   return (
     <motion.div variants={containerVariants} className="grid gap-6">
-      <motion.div variants={itemVariants}>
-        <ChartCard title="Warehouse Item Movement">
-          <ScatterChart
-            margin={{ top: 20, right: 20, bottom: 20, left: 20 }}
-          >
-            <CartesianGrid />
-            <XAxis type="number" dataKey="x" name="Warehouse X-Coordinate" unit="m" />
-            <YAxis type="number" dataKey="y" name="Warehouse Y-Coordinate" unit="m" />
-            <ZAxis type="number" dataKey="z" range={[100, 500]} name="Volume" unit="units" />
-            <Tooltip cursor={{ strokeDasharray: '3 3' }} formatter={(value, name, props) => {
-              if (name === 'Warehouse X-Coordinate' || name === 'Warehouse Y-Coordinate') {
-                return [`${value} m`, name];
-              }
-              if (name === 'Volume') {
-                return [`${value} units`, name];
-              }
-              return [value, name];
-            }} />
-            <Legend />
-            <Scatter name="Products" data={warehouseMovementData} fill="#AB0006" />
-          </ScatterChart>
-        </ChartCard>
-      </motion.div>
-
-      <motion.div variants={itemVariants}>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between">
-            <CardTitle>Recent Inventory Movements</CardTitle>
-            <div className="flex items-center space-x-2">
-              <MapPin className="h-4 w-4 text-gray-500" />
-              <span className="text-sm text-gray-500">Live Updates</span>
-            </div>
-          </CardHeader>
-          <CardContent>
-            <div className="rounded-md border">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Product</TableHead>
-                    <TableHead>From</TableHead>
-                    <TableHead>To</TableHead>
-                    <TableHead className="text-right">Quantity</TableHead>
-                    <TableHead>Time</TableHead>
-                    <TableHead>Status</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {inventoryMovementData.map((movement) => (
-                    <TableRow key={movement.id}>
-                      <TableCell className="font-medium">{movement.product}</TableCell>
-                      <TableCell>{movement.from}</TableCell>
-                      <TableCell>{movement.to}</TableCell>
-                      <TableCell className="text-right">{movement.quantity}</TableCell>
-                      <TableCell>{movement.time}</TableCell>
-                      <TableCell>
-                        <Badge variant="outline" className={
-                          movement.status === 'Completed' ? 'bg-green-100 text-green-800' :
-                          movement.status === 'In Progress' ? 'bg-blue-100 text-blue-800' :
-                          movement.status === 'Pending' ? 'bg-amber-100 text-amber-800' :
-                          'bg-gray-100 text-gray-800'
-                        }>
-                          {movement.status}
-                        </Badge>
-                      </TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-            </div>
-          </CardContent>
-        </Card>
-      </motion.div>
-
-      <motion.div variants={containerVariants} className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
-        <DashboardSummaryCard
-          title="Today's Movements"
-          value={187}
-          icon={<MoveHorizontal size={20} />}
-          iconBgColor="bg-primary-50"
-          iconColor="text-primary"
-        />
-        <DashboardSummaryCard
-          title="Avg. Processing Time"
-          value="14.3 min"
-          icon={<BarChart2 size={20} />}
-          iconBgColor="bg-amber-50"
-          iconColor="text-amber-600"
-        />
-        <DashboardSummaryCard
-          title="Efficiency Rate"
-          value="94.7%"
-          icon={<TrendingUp size={20} />}
-          iconBgColor="bg-green-50"
-          iconColor="text-green-600"
-        />
-        <DashboardSummaryCard
-          title="Active Transporters"
-          value={12}
-          icon={<Truck size={20} />}
-          iconBgColor="bg-blue-50"
-          iconColor="text-blue-600"
-        />
-      </motion.div>
+      <WarehouseMovementChart data={warehouseMovementData} />
+      <InventoryMovementTable movements={inventoryMovementData} />
+      <MovementSummaryCards />
     </motion.div>
   );
 };
