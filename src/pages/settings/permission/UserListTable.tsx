@@ -1,10 +1,25 @@
 
 import React from 'react';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
-import { Button } from '@/components/ui/button';
-import { Edit, Trash2, CheckCircle, XCircle } from 'lucide-react';
+import { Eye, MoreHorizontal, Edit, Trash2 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { User } from './types';
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow
+} from "@/components/ui/table";
+import { Checkbox } from '@/components/ui/checkbox';
+import { Badge } from '@/components/ui/badge';
+import { 
+  DropdownMenu, 
+  DropdownMenuContent, 
+  DropdownMenuItem, 
+  DropdownMenuTrigger 
+} from '@/components/ui/dropdown-menu';
+import { Button } from '@/components/ui/button';
 
 interface UserListTableProps {
   users: User[];
@@ -21,79 +36,117 @@ const UserListTable: React.FC<UserListTableProps> = ({
 }) => {
   const { t } = useLanguage();
 
+  const renderStatusBadge = (isActive: boolean) => {
+    if (isActive) {
+      return (
+        <div className="px-3 py-1 text-xs font-medium rounded-full w-fit bg-green-100 text-green-800">
+          Active
+        </div>
+      );
+    } else {
+      return (
+        <div className="px-3 py-1 text-xs font-medium rounded-full w-fit bg-red-100 text-red-800">
+          Inactive
+        </div>
+      );
+    }
+  };
+
+  const getStatusClassName = (isActive: boolean) => {
+    if (isActive === null || isActive === undefined) {
+      return "bg-yellow-100 text-yellow-800";
+    }
+    return isActive 
+      ? "bg-green-100 text-green-800" 
+      : "bg-red-100 text-red-800";
+  };
+
+  const getStatusText = (isActive: boolean) => {
+    if (isActive === null || isActive === undefined) {
+      return "Suspended";
+    }
+    return isActive ? "Active" : "Inactive";
+  };
+
   return (
-    
-    <div className="rounded-md border overflow-x-auto">
-      <table className="w-full">
-        <thead>
-          <tr className="bg-muted/50">
-            <th className="p-3 text-left font-medium whitespace-nowrap">{t('permission.name')}</th>
-            <th className="p-3 text-left font-medium whitespace-nowrap">{t('permission.email')}</th>
-            <th className="p-3 text-left font-medium whitespace-nowrap">{t('permission.position')}</th>
-            <th className="p-3 text-left font-medium whitespace-nowrap">{t('permission.department')}</th>
-            <th className="p-3 text-left font-medium whitespace-nowrap">{t('permission.permissions')}</th>
-            <th className="p-3 text-left font-medium whitespace-nowrap">{t('permission.status')}</th>
-            <th className="p-3 text-right font-medium whitespace-nowrap">{t('common.actions')}</th>
-          </tr>
-        </thead>
-        <tbody className="divide-y">
+    <div className="rounded-md border">
+      <Table>
+        <TableHeader className="bg-muted/50">
+          <TableRow>
+            <TableHead className="w-12">
+              <Checkbox />
+            </TableHead>
+            <TableHead className="uppercase text-xs">Status</TableHead>
+            <TableHead className="uppercase text-xs">Full name</TableHead>
+            <TableHead className="uppercase text-xs">Username</TableHead>
+            <TableHead className="uppercase text-xs">Role</TableHead>
+            <TableHead className="uppercase text-xs">Department</TableHead>
+            <TableHead className="uppercase text-xs">Position</TableHead>
+            <TableHead className="uppercase text-xs text-right">Action</TableHead>
+          </TableRow>
+        </TableHeader>
+        <TableBody>
           {users.length === 0 ? (
-            <tr>
-              <td colSpan={7} className="p-3 text-center text-gray-500">
-                {t('common.noResults')}
-              </td>
-            </tr>
+            <TableRow>
+              <TableCell colSpan={8} className="text-center text-muted-foreground py-10">
+                No users found
+              </TableCell>
+            </TableRow>
           ) : (
             users.map((user) => (
-              <tr key={user.id}>
-                <td className="p-3 font-medium truncate max-w-[200px]">{user.name}</td>
-                <td className="p-3 truncate max-w-[200px]">{user.email}</td>
-                <td className="p-3 truncate max-w-[150px]">{user.position}</td>
-                <td className="p-3 truncate max-w-[150px]">{user.department}</td>
-                <td className="p-3">{user.permissions.length}</td>
-                <td className="p-3 whitespace-nowrap">
-                  {user.isActive ? (
-                    <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
-                      <CheckCircle className="mr-1 h-3 w-3" />
-                      {t('permission.active')}
-                    </span>
-                  ) : (
-                    <span className="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">
-                      <XCircle className="mr-1 h-3 w-3" />
-                      {t('permission.inactive')}
-                    </span>
-                  )}
-                </td>
-                <td className="p-4 text-right">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="outline" size="sm">
-                        {t('common.actions')}
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="bg-white">
-                      <DropdownMenuItem onClick={() => onViewUser(user)}>
-                        {t('common.viewDetails')}
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => onEditUser(user)}>
-                        <Edit className="mr-2 h-4 w-4" />
-                        {t('common.edit')}
-                      </DropdownMenuItem>
-                      <DropdownMenuItem 
-                        onClick={() => onDeleteUser(user)}
-                        className="text-red-600 focus:bg-red-50 focus:text-red-600"
-                      >
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        {t('common.delete')}
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </td>
-              </tr>
+              <TableRow key={user.id} className="border-b">
+                <TableCell>
+                  <Checkbox />
+                </TableCell>
+                <TableCell>
+                  <div className={`px-3 py-1 text-xs font-medium rounded-full w-fit ${getStatusClassName(user.isActive)}`}>
+                    {getStatusText(user.isActive)}
+                  </div>
+                </TableCell>
+                <TableCell className="flex items-center gap-2">
+                  <div className="w-8 h-8 rounded-full bg-gray-200 overflow-hidden flex items-center justify-center text-gray-500">
+                    {user.name.charAt(0)}
+                  </div>
+                  {user.name}
+                </TableCell>
+                <TableCell>{user.email.split('@')[0]}</TableCell>
+                <TableCell>
+                  {user.isAdmin ? 'Admin' : user.permissions.length > 5 ? 'Manager' : 'User'}
+                </TableCell>
+                <TableCell>{user.department}</TableCell>
+                <TableCell>{user.position}</TableCell>
+                <TableCell className="text-right">
+                  <div className="flex justify-end items-center">
+                    <Button variant="ghost" size="icon" onClick={() => onViewUser(user)}>
+                      <Eye className="h-4 w-4" />
+                    </Button>
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="icon">
+                          <MoreHorizontal className="h-4 w-4" />
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end" className="w-40 bg-white">
+                        <DropdownMenuItem onClick={() => onEditUser(user)} className="cursor-pointer">
+                          <Edit className="mr-2 h-4 w-4" />
+                          <span>Edit</span>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem 
+                          onClick={() => onDeleteUser(user)}
+                          className="text-red-600 focus:bg-red-50 focus:text-red-600 cursor-pointer"
+                        >
+                          <Trash2 className="mr-2 h-4 w-4" />
+                          <span>Delete</span>
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </div>
+                </TableCell>
+              </TableRow>
             ))
           )}
-        </tbody>
-      </table>
+        </TableBody>
+      </Table>
     </div>
   );
 };

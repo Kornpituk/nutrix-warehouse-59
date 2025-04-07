@@ -29,6 +29,11 @@ import TransactionModelSettings from "./pages/settings/TransactionModel";
 import LotModelSettings from "./pages/settings/LotModel";
 import PermissionSettings from "./pages/settings/Permission";
 
+// Permission subpages
+import UsersPage from "./pages/settings/permission/UsersPage";
+import RolesPage from "./pages/settings/permission/RolesPage";
+import PermissionsPage from "./pages/settings/permission/PermissionsPage";
+
 const queryClient = new QueryClient();
 
 const App = () => (
@@ -114,9 +119,26 @@ const App = () => (
                 <LotModelSettings />
               </ProtectedRoute>
             } />
-            <Route path="/settings/permission" element={
+            
+            {/* Permission Routes */}
+            <Route path="/settings/permission/*" element={
               <ProtectedRoute>
                 <PermissionSettings />
+              </ProtectedRoute>
+            } />
+            <Route path="/settings/permission/users" element={
+              <ProtectedRoute>
+                <UsersPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/settings/permission/roles" element={
+              <ProtectedRoute>
+                <RolesPage />
+              </ProtectedRoute>
+            } />
+            <Route path="/settings/permission/permissions" element={
+              <ProtectedRoute>
+                <PermissionsPage />
               </ProtectedRoute>
             } />
             
