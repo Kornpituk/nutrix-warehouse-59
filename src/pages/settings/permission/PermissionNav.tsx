@@ -16,17 +16,17 @@ const PermissionNav: React.FC<PermissionNavProps> = ({ className }) => {
   const navItems = [
     { 
       path: '/settings/permission/users', 
-      label: t('permission.users', 'Users'), 
+      label: t('permission.users'), 
       icon: <Users size={18} />
     },
     { 
       path: '/settings/permission/roles', 
-      label: t('permission.roles', 'Roles'), 
+      label: t('permission.roles'), 
       icon: <Shield size={18} />
     },
     { 
       path: '/settings/permission/permissions', 
-      label: t('permission.permissions', 'Permissions'), 
+      label: t('permission.permissions'), 
       icon: <Lock size={18} />
     },
   ];

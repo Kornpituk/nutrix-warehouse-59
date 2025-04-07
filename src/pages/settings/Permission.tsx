@@ -25,7 +25,7 @@ const PermissionSettings: React.FC = () => {
       <div className="mb-6">
         <h1 className="text-2xl font-bold tracking-tight">{t('settings.permission')}</h1>
         <p className="text-muted-foreground">
-          {t('settings.permissionDescription', 'Manage users, roles, and permissions for your organization')}
+          {t('settings.permissionDescription')}
         </p>
       </div>
       

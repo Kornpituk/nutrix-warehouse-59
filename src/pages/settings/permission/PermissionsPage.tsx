@@ -1,8 +1,8 @@
-
 import React, { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Textarea } from '@/components/ui/textarea';
 import { Plus, Search, Eye, MoreHorizontal, Edit, Copy, Trash2, ArrowLeft } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { useNavigate, Link } from 'react-router-dom';
@@ -231,7 +231,6 @@ export default function PermissionsPage() {
     // Reset search results
   };
 
-  // Rendering logic based on view mode
   if (isViewDetailsMode && selectedPermission) {
     return (
       <div className="container mx-auto py-6">
@@ -368,7 +367,7 @@ export default function PermissionsPage() {
           
           <div className="space-y-2">
             <label htmlFor="description" className="font-medium">Description</label>
-            <textarea 
+            <Textarea 
               id="description"
               className="w-full min-h-[150px] p-3 border rounded-md"
               value={newPermissionDescription}
@@ -524,10 +523,9 @@ export default function PermissionsPage() {
             </div>
             <div className="space-y-2">
               <label htmlFor="description" className="text-sm font-medium">Description</label>
-              <Input 
+              <Textarea 
                 id="description"
                 placeholder="Describe what this permission allows" 
-                as="textarea"
                 className="min-h-[100px] resize-none"
                 value={newPermissionDescription}
                 onChange={(e) => setNewPermissionDescription(e.target.value)}
