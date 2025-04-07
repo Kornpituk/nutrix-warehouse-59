@@ -1,8 +1,8 @@
+
 import React, { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Plus, Search, Eye, MoreHorizontal, Edit, Copy, Trash2, UserPlus } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { 
@@ -270,9 +270,10 @@ export default function RolesPage() {
             </div>
             <div className="space-y-2">
               <label htmlFor="description" className="text-sm font-medium">Description</label>
-              <Textarea 
+              <Input 
                 id="description"
                 placeholder="Describe the role's purpose" 
+                as="textarea"
                 className="min-h-[100px] resize-none"
                 value={newRoleDescription}
                 onChange={(e) => setNewRoleDescription(e.target.value)}

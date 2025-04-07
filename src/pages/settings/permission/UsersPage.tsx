@@ -121,7 +121,7 @@ export default function UsersPage() {
   const handleRoleFilter = (role: string) => {
     setSelectedRole(role);
     
-    if (!role) {
+    if (!role || role === 'all') {
       setFilteredUsers(users);
       return;
     }
@@ -138,8 +138,6 @@ export default function UsersPage() {
       filtered = users.filter(user => 
         !user.isAdmin && user.permissions.length < 5
       );
-    } else if (role === 'all') {
-      filtered = users;
     }
     
     setFilteredUsers(filtered);
@@ -253,7 +251,7 @@ export default function UsersPage() {
               <SelectValue placeholder="Select Role" />
             </SelectTrigger>
             <SelectContent className="bg-white">
-              <SelectItem value="all">All Roles</SelectItem>
+              <SelectItem value="">All Roles</SelectItem>
               <SelectItem value="Admin">Admin</SelectItem>
               <SelectItem value="Manager">Manager</SelectItem>
               <SelectItem value="User">User</SelectItem>
