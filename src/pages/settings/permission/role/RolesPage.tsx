@@ -29,9 +29,9 @@ import {
   DropdownMenuItem, 
   DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu';
-import DeleteConfirmationDialog from './DeleteConfirmationDialog';
-import { Module } from './types';
-import { mockModules } from './mockData';
+import DeleteConfirmationDialog from '../DeleteConfirmationDialog';
+import { Module } from '../types';
+import { mockModules } from '../mockData';
 
 interface Role {
   id: string;

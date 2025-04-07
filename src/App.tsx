@@ -30,9 +30,13 @@ import LotModelSettings from "./pages/settings/LotModel";
 import PermissionSettings from "./pages/settings/Permission";
 
 // Permission subpages
-import UsersPage from "./pages/settings/permission/UsersPage";
-import RolesPage from "./pages/settings/permission/RolesPage";
-import PermissionsPage from "./pages/settings/permission/PermissionsPage";
+import UsersPage from "./pages/settings/permission/user/UsersPage";
+import RolesPage from "./pages/settings/permission/role/RolesPage";
+import PermissionsPage from "./pages/settings/permission/permission/PermissionsPage";
+
+import UserPermission from "./pages/settings/permission/user/UsersPage";
+import RolePermission from "./pages/settings/permission/permission/PermissionsPage";
+import PermissionPermission from "./pages/settings/permission/role/RolesPage";
 
 const queryClient = new QueryClient();
 

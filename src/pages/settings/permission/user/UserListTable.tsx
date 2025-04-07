@@ -2,7 +2,7 @@
 import React from 'react';
 import { Eye, MoreHorizontal, Edit, Trash2 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { User } from './types';
+import { User } from '../types';
 import {
   Table,
   TableBody,

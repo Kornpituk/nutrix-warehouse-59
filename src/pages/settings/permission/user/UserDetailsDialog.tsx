@@ -3,7 +3,7 @@ import React from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Badge } from '@/components/ui/badge';
 import { useLanguage } from '@/contexts/LanguageContext';
-import { User } from './types';
+import { User } from '../types';
 
 interface UserDetailsDialogProps {
   open: boolean;

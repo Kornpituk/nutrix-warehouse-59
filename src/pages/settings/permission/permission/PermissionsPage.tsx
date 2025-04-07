@@ -29,7 +29,7 @@ import {
   DropdownMenuItem, 
   DropdownMenuTrigger 
 } from '@/components/ui/dropdown-menu';
-import DeleteConfirmationDialog from './DeleteConfirmationDialog';
+import DeleteConfirmationDialog from '../DeleteConfirmationDialog';
 
 interface Permission {
   id: string;
