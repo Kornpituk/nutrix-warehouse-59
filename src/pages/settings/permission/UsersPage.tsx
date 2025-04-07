@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
@@ -121,7 +120,7 @@ export default function UsersPage() {
   const handleRoleFilter = (role: string) => {
     setSelectedRole(role);
     
-    if (!role || role === 'all') {
+    if (!role) {
       setFilteredUsers(users);
       return;
     }
@@ -251,7 +250,7 @@ export default function UsersPage() {
               <SelectValue placeholder="Select Role" />
             </SelectTrigger>
             <SelectContent className="bg-white">
-              <SelectItem value="">All Roles</SelectItem>
+              <SelectItem value="all">All Roles</SelectItem>
               <SelectItem value="Admin">Admin</SelectItem>
               <SelectItem value="Manager">Manager</SelectItem>
               <SelectItem value="User">User</SelectItem>
