@@ -121,7 +121,7 @@ export default function UsersPage() {
   const handleRoleFilter = (role: string) => {
     setSelectedRole(role);
     
-    if (!role || role === 'all') {
+    if (!role) {
       setFilteredUsers(users);
       return;
     }
@@ -138,6 +138,8 @@ export default function UsersPage() {
       filtered = users.filter(user => 
         !user.isAdmin && user.permissions.length < 5
       );
+    } else if (role === 'all') {
+      filtered = users;
     }
     
     setFilteredUsers(filtered);
@@ -251,7 +253,7 @@ export default function UsersPage() {
               <SelectValue placeholder="Select Role" />
             </SelectTrigger>
             <SelectContent className="bg-white">
-              <SelectItem value="">All Roles</SelectItem>
+              <SelectItem value="all">All Roles</SelectItem>
               <SelectItem value="Admin">Admin</SelectItem>
               <SelectItem value="Manager">Manager</SelectItem>
               <SelectItem value="User">User</SelectItem>
@@ -316,4 +318,81 @@ export default function UsersPage() {
       />
     </div>
   );
+  
+  function handleViewUser(user: User) {
+    setSelectedUser(user);
+    setUserDetailsOpen(true);
+  }
+
+  function handleEditUser(user: User) {
+    setSelectedUser(user);
+    setIsEditMode(true);
+    setUserFormOpen(true);
+  }
+
+  function handleAddUser() {
+    setSelectedUser(null);
+    setIsEditMode(false);
+    setUserFormOpen(true);
+  }
+
+  function handleDeleteUser(user: User) {
+    setUserToDelete(user);
+    setDeleteDialogOpen(true);
+  }
+
+  function confirmDeleteUser() {
+    if (userToDelete) {
+      setUsers(prevUsers => prevUsers.filter(u => u.id !== userToDelete.id));
+      setFilteredUsers(prevUsers => prevUsers.filter(u => u.id !== userToDelete.id));
+      
+      toast({
+        title: t('common.deleted'),
+        description: t('permission.userDeleted'),
+      });
+      
+      setDeleteDialogOpen(false);
+      setUserToDelete(null);
+    }
+  }
+
+  function handleSaveUser(formData: z.infer<typeof formSchema>) {
+    const permissionObjects = formData.permissions.map(id => {
+      for (const module of modules) {
+        const permission = module.permissions.find(p => p.id === id);
+        if (permission) return permission;
+      }
+      return { id, name: 'Unknown', description: 'Unknown permission' };
+    });
+  
+    const user: User = {
+      id: selectedUser?.id || String(Date.now()),
+      name: formData.name,
+      email: formData.email,
+      password: formData.password,
+      position: formData.position,
+      department: formData.department,
+      isActive: formData.isActive,
+      isAdmin: formData.isAdmin,
+      permissions: permissionObjects
+    };
+    
+    if (isEditMode) {
+      setUsers(prevUsers => prevUsers.map(u => u.id === user.id ? user : u));
+      setFilteredUsers(prevUsers => prevUsers.map(u => u.id === user.id ? user : u));
+      toast({
+        title: t('common.updated'),
+        description: t('permission.userUpdated'),
+      });
+    } else {
+      setUsers(prevUsers => [...prevUsers, user]);
+      setFilteredUsers(prevUsers => [...prevUsers, user]);
+      toast({
+        title: t('common.added'),
+        description: t('permission.userAdded'),
+      });
+    }
+    
+    setUserFormOpen(false);
+  }
 }
