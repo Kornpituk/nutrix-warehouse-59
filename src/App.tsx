@@ -10,9 +10,15 @@ import Index from "./pages/Index";
 import Login from "./pages/Login";
 import SelectWarehouse from "./pages/SelectWarehouse";
 import Dashboard from "./pages/Dashboard";
-import StockUpdate from "./pages/StockUpdate";
+
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
+
+
+import StockUpdate from "./pages/StockUpdate";
+// Permission subpages
+import SummaryStockUpdate from "./pages/stockUpdate/summary/SummaryStockUpdate";
+import SummaryStockUpdateDetail from "./pages/stockUpdate/details/DetailsStockUpdate";
 
 // New pages
 import Receiving from "./pages/Receiving";
@@ -52,9 +58,20 @@ function App() {
                   <Dashboard />
                 </ProtectedRoute>
               } />
+
               <Route path="/stock" element={
                 <ProtectedRoute>
                   <StockUpdate />
+                </ProtectedRoute>
+              } />
+              <Route path="/stock/summary" element={
+                <ProtectedRoute>
+                  <SummaryStockUpdate />
+                </ProtectedRoute>
+              } />
+              <Route path="/stock/details" element={
+                <ProtectedRoute>
+                  <SummaryStockUpdateDetail />
                 </ProtectedRoute>
               } />
               

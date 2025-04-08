@@ -9,6 +9,10 @@ export interface StockItem {
   productId: string;
   barcode: string;
   productName: string;
+  packagingTypeName: string;
+  packagingTypeId: string;
+  packKgs: number;
+  totalKgs: number;
   brand: string;
   styleNo: string;
   colorId: string;
@@ -21,7 +25,8 @@ export interface StockItem {
   image: string;
   nonTags: number;
   tags: number;
-  locations: any | null;
+  lotNumber: string | null;
+  locations: string | null;
 }
 
 export interface StockResponse {

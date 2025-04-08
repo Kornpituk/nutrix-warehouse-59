@@ -65,7 +65,21 @@ const SidebarNav: React.FC<SidebarNavProps> = ({ children }) => {
 
   const mainMenuItems = [
     { path: '/dashboard', name: t('nav.dashboard'), icon: <LayoutDashboard size={20} /> },
-    { path: '/stock', name: t('nav.stock'), icon: <Package size={20} /> },
+    // { path: '/stock', name: t('nav.stock'), icon: <Package size={20} /> },
+    // {
+    //   path: '/stock',
+    //   name: t('nav.stock'),
+    //   subItems: [
+    //     { path: '/stock/summary', name: t('Summary') },
+    //     { path: '/stock/details', name: t('Details') },
+    //   ]
+    // },
+    {
+      id: 'stock',
+      name: t('nav.stock'),
+      icon: <Package size={20} />,
+      hasSubmenu: true
+    },
     { path: '/receiving', name: t('nav.receiving'), icon: <DownloadCloud size={20} /> },
     { path: '/request-picking', name: t('nav.requestForPicking'), icon: <FileHeart size={20} /> },
     { path: '/packing-ptw', name: t('nav.packingPTW'), icon: <Box size={20} /> },
@@ -74,13 +88,13 @@ const SidebarNav: React.FC<SidebarNavProps> = ({ children }) => {
   const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
 
   const settingsMenuItems = [
-    { path: '/settings/product', name: t('settings.product') },
-    { path: '/settings/location', name: t('settings.location') },
-    { path: '/settings/department', name: t('settings.department') },
-    { path: '/settings/customer', name: t('settings.customer') },
-    { path: '/settings/vendor', name: t('settings.vendor') },
-    { path: '/settings/transaction-model', name: t('settings.transactionModel') },
-    { path: '/settings/lot-model', name: t('settings.lotModel') },
+    // { path: '/settings/product', name: t('settings.product') },
+    // { path: '/settings/location', name: t('settings.location') },
+    // { path: '/settings/department', name: t('settings.department') },
+    // { path: '/settings/customer', name: t('settings.customer') },
+    // { path: '/settings/vendor', name: t('settings.vendor') },
+    // { path: '/settings/transaction-model', name: t('settings.transactionModel') },
+    // { path: '/settings/lot-model', name: t('settings.lotModel') },
     {
       path: '/settings/permission',
       name: t('settings.permission'),
@@ -99,6 +113,8 @@ const SidebarNav: React.FC<SidebarNavProps> = ({ children }) => {
   const toggleLanguage = () => {
     setLanguage(language === 'en' ? 'th' : 'en');
   };
+
+  const [isStockMenuOpen, setIsStockMenuOpen] = useState(false);
 
   return (
     <div className="flex h-screen w-full overflow-hidden">
@@ -134,17 +150,17 @@ const SidebarNav: React.FC<SidebarNavProps> = ({ children }) => {
       >
         <div className="flex h-16 items-center justify-between border-b px-6">
           <div className="flex items-center space-x-2">
-            <img 
-              src={companyData?.logo || "/Nutrix.png"} 
-              alt="Company Logo" 
-              className="h-8 w-auto object-contain" 
+            <img
+              src={companyData?.logo || "/Nutrix.png"}
+              alt="Company Logo"
+              className="h-8 w-auto object-contain"
             />
             <span className="text-lg font-bold text-primary">
               {companyData?.companyName || "Nutrix WMS"}
             </span>
           </div>
           <div className="flex items-center space-x-1">
-            
+
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="rounded-full">
@@ -207,24 +223,79 @@ const SidebarNav: React.FC<SidebarNavProps> = ({ children }) => {
 
         <nav className="flex-1 space-y-1 overflow-y-auto px-3 py-2">
           {mainMenuItems.map((item) => (
-            <NavLink
-              key={item.path}
-              to={item.path}
-              className={({ isActive }) => `
-                flex items-center space-x-2 rounded-lg px-3 py-2 transition-colors
-                ${isActive ? 'bg-primary text-white' : 'text-gray-700 hover:bg-gray-100'}
-              `}
-              onClick={() => {
-                if (window.innerWidth < 1024) {
-                  setIsOpen(false);
-                }
-              }}
-            >
-              <div className={`${location.pathname === item.path ? 'text-white' : 'text-primary'}`}>
-                {item.icon}
+            item.hasSubmenu ? (
+              <div key={item.id}>
+                <button
+                  className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left transition-colors ${location.pathname.startsWith(`/${item.id}`) ? 'bg-primary text-white' : 'text-gray-700 hover:bg-gray-100'
+                    }`}
+                  onClick={() => setIsStockMenuOpen(!isStockMenuOpen)}
+                >
+                  <div className="flex items-center space-x-2">
+                    <div className={`${location.pathname.startsWith(`/${item.id}`) ? 'text-white' : 'text-primary'}`}>
+                      {item.icon}
+                    </div>
+                    <span>{item.name}</span>
+                  </div>
+                  <ChevronDown
+                    size={16}
+                    className={`transition-transform duration-200 ${isStockMenuOpen ? 'rotate-180' : ''} ${location.pathname.startsWith(`/${item.id}`) ? 'text-white' : 'text-gray-500'
+                      }`}
+                  />
+                </button>
+
+                <AnimatePresence>
+                  {isStockMenuOpen && (
+                    <motion.div
+                      initial={{ opacity: 0, height: 0 }}
+                      animate={{ opacity: 1, height: 'auto' }}
+                      exit={{ opacity: 0, height: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="overflow-hidden"
+                    >
+                      <div className="mt-1 space-y-1 pl-10 pr-2">
+                        <NavLink
+                          to="/stock/summary"
+                          className={({ isActive }) => `
+                    block rounded-md px-2 py-1.5 text-sm transition-colors
+                    ${isActive ? 'bg-primary-50 text-primary font-medium' : 'text-gray-600 hover:bg-gray-100'}
+                  `}
+                        >
+                          {t('Summary')}
+                        </NavLink>
+                        <NavLink
+                          to="/stock/details"
+                          className={({ isActive }) => `
+                    block rounded-md px-2 py-1.5 text-sm transition-colors
+                    ${isActive ? 'bg-primary-50 text-primary font-medium' : 'text-gray-600 hover:bg-gray-100'}
+                  `}
+                        >
+                          {t('Details')}
+                        </NavLink>
+                      </div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
               </div>
-              <span>{item.name}</span>
-            </NavLink>
+            ) : (
+              <NavLink
+                key={item.path}
+                to={item.path}
+                className={({ isActive }) => `
+          flex items-center space-x-2 rounded-lg px-3 py-2 transition-colors
+          ${isActive ? 'bg-primary text-white' : 'text-gray-700 hover:bg-gray-100'}
+        `}
+                onClick={() => {
+                  if (window.innerWidth < 1024) {
+                    setIsOpen(false);
+                  }
+                }}
+              >
+                <div className={`${location.pathname === item.path ? 'text-white' : 'text-primary'}`}>
+                  {item.icon}
+                </div>
+                <span>{item.name}</span>
+              </NavLink>
+            )
           ))}
 
           {/* Settings Menu with Submenu */}
@@ -267,8 +338,8 @@ const SidebarNav: React.FC<SidebarNavProps> = ({ children }) => {
                             <button
                               onClick={() => setIsSubMenuOpen(!isSubMenuOpen)}
                               className={`flex w-full items-center justify-between rounded-lg px-3 py-2 text-left transition-colors ${location.pathname.startsWith(item.path)
-                                  ? 'bg-primary-50 text-primary font-medium'
-                                  : 'text-gray-600 hover:bg-gray-100'
+                                ? 'bg-primary-50 text-primary font-medium'
+                                : 'text-gray-600 hover:bg-gray-100'
                                 }`}
                             >
                               <span>{item.name}</span>
