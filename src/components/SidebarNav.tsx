@@ -80,9 +80,9 @@ const SidebarNav: React.FC<SidebarNavProps> = ({ children }) => {
       icon: <Package size={20} />,
       hasSubmenu: true
     },
-    { path: '/receiving', name: t('nav.receiving'), icon: <DownloadCloud size={20} /> },
-    { path: '/request-picking', name: t('nav.requestForPicking'), icon: <FileHeart size={20} /> },
-    { path: '/packing-ptw', name: t('nav.packingPTW'), icon: <Box size={20} /> },
+    // { path: '/receiving', name: t('nav.receiving'), icon: <DownloadCloud size={20} /> },
+    // { path: '/request-picking', name: t('nav.requestForPicking'), icon: <FileHeart size={20} /> },
+    // { path: '/packing-ptw', name: t('nav.packingPTW'), icon: <Box size={20} /> },
   ];
 
   const [isSubMenuOpen, setIsSubMenuOpen] = useState(false);
