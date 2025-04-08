@@ -61,24 +61,36 @@ const Dashboard = () => {
         setApiDataLoading(true);
         setApiDataError(null);
         
-        const [productData, expireData, stockData] = await Promise.all([
-          fetchProductSummary(),
-          fetchProductExpireSummary(),
-          fetchStockMaxMinSummary()
-        ]);
+        // Fetch each API separately to prevent one failure affecting others
+        try {
+          const productData = await fetchProductSummary();
+          setProductSummary(productData);
+        } catch (error) {
+          console.error('Product summary fetch error:', error);
+        }
         
-        setProductSummary(productData);
-        setProductExpireSummary(expireData);
-        setStockMaxMinSummary(stockData);
+        try {
+          const expireData = await fetchProductExpireSummary();
+          setProductExpireSummary(expireData);
+        } catch (error) {
+          console.error('Product expire summary fetch error:', error);
+        }
+        
+        try {
+          const stockData = await fetchStockMaxMinSummary();
+          setStockMaxMinSummary(stockData);
+        } catch (error) {
+          console.error('Stock max/min summary fetch error:', error);
+        }
         
         setApiDataLoading(false);
       } catch (error) {
         console.error('Error fetching dashboard data:', error);
-        setApiDataError('Failed to fetch dashboard data. Please try again.');
+        setApiDataError('Failed to fetch some dashboard data. Showing available information.');
         setApiDataLoading(false);
         toast({
-          title: "Error Loading Data",
-          description: "We couldn't load the latest dashboard data. Please try again later.",
+          title: "Warning",
+          description: "Some dashboard data couldn't be loaded. Showing available information.",
           variant: "destructive"
         });
       }
@@ -142,21 +154,6 @@ const Dashboard = () => {
         {apiDataLoading ? (
           <div className="flex justify-center p-8">
             <Loading text="Loading data from API..." />
-          </div>
-        ) : apiDataError ? (
-          <div className="rounded-lg border border-red-200 bg-red-50 p-4 text-red-800">
-            <div className="flex items-center">
-              <AlertCircle className="mr-2 h-5 w-5" />
-              <p>{apiDataError}</p>
-            </div>
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="mt-2"
-              onClick={() => window.location.reload()}
-            >
-              Try Again
-            </Button>
           </div>
         ) : (
           <>
