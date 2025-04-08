@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Exchange } from 'lucide-react';
+import { Repeat } from 'lucide-react';
 import { useCompany } from '@/contexts/CompanyContext';
 
 const ThemeToggle = () => {
@@ -14,7 +14,7 @@ const ThemeToggle = () => {
       onClick={toggleTheme} 
       title={`Switch to ${isAltTheme ? 'Nutrix' : 'Alternative'} theme`}
     >
-      <Exchange size={18} className={isAltTheme ? 'text-[#129748]' : 'text-primary'} />
+      <Repeat size={18} className={isAltTheme ? 'text-[#129748]' : 'text-primary'} />
     </Button>
   );
 };
