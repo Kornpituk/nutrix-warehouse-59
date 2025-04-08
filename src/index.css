@@ -37,6 +37,14 @@
     --sidebar-ring: 358 100% 33%;
   }
 
+  /* Apply theme colors through CSS */
+  body[data-theme="alt"] {
+    --primary: 142 77% 33%;  /* #129748 in HSL */
+    --ring: 142 77% 33%;
+    --sidebar-primary: 142 77% 33%;
+    --sidebar-ring: 142 77% 33%;
+  }
+
   .dark {
     --background: 240 10% 3.9%;
     --foreground: 0 0% 98%;
@@ -65,6 +73,14 @@
     --sidebar-accent-foreground: 0 0% 98%;
     --sidebar-border: 240 3.7% 15.9%;
     --sidebar-ring: 358 100% 33%;
+  }
+  
+  /* Dark mode with alternative theme */
+  body.dark[data-theme="alt"] {
+    --primary: 142 77% 33%;
+    --ring: 142 77% 33%;
+    --sidebar-primary: 142 77% 33%;
+    --sidebar-ring: 142 77% 33%;
   }
 }
 

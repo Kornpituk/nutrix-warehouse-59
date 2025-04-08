@@ -62,14 +62,25 @@ export const CompanyProvider: React.FC<CompanyProviderProps> = ({ children }) =>
       document.title = companyData.companyName;
     }
     
-    // Update CSS variables for theme colors
-    const rootStyle = document.documentElement.style;
+    // Update CSS variables for theme colors directly on :root
+    const rootElement = document.documentElement;
+    
     if (isAltTheme) {
-      rootStyle.setProperty('--primary', '#129748');
-      rootStyle.setProperty('--primary-foreground', '#FFFFFF');
+      rootElement.style.setProperty('--primary', '#129748');
+      rootElement.style.setProperty('--primary-foreground', '#FFFFFF');
+      
+      // Also add a data attribute to the document for additional theme-based styling
+      document.body.setAttribute('data-theme', 'alt');
+      
+      console.log('Theme changed to alternative with color #129748');
     } else {
-      rootStyle.setProperty('--primary', '#AB0006');
-      rootStyle.setProperty('--primary-foreground', '#FFFFFF');
+      rootElement.style.setProperty('--primary', '#AB0006');
+      rootElement.style.setProperty('--primary-foreground', '#FFFFFF');
+      
+      // Remove the data attribute when using default theme
+      document.body.removeAttribute('data-theme');
+      
+      console.log('Theme changed to default with color #AB0006');
     }
     
   }, [isAltTheme, companyData]);
