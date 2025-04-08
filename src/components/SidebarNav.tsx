@@ -144,7 +144,7 @@ const SidebarNav: React.FC<SidebarNavProps> = ({ children }) => {
             </span>
           </div>
           <div className="flex items-center space-x-1">
-            <ThemeToggle />
+            
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="ghost" size="icon" className="rounded-full">
@@ -323,6 +323,7 @@ const SidebarNav: React.FC<SidebarNavProps> = ({ children }) => {
             </AnimatePresence>
           </div>
         </nav>
+        <ThemeToggle />
 
         <div className="border-t border-gray-200 p-4">
           <button

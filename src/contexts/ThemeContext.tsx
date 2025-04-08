@@ -38,13 +38,59 @@ const defaultTheme: Omit<ThemeContextType,
 const ThemeContext = createContext<ThemeContextType | undefined>(undefined);
 
 export function ThemeProvider({ children }: { children: React.ReactNode }) {
-    const [primaryColor, setPrimaryColor] = useState(defaultTheme.primaryColor);
-    const [mode, setMode] = useState<ThemeMode>(defaultTheme.mode);
-    const [skin, setSkin] = useState<ThemeSkin>(defaultTheme.skin);
-    const [semiDarkMenu, setSemiDarkMenu] = useState(defaultTheme.semiDarkMenu);
-    const [layout, setLayout] = useState<ThemeLayout>(defaultTheme.layout);
-    const [content, setContent] = useState<ThemeContent>(defaultTheme.content);
-    const [direction, setDirection] = useState<ThemeDirection>(defaultTheme.direction);
+    const [primaryColor, setPrimaryColor] = useState(() => {
+        const saved = localStorage.getItem('primaryColor');
+        return saved || defaultTheme.primaryColor;
+    });
+
+    const [mode, setMode] = useState<ThemeMode>(() => {
+        const saved = localStorage.getItem('themeMode');
+        if (saved) {
+            return saved as ThemeMode;
+        }
+
+        if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+            return "dark";
+        }
+
+        return defaultTheme.mode;
+    });
+
+    const [skin, setSkin] = useState<ThemeSkin>(() => {
+        const saved = localStorage.getItem('themeSkin');
+        return saved as ThemeSkin || defaultTheme.skin;
+    });
+
+    const [semiDarkMenu, setSemiDarkMenu] = useState(() => {
+        const saved = localStorage.getItem('semiDarkMenu');
+        return saved ? JSON.parse(saved) : defaultTheme.semiDarkMenu;
+    });
+
+    const [layout, setLayout] = useState<ThemeLayout>(() => {
+        const saved = localStorage.getItem('themeLayout');
+        return saved as ThemeLayout || defaultTheme.layout;
+    });
+
+    const [content, setContent] = useState<ThemeContent>(() => {
+        const saved = localStorage.getItem('themeContent');
+        return saved as ThemeContent || defaultTheme.content;
+    });
+
+    const [direction, setDirection] = useState<ThemeDirection>(() => {
+        const saved = localStorage.getItem('themeDirection');
+        return saved as ThemeDirection || defaultTheme.direction;
+    });
+
+    // Save settings to localStorage whenever they change
+    useEffect(() => {
+        localStorage.setItem('primaryColor', primaryColor);
+        localStorage.setItem('themeMode', mode);
+        localStorage.setItem('themeSkin', skin);
+        localStorage.setItem('semiDarkMenu', JSON.stringify(semiDarkMenu));
+        localStorage.setItem('themeLayout', layout);
+        localStorage.setItem('themeContent', content);
+        localStorage.setItem('themeDirection', direction);
+    }, [primaryColor, mode, skin, semiDarkMenu, layout, content, direction]);
 
     // Apply theme changes
     useEffect(() => {
@@ -122,8 +168,13 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
         // Apply semi dark menu if enabled
         if (semiDarkMenu) {
             document.body.classList.add("semi-dark-menu");
+            if (mode === "light") {
+                document.body.classList.add("semi-dark-enabled");
+            } else {
+                document.body.classList.remove("semi-dark-enabled");
+            }
         } else {
-            document.body.classList.remove("semi-dark-menu");
+            document.body.classList.remove("semi-dark-menu", "semi-dark-enabled");
         }
 
         // Show toast on subsequent changes (not on initial load)

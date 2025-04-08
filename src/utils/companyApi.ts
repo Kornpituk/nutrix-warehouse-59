@@ -18,18 +18,24 @@ export const fetchCompanyData = async (): Promise<CompanyData> => {
         method: 'GET',
         headers: {
           'accept': '*/*',
-          'x-location': warehouseId,
+          // eslint-disable-next-line no-control-regex
+          'x-location': warehouseId.replace(/[^\x00-\x7F]/g, '') // Remove non-ASCII characters,
         }
       }
     );
 
-    if (!response.ok) {
+    if (!response) {
       throw new Error('Failed to fetch company data');
     }
 
+    if(response){
+      console.log('Company data response:', response);
+
+    } 
+
     const data: CompanyData = await response.json();
 
-    console.log('Company data:', data);
+    console.log('Company data:', response);
     return data;
   } catch (error) {
     console.error('Error fetching company data:', error);
