@@ -17,7 +17,7 @@ const defaultCompanyData: CompanyData = {
 
 const CompanyContext = createContext<CompanyContextType>({
   isAltTheme: false,
-  toggleTheme: () => {},
+  toggleTheme: () => { },
   companyData: defaultCompanyData,
   isLoading: true,
 });
@@ -42,6 +42,7 @@ export const CompanyProvider: React.FC<CompanyProviderProps> = ({ children }) =>
         try {
           const data = await fetchCompanyData();
           setCompanyData(data);
+          console.log('Company data loaded:', data);
         } catch (error) {
           console.error('Failed to load company data:', error);
         }
@@ -56,33 +57,33 @@ export const CompanyProvider: React.FC<CompanyProviderProps> = ({ children }) =>
 
   useEffect(() => {
     localStorage.setItem('isAltTheme', JSON.stringify(isAltTheme));
-    
+
     // Update the document title based on the company theme
     if (companyData) {
       document.title = companyData.companyName;
     }
-    
+
     // Update CSS variables for theme colors directly on :root
     const rootElement = document.documentElement;
-    
+
     if (isAltTheme) {
       rootElement.style.setProperty('--primary', '#129748');
       rootElement.style.setProperty('--primary-foreground', '#FFFFFF');
-      
+
       // Also add a data attribute to the document for additional theme-based styling
       document.body.setAttribute('data-theme', 'alt');
-      
+
       console.log('Theme changed to alternative with color #129748');
     } else {
       rootElement.style.setProperty('--primary', '#AB0006');
       rootElement.style.setProperty('--primary-foreground', '#FFFFFF');
-      
+
       // Remove the data attribute when using default theme
       document.body.removeAttribute('data-theme');
-      
+
       console.log('Theme changed to default with color #AB0006');
     }
-    
+
   }, [isAltTheme, companyData]);
 
   const toggleTheme = () => {
