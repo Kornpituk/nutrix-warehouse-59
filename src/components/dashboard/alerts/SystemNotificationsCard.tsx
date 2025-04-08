@@ -2,6 +2,7 @@
 import React from 'react';
 import { motion } from 'framer-motion';
 import { Card, CardHeader, CardTitle, CardContent } from '@/components/ui/card';
+import { NotificationType } from '@/types/dashboard';
 
 const itemVariants = {
   hidden: { opacity: 0, y: 20 },
@@ -11,11 +12,11 @@ const itemVariants = {
 interface SystemNotification {
   message: string;
   time: string;
-  type: 'warning' | 'success' | 'info';
+  type: NotificationType;
 }
 
 interface SystemNotificationsCardProps {
-  notifications: SystemNotification[];
+  notifications: ReadonlyArray<SystemNotification>;
 }
 
 const SystemNotificationsCard = ({ notifications }: SystemNotificationsCardProps) => {
@@ -33,6 +34,7 @@ const SystemNotificationsCard = ({ notifications }: SystemNotificationsCardProps
                 className={`rounded-lg p-4 ${
                   notification.type === 'warning' ? 'bg-amber-50 border border-amber-200' :
                   notification.type === 'success' ? 'bg-green-50 border border-green-200' :
+                  notification.type === 'danger' ? 'bg-red-50 border border-red-200' :
                   'bg-blue-50 border border-blue-200'
                 }`}
               >
@@ -41,6 +43,7 @@ const SystemNotificationsCard = ({ notifications }: SystemNotificationsCardProps
                     <p className={`font-medium ${
                       notification.type === 'warning' ? 'text-amber-800' :
                       notification.type === 'success' ? 'text-green-800' :
+                      notification.type === 'danger' ? 'text-red-800' :
                       'text-blue-800'
                     }`}>
                       {notification.message}

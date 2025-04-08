@@ -6,7 +6,7 @@ import { ResponsiveContainer } from 'recharts';
 
 interface ChartCardProps {
   title: string;
-  children: React.ReactNode;
+  children: React.ReactNode; // Keep as ReactNode
   className?: string;
   height?: string;
 }
@@ -21,7 +21,8 @@ const ChartCard = ({ title, children, className, height = "h-80" }: ChartCardPro
         <CardContent>
           <div className={height}>
             <ResponsiveContainer width="100%" height="100%">
-              {children}
+              {/* Use explicit casting to ReactElement to satisfy TypeScript */}
+              {React.Children.only(children) as React.ReactElement}
             </ResponsiveContainer>
           </div>
         </CardContent>
