@@ -1,17 +1,9 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Plus, Search, UserPlus, ArrowLeft } from 'lucide-react';
+import { Plus, Search, RefreshCw } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
-
-// Import refactored components
-import UserListTable from './UserListTable';
-import UserDetailsDialog from './UserDetailsDialog';
-import UserFormDialog from './UserFormDialog';
-import DeleteConfirmationDialog from '../DeleteConfirmationDialog';
-import { User, Module } from '../types';
-import { mockUsers, mockModules } from '../mockData';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -22,6 +14,32 @@ import {
   SelectTrigger, 
   SelectValue 
 } from '@/components/ui/select';
+
+// Import refactored components
+import UserListTable from './UserListTable';
+import UserDetailsDialog from './UserDetailsDialog';
+import UserFormDialog from './UserFormDialog';
+import DeleteConfirmationDialog from '../DeleteConfirmationDialog';
+import { User, Module } from '../types';
+import { mockUsers, mockModules } from '../mockData';
+
+// Form schema for user form
+const createUserSchema = (t: (key: string) => string) => z.object({
+  name: z.string().min(1, { message: t('validation.required') }),
+  firstName: z.string().min(1, { message: t('validation.required') }),
+  lastName: z.string().min(1, { message: t('validation.required') }),
+  email: z.string().email({ message: t('validation.email') }),
+  userName: z.string().min(1, { message: t('validation.required') }),
+  password: z.string().min(6, { message: t('validation.minLength') }),
+  position: z.string().min(1, { message: t('validation.required') }),
+  department: z.string().min(1, { message: t('validation.required') }),
+  role: z.string().min(1, { message: t('validation.required') }),
+  isActive: z.boolean(),
+  isAdmin: z.boolean(),
+  permissions: z.array(z.string()),
+  created: z.string().optional(),
+  updated: z.string().optional()
+});
 
 export default function UsersPage() {
   const { toast } = useToast();
@@ -39,25 +57,11 @@ export default function UsersPage() {
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedRole, setSelectedRole] = useState('');
 
-  // Form schema for user form
-  const formSchema = z.object({
-    name: z.string().min(1, { message: t('validation.required') }),
-    email: z.string().email({ message: t('validation.email') }),
-    userName: z.string().min(1, { message: t('validation.required') }),
-    firstName: z.string().min(1, { message: t('validation.required') }),
-    lastName: z.string().min(1, { message: t('validation.required') }),
-    password: z.string().min(6, { message: t('validation.minLength') }),
-    position: z.string().min(1, { message: t('validation.required') }),
-    role: z.string().min(1, { message: t('validation.required') }),
-    department: z.string().min(1, { message: t('validation.required') }),
-    isActive: z.boolean(),
-    isAdmin: z.boolean(),
-    created: z.string().optional(),
-    updated: z.string().optional(),
-    permissions: z.array(z.string())
-  });
-
-  const form = useForm<z.infer<typeof formSchema>>({
+  // Create form with schema
+  const formSchema = createUserSchema(t);
+  type FormValues = z.infer<typeof formSchema>;
+  
+  const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
     defaultValues: {
       name: '',
@@ -65,45 +69,22 @@ export default function UsersPage() {
       lastName: '',
       email: '',
       userName: '',
-      role: '',
       password: '',
       position: '',
       department: '',
+      role: '',
+      created: new Date().toISOString(),
+      updated: new Date().toISOString(),
       isActive: true,
       isAdmin: false,
-      created: undefined,
-      updated: undefined,
       permissions: []
     }
   });
 
-  useEffect(() => {
-    if (selectedUser && isEditMode) {
-      form.reset({
-        name: selectedUser.name,
-        email: selectedUser.email,
-        password: selectedUser.password || '',
-        position: selectedUser.position,
-        department: selectedUser.department,
-        isActive: selectedUser.isActive,
-        isAdmin: selectedUser.isAdmin || false,
-        permissions: selectedUser.permissions.map(p => p.id)
-      });
-    } else if (!isEditMode) {
-      form.reset({
-        name: '',
-        email: '',
-        password: '',
-        position: '',
-        department: '',
-        isActive: true,
-        isAdmin: false,
-        permissions: []
-      });
-    }
-  }, [selectedUser, isEditMode, form]);
-
-  useEffect(() => {
+  // Fetch users data
+  const fetchUsers = useCallback(() => {
+    setLoading(true);
+    // Simulating API call with timeout
     setTimeout(() => {
       setUsers(mockUsers);
       setFilteredUsers(mockUsers);
@@ -112,47 +93,87 @@ export default function UsersPage() {
     }, 500);
   }, []);
 
-  const handleSearch = () => {
-    if (!searchTerm.trim()) {
-      setFilteredUsers(users);
-      return;
-    }
-    
-    const lowercaseSearchTerm = searchTerm.toLowerCase();
-    const filtered = users.filter(user => 
-      user.name.toLowerCase().includes(lowercaseSearchTerm) ||
-      user.email.toLowerCase().includes(lowercaseSearchTerm) ||
-      user.position.toLowerCase().includes(lowercaseSearchTerm) ||
-      user.department.toLowerCase().includes(lowercaseSearchTerm)
-    );
-    
-    setFilteredUsers(filtered);
-  };
+  useEffect(() => {
+    fetchUsers();
+  }, [fetchUsers]);
 
-  const handleRoleFilter = (role: string) => {
-    setSelectedRole(role);
-    
-    if (!role) {
+  // Reset form when selectedUser or editMode changes
+  useEffect(() => {
+    if (selectedUser && isEditMode) {
+      form.reset({
+        name: selectedUser.name,
+        firstName: selectedUser.firstName,
+        lastName: selectedUser.lastName,
+        email: selectedUser.email,
+        userName: selectedUser.userName,
+        password: selectedUser.password,  // Don't pre-fill password for security
+        position: selectedUser.position,
+        department: selectedUser.department,
+        role: selectedUser.role,
+        isActive: selectedUser.isActive,
+        isAdmin: selectedUser.isAdmin || false,
+        permissions: selectedUser.permissions.map(p => p.id)
+      });
+    } else if (!isEditMode) {
+      form.reset({
+        name: '',
+        firstName: '',
+        lastName: '',
+        email: '',
+        userName: '',
+        password: '',
+        position: '',
+        department: '',
+        role: '',
+        isActive: true,
+        isAdmin: false,
+        permissions: []
+      });
+    }
+  }, [selectedUser, isEditMode, form]);
+
+  // Search functionality
+  const handleSearch = useCallback(() => {
+    if (!searchTerm.trim() && !selectedRole) {
       setFilteredUsers(users);
       return;
     }
     
     let filtered = users;
     
-    if (role === 'Admin') {
-      filtered = users.filter(user => user.isAdmin);
-    } else if (role === 'Manager') {
-      filtered = users.filter(user => 
-        !user.isAdmin && user.permissions.length >= 5
-      );
-    } else if (role === 'User') {
-      filtered = users.filter(user => 
-        !user.isAdmin && user.permissions.length < 5
+    // Apply search term filter
+    if (searchTerm.trim()) {
+      const lowercaseSearchTerm = searchTerm.toLowerCase();
+      filtered = filtered.filter(user => 
+        user.name.toLowerCase().includes(lowercaseSearchTerm) ||
+        user.email.toLowerCase().includes(lowercaseSearchTerm) ||
+        user.position.toLowerCase().includes(lowercaseSearchTerm) ||
+        user.department.toLowerCase().includes(lowercaseSearchTerm)
       );
     }
     
+    // Apply role filter
+    if (selectedRole) {
+      if (selectedRole === 'Admin') {
+        filtered = filtered.filter(user => user.isAdmin);
+      } else if (selectedRole === 'Manager') {
+        filtered = filtered.filter(user => 
+          !user.isAdmin && user.permissions.length >= 5
+        );
+      } else if (selectedRole === 'User') {
+        filtered = filtered.filter(user => 
+          !user.isAdmin && user.permissions.length < 5
+        );
+      }
+    }
+    
     setFilteredUsers(filtered);
-  };
+  }, [searchTerm, selectedRole, users]);
+
+  // Apply filters when search term or role changes
+  useEffect(() => {
+    handleSearch();
+  }, [searchTerm, selectedRole, handleSearch]);
 
   const handleClear = () => {
     setSearchTerm('');
@@ -197,7 +218,7 @@ export default function UsersPage() {
     }
   };
 
-  const handleSaveUser = (formData: z.infer<typeof formSchema>) => {
+  const handleSaveUser = (formData: FormValues) => {
     const permissionObjects = formData.permissions.map(id => {
       for (const module of modules) {
         const permission = module.permissions.find(p => p.id === id);
@@ -206,22 +227,23 @@ export default function UsersPage() {
       return { id, name: 'Unknown', description: 'Unknown permission' };
     });
   
+    const now = new Date().toISOString();
     const user: User = {
       id: selectedUser?.id || String(Date.now()),
       name: formData.name,
+      firstName: formData.firstName,
+      lastName: formData.lastName,
       email: formData.email,
+      userName: formData.userName,
       password: formData.password,
       position: formData.position,
       department: formData.department,
+      role: formData.role,
       isActive: formData.isActive,
       isAdmin: formData.isAdmin,
       permissions: permissionObjects,
-      firstName: formData.firstName,
-      lastName: formData.lastName,
-      role: formData.role,
-      userName: formData.userName,
-      created: formData.created || new Date().toISOString(),
-      updated: formData.updated || new Date().toISOString(),
+      created: selectedUser?.created || now,
+      updated: now,
     };
     
     if (isEditMode) {
@@ -247,28 +269,28 @@ export default function UsersPage() {
     <div className="container mx-auto py-6">
       <div className="mb-6 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold tracking-tight">User</h1>
-          <p className="text-muted-foreground">Find all of your company's user accounts and their associate roles.</p>
+          <h1 className="text-2xl font-bold tracking-tight">{t('permission.users')}</h1>
+          <p className="text-muted-foreground">{t('permission.usersDescription')}</p>
         </div>
         <Button 
           onClick={handleAddUser}
           className="gap-1 bg-primary"
         >
-          <Plus className="size-4" /> Add User
+          <Plus className="h-4 w-4" /> {t('permission.addUser')}
         </Button>
       </div>
       
-      <div className="rounded-md border bg-white">
-        <div className="p-4 flex gap-2">
+      <div className="rounded-md border bg-white shadow-sm">
+        <div className="p-4 flex flex-wrap gap-2">
           <Select 
             value={selectedRole} 
-            onValueChange={handleRoleFilter}
+            onValueChange={setSelectedRole}
           >
             <SelectTrigger className="w-[200px]">
-              <SelectValue placeholder="Select Role" />
+              <SelectValue placeholder={t('permission.selectRole')} />
             </SelectTrigger>
             <SelectContent className="bg-white">
-              <SelectItem value="all">All Roles</SelectItem>
+              <SelectItem value="">All Roles</SelectItem>
               <SelectItem value="Admin">Admin</SelectItem>
               <SelectItem value="Manager">Manager</SelectItem>
               <SelectItem value="User">User</SelectItem>
@@ -277,7 +299,7 @@ export default function UsersPage() {
           
           <div className="flex-grow relative">
             <Input 
-              placeholder="Search" 
+              placeholder={t('common.search')}
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
               className="pr-10"
@@ -285,17 +307,18 @@ export default function UsersPage() {
           </div>
           
           <Button 
-            variant="default" 
-            onClick={handleSearch}
-          >
-            <Search className="size-4 mr-1" /> Search
-          </Button>
-          
-          <Button 
             variant="outline" 
             onClick={handleClear}
           >
-            Clear
+            {t('common.clear')}
+          </Button>
+          
+          <Button 
+            variant="outline"
+            onClick={fetchUsers}
+            className="ml-auto"
+          >
+            <RefreshCw className="h-4 w-4 mr-1" /> {t('common.refresh')}
           </Button>
         </div>
         
@@ -307,11 +330,13 @@ export default function UsersPage() {
         />
       </div>
       
-      <UserDetailsDialog
-        open={userDetailsOpen}
-        onOpenChange={setUserDetailsOpen}
-        user={selectedUser}
-      />
+      {selectedUser && (
+        <UserDetailsDialog
+          open={userDetailsOpen}
+          onOpenChange={setUserDetailsOpen}
+          user={selectedUser}
+        />
+      )}
       
       <UserFormDialog
         open={userFormOpen}

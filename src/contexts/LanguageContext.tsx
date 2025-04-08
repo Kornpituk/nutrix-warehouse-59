@@ -164,6 +164,14 @@ const translations: Translations = {
     en: 'Name',
     th: 'ชื่อ'
   },
+  'permission.firstName': {
+    en: 'First Name',
+    th: 'ชื่อ'
+  },
+  'permission.lastName': {
+    en: 'Last Name',
+    th: 'สกุล'
+  },
   'permission.email': {
     en: 'Email',
     th: 'อีเมล'
@@ -219,6 +227,10 @@ const translations: Translations = {
   'permission.deleteWarning': {
     en: 'Are you sure you want to delete this user',
     th: 'คุณแน่ใจหรือไม่ว่าต้องการลบผู้ใช้นี้'
+  },
+  'permission.userName': {
+    en: 'User Name',
+    th: 'ชื่อผู้ใช้'
   },
   'permission.userDeleted': {
     en: 'User Deleted',
