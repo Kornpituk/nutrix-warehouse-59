@@ -19,7 +19,6 @@ export const fetchCompanyData = async (): Promise<CompanyData> => {
         headers: {
           'accept': '*/*',
           'x-location': warehouseId,
-          'Authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJuYW1lIjoi4LiT4Lix4LiQ4Lie4LilIiwibmFtZWlkIjoiMDAwMDAxIiwibmJmIjoxNzQ0MDc3MzI3LCJleHAiOjE3NDYyMzczMjcsImlhdCI6MTc0NDA3NzMyNywiaXNzIjoiSXNzdWVyIiwiYXVkIjoiQXVkaWVuY2UifQ.1ufIkf69BP2b5ZCD1boaSHKTnkR2mTXRyGtC1DmSU2g',
         }
       }
     );
@@ -29,6 +28,8 @@ export const fetchCompanyData = async (): Promise<CompanyData> => {
     }
 
     const data: CompanyData = await response.json();
+
+    console.log('Company data:', data);
     return data;
   } catch (error) {
     console.error('Error fetching company data:', error);

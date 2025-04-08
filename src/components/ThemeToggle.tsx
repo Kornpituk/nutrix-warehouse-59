@@ -1,20 +1,26 @@
-
 import React from 'react';
 import { Button } from '@/components/ui/button';
 import { Repeat } from 'lucide-react';
 import { useCompany } from '@/contexts/CompanyContext';
-import { Toggle } from '@/components/ui/toggle';
+import { useTheme } from '@/contexts/ThemeContext';
 
 const ThemeToggle = () => {
   const { isAltTheme, toggleTheme, companyData } = useCompany();
+  // Get current theme mode from ThemeContext
+  const { mode, setMode } = useTheme();
+  
+  // Toggle between light and dark mode
+  const toggleMode = () => {
+    setMode(mode === 'dark' ? 'light' : 'dark');
+  };
 
   return (
     <Button 
       variant="ghost" 
       size="icon" 
-      onClick={toggleTheme} 
+      onClick={toggleTheme} // Keep the company theme toggle functionality
       title={`Switch to ${isAltTheme ? 'Nutrix' : 'Alternative'} theme`}
-      className="relative"
+      className="relative mr-2"
     >
       <Repeat 
         size={18} 
