@@ -14,11 +14,12 @@ import {
   Globe,
   DownloadCloud,
   FileHeart,
-  Box,
-  UserCheck
+  Box
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useCompany } from '@/contexts/CompanyContext';
+import ThemeToggle from '@/components/ThemeToggle';
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu';
 import { Location } from '@/utils/auth';
 
@@ -34,6 +35,7 @@ const SidebarNav: React.FC<SidebarNavProps> = ({ children }) => {
   const [isSettingsOpen, setIsSettingsOpen] = useState(false);
 
   const { language, setLanguage, t } = useLanguage();
+  const { companyData, isLoading: isCompanyLoading } = useCompany();
 
   // State for selected warehouse
   const [selectedWarehouse, setSelectedWarehouse] = useState<Location | null>(null);
@@ -132,21 +134,30 @@ const SidebarNav: React.FC<SidebarNavProps> = ({ children }) => {
       >
         <div className="flex h-16 items-center justify-between border-b px-6">
           <div className="flex items-center space-x-2">
-            <img src="/Nutrix.png" alt="Nutrix Logo" className="h-8 w-auto object-contain" />
-            <span className="text-lg font-bold text-primary">{t('app.name')}</span>
+            <img 
+              src={companyData?.logo || "/Nutrix.png"} 
+              alt="Company Logo" 
+              className="h-8 w-auto object-contain" 
+            />
+            <span className="text-lg font-bold text-primary">
+              {companyData?.companyName || "Nutrix WMS"}
+            </span>
           </div>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="rounded-full">
-                <Globe size={18} className="text-primary" />
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              <DropdownMenuItem onClick={toggleLanguage}>
-                {language === 'en' ? 'ภาษาไทย' : 'English'}
-              </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
+          <div className="flex items-center space-x-1">
+            <ThemeToggle />
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="ghost" size="icon" className="rounded-full">
+                  <Globe size={18} className="text-primary" />
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                <DropdownMenuItem onClick={toggleLanguage}>
+                  {language === 'en' ? 'ภาษาไทย' : 'English'}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
 
         <div className="px-4 py-3">

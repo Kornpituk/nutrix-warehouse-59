@@ -6,6 +6,7 @@ import { AlertCircle } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
+import { useCompany } from '@/contexts/CompanyContext';
 import { Loading } from "@/components/ui/custom/loading";
 import { fetchProductSummary, fetchProductExpireSummary, fetchStockMaxMinSummary } from '@/utils/dashboardApi';
 import { NotificationItem } from '@/types/dashboard';
@@ -31,6 +32,7 @@ const notificationsData: NotificationItem[] = [
 const Dashboard = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
+  const { companyData } = useCompany();
   const [isLoading, setIsLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
   const [showFilters, setShowFilters] = useState(false);
@@ -123,7 +125,7 @@ const Dashboard = () => {
   if (isLoading) {
     return (
       <div className="flex h-screen items-center justify-center">
-        <Loading text="Loading stock update..."  />
+        <Loading text={`Loading ${companyData?.companyName || 'Nutrix WMS'}...`} />
       </div>
     );
   }
