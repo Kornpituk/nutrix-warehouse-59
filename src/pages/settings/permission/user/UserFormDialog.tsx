@@ -12,8 +12,9 @@ import { UseFormReturn } from 'react-hook-form';
 import { Avatar, AvatarImage, AvatarFallback } from '@/components/ui/avatar';
 import { Check } from 'lucide-react';
 
+// Updated UserFormData to match the form schema in UsersPage.tsx
 type UserFormData = {
-  name: string;
+  name?: string;  // Changed from required to optional
   firstName: string;
   lastName: string;
   email: string;
@@ -25,9 +26,8 @@ type UserFormData = {
   isActive: boolean;
   isAdmin: boolean;
   permissions: string[];
-  created: string;
-  updated: string;
-  // Optional fields that exist in UserFormData but not in the form
+  created?: string;  // Make optional to match the form schema
+  updated?: string;  // Make optional to match the form schema
 };
 
 interface UserFormDialogProps {

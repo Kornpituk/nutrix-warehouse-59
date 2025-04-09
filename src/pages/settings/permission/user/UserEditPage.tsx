@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -24,6 +23,7 @@ type UserFormData = {
   permissions?: string[];
   created?: string;
   updated?: string;
+  name?: string;
 };
 
 interface UserEditPageProps {
@@ -53,8 +53,6 @@ const UserEditPage: React.FC<UserEditPageProps> = ({ user, onSave, isNew = false
   });
 
   const handleChangePhoto = () => {
-    // In a real implementation, this would open a file picker
-    // For now, just show a placeholder avatar
     setAvatarUrl('/lovable-uploads/f3e076ea-7b13-4bcb-9c03-7cc401abcc74.png');
   };
 

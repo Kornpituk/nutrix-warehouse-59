@@ -30,3 +30,21 @@ export interface Module {
   name: string;
   permissions: Permission[];
 }
+
+// Add the UserFormData type here to be used across all components
+export interface UserFormData {
+  name?: string; // Optional to match form schema
+  firstName: string;
+  lastName: string;
+  email: string;
+  userName: string;
+  password: string;
+  position: string;
+  department: string;
+  role: string;
+  isActive: boolean;
+  isAdmin: boolean;
+  permissions: string[];
+  created?: string;
+  updated?: string;
+}

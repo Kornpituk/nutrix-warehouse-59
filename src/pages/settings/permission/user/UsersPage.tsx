@@ -13,7 +13,7 @@ import UserDetailsDialog from './UserDetailsDialog';
 import UserFormDialog from './UserFormDialog';
 import UserEditPage from './UserEditPage';
 import DeleteConfirmationDialog from '../DeleteConfirmationDialog';
-import { User, Module } from '../types';
+import { User, Module, UserFormData } from '../types'; // Import the shared UserFormData type
 import { mockUsers, mockModules } from '../mockData';
 import { useForm } from 'react-hook-form';
 import * as z from 'zod';
@@ -46,7 +46,7 @@ export default function UsersPage() {
 
   // Form schema for user form
   const formSchema = z.object({
-    name: z.string().min(1, { message: t('validation.required') }),
+    name: z.string().optional(), // Changed to optional to match UserFormData
     email: z.string().email({ message: t('validation.email') }),
     userName: z.string().min(1, { message: t('validation.required') }),
     firstName: z.string().min(1, { message: t('validation.required') }),
@@ -62,10 +62,11 @@ export default function UsersPage() {
     permissions: z.array(z.string())
   });
 
+  // Now this will correctly be inferred as UserFormData
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      name: '',
+      name: '', // This is now optional
       firstName: '',
       lastName: '',
       email: '',
