@@ -41,8 +41,8 @@ const DashboardHeader = ({ showFilters, toggleFilters, notificationsData }: Dash
       className="mb-6 flex justify-between items-center"
     >
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">Dashboard</h1>
-        <p className="text-gray-600">Welcome back to your pet food warehouse management system</p>
+        <h1 className="text-2xl font-bold">Dashboard</h1>
+        <p className="">Welcome back to your pet food warehouse management system</p>
       </div>
       <div className="flex items-center space-x-4">
         <div className="relative">

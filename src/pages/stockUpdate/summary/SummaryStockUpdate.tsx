@@ -340,7 +340,7 @@ const StockUpdate = () => {
         className="mb-6 flex justify-between items-center"
       >
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Stock Update Summary</h1>
+          <h1 className="text-2xl font-bold">Stock Update Summary</h1>
           {/* <p className="text-gray-600">Manage and view your inventory items</p> */}
         </div>
         <div className="flex items-center space-x-2">
