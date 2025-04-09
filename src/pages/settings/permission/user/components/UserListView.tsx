@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useUserContext } from '../context/UserContext';
+import { useUserContext } from '../context';
 import UserHeader from './UserHeader';
 import UserFilterBar from './UserFilterBar';
 import UserListTable from '../UserListTable';

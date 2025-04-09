@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useLocation } from 'react-router-dom';
-import { UserProvider } from './context/UserContext';
+import { UserProvider } from './context';
 import UserRoutes from './components/UserRoutes';
 
 const UsersPage: React.FC = () => {

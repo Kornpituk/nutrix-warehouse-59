@@ -3,7 +3,7 @@ import React, { useState } from 'react';
 import UserDetailsDialog from '../UserDetailsDialog';
 import UserFormDialog from '../UserFormDialog';
 import DeleteConfirmationDialog from '../../DeleteConfirmationDialog';
-import { useUserContext } from '../context/UserContext';
+import { useUserContext } from '../context';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { z } from 'zod';

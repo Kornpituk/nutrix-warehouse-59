@@ -2,7 +2,7 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import UserEditPage from '../UserEditPage';
-import { useUserContext } from '../context/UserContext';
+import { useUserContext } from '../context';
 import UserListView from './UserListView';
 
 const UserRoutes: React.FC = () => {
