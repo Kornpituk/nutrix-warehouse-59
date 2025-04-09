@@ -185,7 +185,7 @@ const Index = () => {
                   </div>
                   <div className="cube__face cube__face--left">
                     <motion.img 
-                      src="https://cdn.pixabay.com/photo/2021/12/22/06/23/cat-6886790_1280.jpg" 
+                      src="https://images.unsplash.com/photo-1609166614178-32cf1d3efe5a?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" 
                       alt="Pet treats" 
                       className="w-full h-full object-cover rounded-lg opacity-90"
                       whileHover={{ scale: 1.05 }}

@@ -169,7 +169,7 @@ const Index = () => {
                   </div>
                   <div className="cube__face cube__face--back">
                     <motion.img 
-                      src="https://cdn.pixabay.com/photo/2019/02/08/17/35/dog-3983631_1280.jpg" 
+                      src="https://images.unsplash.com/photo-1541781774459-bb2af2f05b55?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" 
                       alt="Cat with food" 
                       className="w-full h-full object-cover rounded-lg opacity-90"
                       whileHover={{ scale: 1.05 }}
@@ -177,7 +177,7 @@ const Index = () => {
                   </div>
                   <div className="cube__face cube__face--right">
                     <motion.img 
-                      src="https://cdn.pixabay.com/photo/2017/08/04/11/40/dog-2579908_1280.jpg" 
+                      src="https://images.unsplash.com/photo-1616668983570-a971f65a82d6?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" 
                       alt="Pet food" 
                       className="w-full h-full object-cover rounded-lg opacity-90"
                       whileHover={{ scale: 1.05 }}
@@ -185,7 +185,7 @@ const Index = () => {
                   </div>
                   <div className="cube__face cube__face--left">
                     <motion.img 
-                      src="https://cdn.pixabay.com/photo/2021/12/22/06/23/cat-6886790_1280.jpg" 
+                      src="https://images.unsplash.com/photo-1609166614178-32cf1d3efe5a?ixlib=rb-4.0.3&auto=format&fit=crop&w=300&q=80" 
                       alt="Pet treats" 
                       className="w-full h-full object-cover rounded-lg opacity-90"
                       whileHover={{ scale: 1.05 }}
