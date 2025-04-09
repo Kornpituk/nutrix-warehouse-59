@@ -521,7 +521,7 @@ const ShipmentPlan = () => {
                       <p className="text-sm text-gray-500">{selectedShipment.customer}</p>
                     </div>
                     
-                    <div className="rounded-lg bg-gray-50 p-4">
+                    <div className="rounded-lg bg-background p-4">
                       <div className="mb-3 flex items-center">
                         <Calendar className="mr-2 h-5 w-5 text-gray-500" />
                         <span className="font-medium">Shipment Date</span>
@@ -529,7 +529,7 @@ const ShipmentPlan = () => {
                       <p>{format(new Date(selectedShipment.date), 'MMMM dd, yyyy')}</p>
                     </div>
                     
-                    <div className="rounded-lg bg-gray-50 p-4">
+                    <div className="rounded-lg bg-background p-4">
                       <div className="mb-3 flex items-center">
                         <Truck className="mr-2 h-5 w-5 text-gray-500" />
                         <span className="font-medium">Destination</span>
@@ -539,7 +539,7 @@ const ShipmentPlan = () => {
                   </div>
                   
                   <div className="space-y-4">
-                    <div className="rounded-lg bg-gray-50 p-4">
+                    <div className="rounded-lg bg-background p-4">
                       <div className="mb-3 flex items-center">
                         <Badge variant="outline" className={
                           selectedShipment.status === 'Scheduled' ? 'bg-blue-100 text-blue-800' :
@@ -569,7 +569,7 @@ const ShipmentPlan = () => {
                     </div>
                     
                     {selectedShipment.notes && (
-                      <div className="rounded-lg bg-gray-50 p-4">
+                      <div className="rounded-lg bg-background p-4">
                         <div className="mb-3 flex items-center">
                           <FileText className="mr-2 h-5 w-5 text-gray-500" />
                           <span className="font-medium">Notes</span>
@@ -581,15 +581,15 @@ const ShipmentPlan = () => {
                 </div>
                 
                 <div className="grid gap-6 md:grid-cols-3">
-                  <div className="rounded-lg bg-gray-50 p-4 text-center">
+                  <div className="rounded-lg bg-background p-4 text-center">
                     <p className="text-sm text-gray-500">Created By</p>
                     <p className="font-medium">Admin User</p>
                   </div>
-                  <div className="rounded-lg bg-gray-50 p-4 text-center">
+                  <div className="rounded-lg bg-background p-4 text-center">
                     <p className="text-sm text-gray-500">Created Date</p>
                     <p className="font-medium">May 10, 2023</p>
                   </div>
-                  <div className="rounded-lg bg-gray-50 p-4 text-center">
+                  <div className="rounded-lg bg-background p-4 text-center">
                     <p className="text-sm text-gray-500">Last Updated</p>
                     <p className="font-medium">May 15, 2023</p>
                   </div>
@@ -780,7 +780,7 @@ const ShipmentPlan = () => {
                   </div>
                 </div>
                 
-                <div className="rounded-lg bg-gray-50 p-4">
+                <div className="rounded-lg bg-background p-4">
                   <div className="mb-2 flex items-center">
                     <CheckCircle2 className="mr-2 h-5 w-5 text-gray-500" />
                     <span className="font-medium">Confirmation</span>

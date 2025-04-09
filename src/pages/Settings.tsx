@@ -763,7 +763,7 @@ const Settings = () => {
                 </CardHeader>
                 <CardContent>
                   <div className="grid gap-6 md:grid-cols-3">
-                    <div className="rounded-lg bg-gray-50 p-4">
+                    <div className="rounded-lg bg-background p-4">
                       <div className="mb-2 flex items-center space-x-2">
                         <Database className="h-5 w-5 text-gray-500" />
                         <span className="font-medium">Database Status</span>
@@ -776,7 +776,7 @@ const Settings = () => {
                         Last synced: 10 minutes ago
                       </p>
                     </div>
-                    <div className="rounded-lg bg-gray-50 p-4">
+                    <div className="rounded-lg bg-background p-4">
                       <div className="mb-2 flex items-center space-x-2">
                         <SettingsIcon className="h-5 w-5 text-gray-500" />
                         <span className="font-medium">System Version</span>
@@ -786,7 +786,7 @@ const Settings = () => {
                         Released: May 10, 2023
                       </p>
                     </div>
-                    <div className="rounded-lg bg-gray-50 p-4">
+                    <div className="rounded-lg bg-background p-4">
                       <div className="mb-2 flex items-center space-x-2">
                         <HelpCircle className="h-5 w-5 text-gray-500" />
                         <span className="font-medium">Support</span>

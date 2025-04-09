@@ -75,7 +75,7 @@ const DashboardHeader = ({ showFilters, toggleFilters, notificationsData }: Dash
                   notificationsData.map((notification) => (
                     <div 
                       key={notification.id} 
-                      className={`mb-2 rounded-md p-2 ${!notification.read ? 'bg-gray-50' : ''}`}
+                      className={`mb-2 rounded-md p-2 ${!notification.read ? 'bg-background' : ''}`}
                     >
                       <div className="flex items-start">
                         <div className={`mt-0.5 mr-2 h-2 w-2 rounded-full ${

@@ -98,7 +98,7 @@ const SelectWarehouse = () => {
                     <Skeleton className="mb-2 h-6 w-3/4" />
                     <Skeleton className="h-4 w-1/2" />
                   </div>
-                  <div className="bg-gray-50 p-4">
+                  <div className="bg-background p-4">
                     <Skeleton className="h-9 w-full" />
                   </div>
                 </CardContent>
@@ -125,7 +125,7 @@ const SelectWarehouse = () => {
                       ID: {location.id}
                     </p>
                   </div>
-                  <div className="bg-gray-50 p-4">
+                  <div className="bg-background p-4">
                     <Button
                       className="w-full"
                       onClick={() => handleSelectWarehouse(location)}

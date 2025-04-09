@@ -243,7 +243,7 @@ const Login = () => {
               <h3 className="text-sm font-medium text-gray-700 mb-2">
                 Example Account:
               </h3>
-              <div className="bg-gray-50 p-3 rounded-md border border-gray-200 text-sm space-y-2">
+              <div className="bg-background p-3 rounded-md border border-gray-200 text-sm space-y-2">
                 <div className="flex flex-col">
                   <span className="text-gray-600">Username: air</span>
                   <span className="text-gray-600">Password: air</span>

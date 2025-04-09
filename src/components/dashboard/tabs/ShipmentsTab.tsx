@@ -58,19 +58,19 @@ const ShipmentsTab = () => {
           </CardHeader>
           <CardContent>
             <div className="grid gap-4 grid-cols-2">
-              <div className="rounded-lg bg-gray-50 p-4 text-center">
+              <div className="rounded-lg bg-background p-4 text-center">
                 <div className="text-3xl font-bold text-primary">98.3%</div>
                 <div className="mt-1 text-sm text-gray-600">On-Time Delivery</div>
               </div>
-              <div className="rounded-lg bg-gray-50 p-4 text-center">
+              <div className="rounded-lg bg-background p-4 text-center">
                 <div className="text-3xl font-bold text-primary">99.7%</div>
                 <div className="mt-1 text-sm text-gray-600">Order Accuracy</div>
               </div>
-              <div className="rounded-lg bg-gray-50 p-4 text-center">
+              <div className="rounded-lg bg-background p-4 text-center">
                 <div className="text-3xl font-bold text-primary">0.5%</div>
                 <div className="mt-1 text-sm text-gray-600">Return Rate</div>
               </div>
-              <div className="rounded-lg bg-gray-50 p-4 text-center">
+              <div className="rounded-lg bg-background p-4 text-center">
                 <div className="text-3xl font-bold text-primary">4.2h</div>
                 <div className="mt-1 text-sm text-gray-600">Avg. Processing</div>
               </div>

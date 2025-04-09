@@ -861,7 +861,7 @@ const StockUpdate = () => {
               </div>
 
               <div className="md:col-span-2">
-                <div className="space-y-2 rounded-lg bg-gray-50 p-4">
+                <div className="space-y-2 rounded-lg bg-background p-4">
                   <h4 className="font-medium text-gray-900">Stock Information</h4>
                   <div className="space-y-2 text-sm">
                     <div className="flex justify-between">

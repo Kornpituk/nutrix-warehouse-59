@@ -123,7 +123,7 @@ const SidebarNav: React.FC<SidebarNavProps> = ({ children }) => {
           variant="outline"
           size="icon"
           onClick={() => setIsOpen(!isOpen)}
-          className="rounded-full border-gray-200 bg-white shadow-md hover:bg-gray-50"
+          className="rounded-full border-gray-200 bg-white shadow-md hover:bg-background"
         >
           {isOpen ? <X size={20} /> : <Menu size={20} />}
         </Button>
@@ -178,7 +178,7 @@ const SidebarNav: React.FC<SidebarNavProps> = ({ children }) => {
 
         <div className="px-4 py-3">
           <div
-            className="relative mb-4 cursor-pointer rounded-lg border border-gray-200 p-3 shadow-sm transition-all hover:bg-gray-50"
+            className="relative mb-4 cursor-pointer rounded-lg border border-gray-200 p-3 shadow-sm transition-all hover:bg-background"
             onClick={() => setIsWarehouseMenuOpen(!isWarehouseMenuOpen)}
           >
             <div className="flex items-center justify-between">
@@ -408,7 +408,7 @@ const SidebarNav: React.FC<SidebarNavProps> = ({ children }) => {
       </motion.div>
 
       <div className="flex-1 overflow-auto">
-        <div className="min-h-screen bg-gray-50 px-4 py-4 lg:px-8 lg:py-6">
+        <div className="min-h-screen bg-background px-4 py-4 lg:px-8 lg:py-6">
           {children}
         </div>
       </div>

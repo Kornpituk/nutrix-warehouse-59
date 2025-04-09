@@ -249,7 +249,7 @@ const Index = () => {
       </header>
 
       {/* Features Section */}
-      <section id="features" className="bg-gray-50 py-20">
+      <section id="features" className="bg-background py-20">
         <div className="container mx-auto px-4">
           <motion.div 
             className="mb-16 text-center"
