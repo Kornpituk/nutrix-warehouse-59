@@ -26,19 +26,8 @@ export default {
         background: "hsl(var(--background))",
         foreground: "hsl(var(--foreground))",
         primary: {
-          DEFAULT: "#AB0006",
-          foreground: "#FFFFFF",
-          50: "#FFE5E6",
-          100: "#FFCCCF",
-          200: "#FF999E",
-          300: "#FF666E",
-          400: "#FF333D",
-          500: "#FF000D",
-          600: "#CC0007",
-          700: "#990005",
-          800: "#660003",
-          900: "#330002",
-          950: "#1A0001",
+          DEFAULT: "hsl(var(--primary))",
+          foreground: "hsl(var(--primary-foreground))",
         },
         secondary: {
           DEFAULT: "hsl(var(--secondary))",
@@ -153,5 +142,6 @@ export default {
       },
     },
   },
+  // eslint-disable-next-line @typescript-eslint/no-require-imports
   plugins: [require("tailwindcss-animate")],
 } satisfies Config;

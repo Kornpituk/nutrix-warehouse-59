@@ -1,6 +1,8 @@
 import React from "react";
+import { useCompany } from '@/contexts/CompanyContext';
 
 import catLoading from "@/assets/5b84d93a88cb0-unscreen.gif";
+import srpLoaing from "@/assets/loading/output-onlinegiftools.gif"
 
 interface LoadingProps {
   text?: string;
@@ -35,6 +37,8 @@ export const Loading = ({
     );
   };
 
+  const { companyData, isAltTheme, isLoading: isCompanyLoading } = useCompany();
+
   return (
     <div
       className={`flex h-full w-full items-center justify-center ${className}`}
@@ -61,7 +65,7 @@ export const Loading = ({
           ></path>
         </svg> */}
         <img
-          src={catLoading}
+          src={!isAltTheme ? catLoading: srpLoaing}
           alt="ตัวอย่าง GIF"
           className="w-full max-w-md mx-auto"
         />

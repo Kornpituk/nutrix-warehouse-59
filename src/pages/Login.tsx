@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Key, User } from "lucide-react";
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { useCompany } from "@/contexts/CompanyContext";
 
 import imageTop from "@/assets/Group 3.png";
 import imageBop from "@/assets/Group 6.png";
@@ -26,6 +27,11 @@ const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const {
+    companyData,
+    isAltTheme,
+    toggleTheme: toggleCompanyTheme,
+  } = useCompany();
   const [error, setError] = useState("");
 
   const handleLogin = async (e: React.FormEvent) => {
@@ -34,21 +40,24 @@ const Login = () => {
     setError("");
 
     try {
-      const response = await fetch("https://webapiorg.easetrackwms.com/api/Auth", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "accept": "*/*"
-        },
-        body: JSON.stringify({
-          username,
-          password,
-          grantType: "password",
-          audience: "string",
-          serialNo: "string",
-          refreshToken: "string"
-        })
-      });
+      const response = await fetch(
+        "https://webapiorg.easetrackwms.com/api/Auth",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            accept: "*/*",
+          },
+          body: JSON.stringify({
+            username,
+            password,
+            grantType: "password",
+            audience: "string",
+            serialNo: "string",
+            refreshToken: "string",
+          }),
+        }
+      );
 
       if (!response.ok) {
         const errorData = await response.json();
@@ -56,30 +65,37 @@ const Login = () => {
       }
 
       const authData: AuthResponse = await response.json();
-      
+
       // Store tokens and expiration in localStorage
       localStorage.setItem("accessToken", authData.access_token);
       localStorage.setItem("refreshToken", authData.refresh_token);
       localStorage.setItem("tokenExpiry", authData.expires_at);
       localStorage.setItem("isAuthenticated", "true");
-      
+
       // Extract user data from token (JWT payload)
-      const tokenPayload = JSON.parse(atob(authData.access_token.split('.')[1]));
-      localStorage.setItem("currentUser", JSON.stringify({
-        id: tokenPayload.nameid,
-        name: tokenPayload.name,
-        // Other user data as needed
-      }));
+      const tokenPayload = JSON.parse(
+        atob(authData.access_token.split(".")[1])
+      );
+      localStorage.setItem(
+        "currentUser",
+        JSON.stringify({
+          id: tokenPayload.nameid,
+          name: tokenPayload.name,
+          // Other user data as needed
+        })
+      );
 
       toast({
         title: "Login successful",
         description: `Welcome back, ${tokenPayload.name}!`,
       });
-      
+
       navigate("/select-warehouse");
     } catch (err) {
       console.error("Login error:", err);
-      setError("Failed to authenticate. Please check your credentials and try again.");
+      setError(
+        "Failed to authenticate. Please check your credentials and try again."
+      );
       toast({
         title: "Login failed",
         description: "Invalid username or password.",
@@ -122,7 +138,11 @@ const Login = () => {
             transition={{ delay: 0.2, duration: 0.5 }}
           >
             <div className="flex h-32 w-32 items-center justify-center rounded-full bg-white p-2 shadow-lg">
-              <img src={logo} alt="Logo" className="w-30 h-30" />
+              <img
+                src={companyData?.logo || "/Nutrix.png"}
+                alt="Company Logo"
+                className="h-14 w-auto object-contain"
+              />
             </div>
           </motion.div>
         </div>
@@ -220,7 +240,9 @@ const Login = () => {
             </form>
 
             <div className="mt-6">
-              <h3 className="text-sm font-medium text-gray-700 mb-2">Example Account:</h3>
+              <h3 className="text-sm font-medium text-gray-700 mb-2">
+                Example Account:
+              </h3>
               <div className="bg-gray-50 p-3 rounded-md border border-gray-200 text-sm space-y-2">
                 <div className="flex flex-col">
                   <span className="text-gray-600">Username: air</span>
@@ -242,9 +264,11 @@ const Login = () => {
             </div>
           </motion.div>
         </div>
-        <div className="bottom-0 right-0 w-full flex justify-end">
-          <img src={imageBop} alt="Bottom decoration" className="w-10 h-10" />
-        </div>
+        {!isAltTheme && (
+          <div className="bottom-0 right-0 w-full flex justify-end">
+            <img src={imageBop} alt="Bottom decoration" className="w-10 h-10" />
+          </div>
+        )}
       </motion.div>
     </div>
   );

@@ -117,13 +117,14 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
             hex = hex.replace(/^#/, '');
 
             // Parse the hex values
-            let r = parseInt(hex.substring(0, 2), 16) / 255;
-            let g = parseInt(hex.substring(2, 4), 16) / 255;
-            let b = parseInt(hex.substring(4, 6), 16) / 255;
+            const r = parseInt(hex.substring(0, 2), 16) / 255;
+            const g = parseInt(hex.substring(2, 4), 16) / 255;
+            const b = parseInt(hex.substring(4, 6), 16) / 255;
 
             // Find min and max
             const max = Math.max(r, g, b);
             const min = Math.min(r, g, b);
+            // eslint-disable-next-line prefer-const
             let h = 0, s = 0, l = (max + min) / 2;
 
             if (max !== min) {

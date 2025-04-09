@@ -57,6 +57,14 @@ const ThemeOption: React.FC<ThemeOptionProps> = ({
 };
 
 export function ThemeCustomizer() {
+
+    React.useEffect(() => {
+        const savedColor = localStorage.getItem("primaryColor");
+        if (savedColor) {
+            setPrimaryColor(savedColor);
+        }
+    }, []);
+
     const [open, setOpen] = React.useState(false);
     const {
         primaryColor, setPrimaryColor,
@@ -68,7 +76,10 @@ export function ThemeCustomizer() {
         direction, setDirection
     } = useTheme();
 
+    
+
     const colorOptions = [
+        { value: "#129748", label: "Green" },
         { value: "#6366f1", label: "Indigo" },
         { value: "#0ea5e9", label: "Cyan" },
         { value: "#f59e0b", label: "Amber" },
