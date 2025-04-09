@@ -29,6 +29,9 @@ const UserEditForm: React.FC<UserEditFormProps> = ({
       position: user?.position || '',
       department: user?.department || '',
       role: user?.role || '',
+      isActive: user?.isActive ?? true,
+      isAdmin: user?.isAdmin ?? false,
+      permissions: user?.permissions || [],
       created: user?.created || new Date().toISOString(),
       updated: user?.updated || new Date().toISOString(),
     }

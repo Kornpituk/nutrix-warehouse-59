@@ -12,7 +12,7 @@ export interface User {
   isActive: boolean;
   userName: string;
   password: string;
-  isAdmin?: boolean;
+  isAdmin: boolean; // Changed from optional to required
   created: string;
   updated: string;
   avatar?: string;
