@@ -137,7 +137,7 @@ function App() {
                   <PermissionSettings />
                 </ProtectedRoute>
               } />
-              <Route path="/settings/permission/users" element={
+              <Route path="/settings/permission/users/*" element={
                 <ProtectedRoute>
                   <UsersPage />
                 </ProtectedRoute>
