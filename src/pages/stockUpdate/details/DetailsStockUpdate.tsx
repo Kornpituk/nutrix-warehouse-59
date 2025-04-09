@@ -184,7 +184,7 @@ const StockUpdate = () => {
       }
 
       const data: StockResponse = await response.json();
-      
+
       // Handle null items from API response
       const items = data.items || [];
       setStockItems(items);
@@ -340,22 +340,37 @@ const StockUpdate = () => {
         className="mb-6 flex justify-between items-center"
       >
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Stock Update</h1>
-          <p className="text-gray-600">Manage and view your inventory items</p>
+          <h1 className="text-2xl font-bold text-gray-900">Stock Update Details</h1>
+          {/* <p className="text-gray-600">Manage and view your inventory items</p> */}
         </div>
         <div className="flex items-center space-x-2">
-          <Label htmlFor="showFilters" className="text-sm">
+          <Button
+            variant="outline"
+            onClick={handleExport}
+            className="flex-1 space-x-1"
+          >
+            <Download size={16} />
+            <span>Export</span>
+          </Button>
+          <Button
+            variant="outline"
+            onClick={handleExport}
+            className="flex-1 space-x-1"
+          >
+            <Filter className="h-4 w-4" />
+          </Button>
+          {/* <Label htmlFor="showFilters" className="text-sm">
             Show Filters
           </Label>
           <Switch
             id="showFilters"
             checked={showFilters}
             onCheckedChange={toggleFilters}
-          />
+          /> */}
         </div>
       </motion.div>
 
-      {showFilters && (
+      {/* {showFilters && (
         <motion.div variants={itemVariants}>
           <Card className="mb-6">
             <CardContent className="p-6">
@@ -468,6 +483,55 @@ const StockUpdate = () => {
             </CardContent>
           </Card>
         </motion.div>
+      )} */}
+
+      {showFilters && (
+        <motion.div variants={itemVariants}>
+          <Card className="mb-6">
+            <CardContent className="p-6">
+              <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-5">
+                <div className="lg:col-span-4">
+                  <div className="flex w-full items-center space-x-2">
+                    <Input
+                      type="text"
+                      placeholder="Search by product name, barcode, or ID"
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      className="w-full"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex space-x-2 lg:col-span-1">
+                  <Button
+                    variant="default"
+                    onClick={handleSearch}
+                    className="flex-1 space-x-1 bg-primary"
+                  >
+                    <Search size={16} />
+                    <span>Search</span>
+                  </Button>
+                  <Button
+                    variant="outline"
+                    onClick={handleClear}
+                    className="flex-1 space-x-1"
+                  >
+                    <RefreshCcw size={16} />
+                    <span>Clear</span>
+                  </Button>
+                  {/* <Button
+                    variant="outline"
+                    onClick={handleExport}
+                    className="flex-1 space-x-1"
+                  >
+                    <Download size={16} />
+                    <span>Export</span>
+                  </Button> */}
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
       )}
 
       <motion.div variants={itemVariants}>
@@ -477,7 +541,7 @@ const StockUpdate = () => {
               <Table>
                 <TableHeader>
                   <TableRow>
-                    <TableHead className="w-12">
+                    {/* <TableHead className="w-12">
                       <Checkbox
                         checked={
                           filteredItems.length > 0 &&
@@ -485,19 +549,19 @@ const StockUpdate = () => {
                         }
                         onCheckedChange={handleSelectAll}
                       />
-                    </TableHead>
+                    </TableHead> */}
                     <TableHead className="w-12">No.</TableHead>
                     <TableHead className="w-16">Image</TableHead>
                     <TableHead
                       className="cursor-pointer"
                       onClick={() => handleSort("productId")}
                     >
-                      <div className="flex items-center">
-                        Product ID
+                      <div className="flex w-40 items-center">
+                        Item ID
                         {renderSortIndicator("productId")}
                       </div>
                     </TableHead>
-                    <TableHead
+                    {/* <TableHead
                       className="cursor-pointer"
                       onClick={() => handleSort("barcode")}
                     >
@@ -505,26 +569,71 @@ const StockUpdate = () => {
                         Barcode
                         {renderSortIndicator("barcode")}
                       </div>
+                    </TableHead> */}
+                    <TableHead
+                      className="cursor-pointer"
+                      onClick={() => handleSort("productName")}
+                    >
+                      <div className="flex items-center">
+                        Item Name
+                        {renderSortIndicator("productName")}
+                      </div>
+                    </TableHead>
+                    <TableHead
+                      className="cursor-pointer"
+                      onClick={() => handleSort("packagingTypeName")}
+                    >
+                      <div className="flex items-center">
+                        Packaging Type
+                        {renderSortIndicator("packagingTypeName")}
+                      </div>
                     </TableHead>
                     <TableHead
                       className="cursor-pointer"
                       onClick={() => handleSort("productName")}
                     >
                       <div className="flex items-center">
-                        Product Name
+                        Lot
                         {renderSortIndicator("productName")}
                       </div>
                     </TableHead>
                     <TableHead
                       className="cursor-pointer"
-                      onClick={() => handleSort("categoryName")}
+                      onClick={() => handleSort("productName")}
                     >
-                      <div className="flex items-center">
-                        Category
-                        {renderSortIndicator("categoryName")}
+                      <div className="flex items-center w-28">
+                        Total Qty
+                        {renderSortIndicator("productName")}
                       </div>
                     </TableHead>
                     <TableHead
+                      className="cursor-pointer"
+                      onClick={() => handleSort("productName")}
+                    >
+                      <div className="flex items-center">
+                        UoM
+                        {renderSortIndicator("productName")}
+                      </div>
+                    </TableHead>
+                    <TableHead
+                      className="cursor-pointer"
+                      onClick={() => handleSort("packKgs")}
+                    >
+                      <div className="flex items-center w-30">
+                        Pack (Kgs)
+                        {renderSortIndicator("packKgs")}
+                      </div>
+                    </TableHead>
+                    <TableHead
+                      className="cursor-pointer"
+                      onClick={() => handleSort("totalKgs")}
+                    >
+                      <div className="flex items-center w-30">
+                        Total Qty (Kgs)
+                        {renderSortIndicator("totalKgs")}
+                      </div>
+                    </TableHead>
+                    {/* <TableHead
                       className="cursor-pointer"
                       onClick={() => handleSort("typeName")}
                     >
@@ -560,8 +669,8 @@ const StockUpdate = () => {
                         Non-Tags
                         {renderSortIndicator("nonTags")}
                       </div>
-                    </TableHead>
-                    <TableHead>Action</TableHead>
+                    </TableHead> */}
+                    {/* <TableHead>Action</TableHead> */}
                   </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -574,12 +683,12 @@ const StockUpdate = () => {
                   ) : (
                     filteredItems.map((item, index) => (
                       <TableRow key={`${item.productId}-${item.barcode}-${item.unitId}`}>
-                        <TableCell>
+                        {/* <TableCell>
                           <Checkbox
                             checked={selectedItems.includes(item.productId)}
                             onCheckedChange={() => handleSelectItem(item.productId)}
                           />
-                        </TableCell>
+                        </TableCell> */}
                         <TableCell>{index + 1}</TableCell>
                         <TableCell>
                           <img
@@ -590,14 +699,27 @@ const StockUpdate = () => {
                           />
                         </TableCell>
                         <TableCell>{item.productId}</TableCell>
-                        <TableCell>{item.barcode}</TableCell>
+                        {/* <TableCell>{item.barcode}</TableCell> */}
                         <TableCell>{item.productName}</TableCell>
                         <TableCell>
-                          <Badge variant="outline" className="bg-gray-100">
-                            {item.categoryName}
-                          </Badge>
+                          {item.packagingTypeName}
                         </TableCell>
-                        <TableCell>{item.typeName}</TableCell>
+                        <TableCell>
+                          {item.lotNumber}
+                        </TableCell>
+                        <TableCell>
+                          {item.qty.toLocaleString()}
+                        </TableCell>
+                        <TableCell>
+                          {item.unitName}
+                        </TableCell>
+                        <TableCell>
+                          {item.packKgs}
+                        </TableCell>
+                        <TableCell>
+                          {item.totalKgs}
+                        </TableCell>
+                        {/* <TableCell>{item.typeName}</TableCell>
                         <TableCell className="text-right">
                           {item.qty.toLocaleString()}
                         </TableCell>
@@ -607,8 +729,8 @@ const StockUpdate = () => {
                         </TableCell>
                         <TableCell className="text-right">
                           {item.nonTags.toLocaleString()}
-                        </TableCell>
-                        <TableCell>
+                        </TableCell> */}
+                        {/* <TableCell>
                           <Button
                             variant="ghost"
                             size="icon"
@@ -616,7 +738,7 @@ const StockUpdate = () => {
                           >
                             <Eye size={16} />
                           </Button>
-                        </TableCell>
+                        </TableCell> */}
                       </TableRow>
                     ))
                   )}
@@ -630,9 +752,9 @@ const StockUpdate = () => {
                 Showing {filteredItems.length} of {totalCount} items
               </div>
               <div className="flex items-center space-x-2">
-                <Button 
-                  variant="outline" 
-                  size="sm" 
+                <Button
+                  variant="outline"
+                  size="sm"
                   onClick={handlePreviousPage}
                   disabled={currentPage === 1}
                 >
@@ -641,9 +763,9 @@ const StockUpdate = () => {
                 <span className="text-sm">
                   Page {currentPage} of {totalPages || 1}
                 </span>
-                <Button 
-                  variant="outline" 
-                  size="sm" 
+                <Button
+                  variant="outline"
+                  size="sm"
                   onClick={handleNextPage}
                   disabled={currentPage === totalPages || totalPages === 0}
                 >

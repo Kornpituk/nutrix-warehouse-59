@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { Dialog, DialogContent, DialogDescription, DialogFooter, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Button } from '@/components/ui/button';
@@ -6,20 +7,26 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Checkbox } from '@/components/ui/checkbox';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Module, User } from './types';
+import { Module, User } from '../types';
 import { UseFormReturn } from 'react-hook-form';
 
 type UserFormData = {
-  name?: string;
-  email?: string;
-  password?: string;
-  position?: string;
-  department?: string;
-  isActive?: boolean;
-  isAdmin?: boolean;
-  permissions?: string[];
+  name: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  userName: string;
+  password: string;
+  position: string;
+  department: string;
+  role: string;
+  isActive: boolean;
+  isAdmin: boolean;
+  permissions: string[];
+  created: string;
+  updated: string;
+  // Optional fields that exist in UserFormData but not in the form
 };
-
 interface UserFormDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
@@ -61,12 +68,38 @@ const UserFormDialog: React.FC<UserFormDialogProps> = ({
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <div className="grid grid-cols-2 gap-4">
-              <FormField
+              {/* <FormField
                 control={form.control}
                 name="name"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>{t('permission.name')}</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              /> */}
+              <FormField
+                control={form.control}
+                name="firstName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('permission.firstName')}</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="lastName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('permission.lastName')}</FormLabel>
                     <FormControl>
                       <Input {...field} />
                     </FormControl>
@@ -89,12 +122,38 @@ const UserFormDialog: React.FC<UserFormDialogProps> = ({
               />
               <FormField
                 control={form.control}
+                name="userName"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('permission.userName')}</FormLabel>
+                    <FormControl>
+                      <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
                 name="password"
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>{t('permission.password')}</FormLabel>
                     <FormControl>
                       <Input type="password" {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('permission.role')}</FormLabel>
+                    <FormControl>
+                    <Input {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -152,9 +211,35 @@ const UserFormDialog: React.FC<UserFormDialogProps> = ({
                   </FormItem>
                 )}
               />
+              <FormField
+                control={form.control}
+                name="created"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('permission.created')}</FormLabel>
+                    <FormControl>
+                    <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>{t('permission.updated')}</FormLabel>
+                    <FormControl>
+                    <Input {...field} />
+                    </FormControl>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
             </div>
             
-            <div className="flex space-x-4">
+            {/* <div className="flex space-x-4">
               <FormField
                 control={form.control}
                 name="isActive"
@@ -196,9 +281,9 @@ const UserFormDialog: React.FC<UserFormDialogProps> = ({
                   </FormItem>
                 )}
               />
-            </div>
+            </div> */}
             
-            <div>
+            {/* <div>
               <h3 className="mb-2 text-sm font-medium">{t('permission.permissions')}</h3>
               <div className="max-h-60 space-y-3 overflow-y-auto rounded-md border p-4">
                 {modules.map((module) => (
@@ -243,7 +328,7 @@ const UserFormDialog: React.FC<UserFormDialogProps> = ({
                   </div>
                 ))}
               </div>
-            </div>
+            </div> */}
             
             <DialogFooter>
               <Button type="button" variant="outline" onClick={onCancel}>
