@@ -1,14 +1,17 @@
+
 import React, { useEffect, useState } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Plus, Search, UserPlus, ArrowLeft } from 'lucide-react';
+import { Plus, Search, ArrowLeft } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { Routes, Route, useNavigate, useLocation } from 'react-router-dom';
 
 // Import refactored components
 import UserListTable from './UserListTable';
 import UserDetailsDialog from './UserDetailsDialog';
 import UserFormDialog from './UserFormDialog';
+import UserEditPage from './UserEditPage';
 import DeleteConfirmationDialog from '../DeleteConfirmationDialog';
 import { User, Module } from '../types';
 import { mockUsers, mockModules } from '../mockData';
@@ -26,6 +29,8 @@ import {
 export default function UsersPage() {
   const { toast } = useToast();
   const { t } = useLanguage();
+  const navigate = useNavigate();
+  const location = useLocation();
   const [loading, setLoading] = useState(true);
   const [users, setUsers] = useState<User[]>([]);
   const [modules, setModules] = useState<Module[]>([]);
@@ -71,33 +76,48 @@ export default function UsersPage() {
       department: '',
       isActive: true,
       isAdmin: false,
-      created: undefined,
-      updated: undefined,
+      created: new Date().toISOString(),
+      updated: new Date().toISOString(),
       permissions: []
     }
   });
+
+  // Check if we're on the main users list page or a sub-page
+  const isListView = location.pathname === '/settings/permission/users';
 
   useEffect(() => {
     if (selectedUser && isEditMode) {
       form.reset({
         name: selectedUser.name,
+        firstName: selectedUser.firstName,
+        lastName: selectedUser.lastName,
         email: selectedUser.email,
+        userName: selectedUser.userName,
         password: selectedUser.password || '',
         position: selectedUser.position,
         department: selectedUser.department,
+        role: selectedUser.role,
         isActive: selectedUser.isActive,
         isAdmin: selectedUser.isAdmin || false,
+        created: selectedUser.created,
+        updated: selectedUser.updated,
         permissions: selectedUser.permissions.map(p => p.id)
       });
     } else if (!isEditMode) {
       form.reset({
         name: '',
+        firstName: '',
+        lastName: '',
         email: '',
+        userName: '',
         password: '',
         position: '',
         department: '',
+        role: '',
         isActive: true,
         isAdmin: false,
+        created: new Date().toISOString(),
+        updated: new Date().toISOString(),
         permissions: []
       });
     }
@@ -168,13 +188,13 @@ export default function UsersPage() {
   const handleEditUser = (user: User) => {
     setSelectedUser(user);
     setIsEditMode(true);
-    setUserFormOpen(true);
+    navigate(`/settings/permission/users/edit/${user.id}`);
   };
 
   const handleAddUser = () => {
     setSelectedUser(null);
     setIsEditMode(false);
-    setUserFormOpen(true);
+    navigate('/settings/permission/users/new');
   };
 
   const handleDeleteUser = (user: User) => {
@@ -208,20 +228,20 @@ export default function UsersPage() {
   
     const user: User = {
       id: selectedUser?.id || String(Date.now()),
-      name: formData.name,
+      name: `${formData.firstName} ${formData.lastName}`,
+      firstName: formData.firstName,
+      lastName: formData.lastName,
       email: formData.email,
+      userName: formData.userName,
       password: formData.password,
       position: formData.position,
       department: formData.department,
+      role: formData.role,
       isActive: formData.isActive,
       isAdmin: formData.isAdmin,
       permissions: permissionObjects,
-      firstName: formData.firstName,
-      lastName: formData.lastName,
-      role: formData.role,
-      userName: formData.userName,
       created: formData.created || new Date().toISOString(),
-      updated: formData.updated || new Date().toISOString(),
+      updated: new Date().toISOString(),
     };
     
     if (isEditMode) {
@@ -240,8 +260,28 @@ export default function UsersPage() {
       });
     }
     
-    setUserFormOpen(false);
+    navigate('/settings/permission/users');
   };
+
+  // Render UserList or EditPage based on route
+  if (!isListView) {
+    return (
+      <Routes>
+        <Route path="new" element={
+          <UserEditPage 
+            onSave={handleSaveUser} 
+            isNew={true} 
+          />
+        } />
+        <Route path="edit/:id" element={
+          <UserEditPage 
+            user={selectedUser!} 
+            onSave={handleSaveUser}
+          />
+        } />
+      </Routes>
+    );
+  }
 
   return (
     <div className="container mx-auto py-6">

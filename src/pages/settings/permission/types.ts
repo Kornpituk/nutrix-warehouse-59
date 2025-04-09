@@ -15,6 +15,7 @@ export interface User {
   isAdmin?: boolean;
   created: string;
   updated: string;
+  avatar?: string;
 }
 
 export interface Permission {
