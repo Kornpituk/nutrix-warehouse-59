@@ -1,10 +1,14 @@
 
 import React from 'react';
 import { useForm } from 'react-hook-form';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
-import { Input } from '@/components/ui/input';
+import { Form } from '@/components/ui/form';
 import { UserFormData } from '../../types';
 import UserAvatarSection from './UserAvatarSection';
+import UserBasicInfoSection from './form/UserBasicInfoSection';
+import UserCredentialsSection from './form/UserCredentialsSection';
+import UserRoleSection from './form/UserRoleSection';
+import UserDepartmentPositionSection from './form/UserDepartmentPositionSection';
+import UserMetadataSection from './form/UserMetadataSection';
 
 interface UserEditFormProps {
   user?: UserFormData;
@@ -57,150 +61,16 @@ const UserEditForm: React.FC<UserEditFormProps> = ({
           />
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-            <FormField
-              control={form.control}
-              name="firstName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>First Name</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="lastName"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Last Name</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <FormField
-              control={form.control}
-              name="email"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Email</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
+            <UserBasicInfoSection form={form} />
             
-            <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
-              <FormField
-                control={form.control}
-                name="userName"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Username</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+            <UserCredentialsSection form={form} />
 
-              <FormField
-                control={form.control}
-                name="password"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Password</FormLabel>
-                    <FormControl>
-                      <Input type="password" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+            <UserRoleSection form={form} />
 
-            <FormField
-              control={form.control}
-              name="role"
-              render={({ field }) => (
-                <FormItem>
-                  <FormLabel>Role</FormLabel>
-                  <FormControl>
-                    <Input {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            <div className="md:col-span-2 grid grid-cols-1 md:grid-cols-2 gap-6">
-              <FormField
-                control={form.control}
-                name="department"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Department</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-
-              <FormField
-                control={form.control}
-                name="position"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Position</FormLabel>
-                    <FormControl>
-                      <Input {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-            </div>
+            <UserDepartmentPositionSection form={form} />
 
             {user && (
-              <>
-                <FormField
-                  control={form.control}
-                  name="created"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Created</FormLabel>
-                      <FormControl>
-                        <Input {...field} readOnly />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="updated"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Last Update</FormLabel>
-                      <FormControl>
-                        <Input {...field} readOnly />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-              </>
+              <UserMetadataSection form={form} user={user} />
             )}
           </div>
         </form>

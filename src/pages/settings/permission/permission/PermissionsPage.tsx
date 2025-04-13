@@ -175,7 +175,7 @@ export default function PermissionsPage() {
       ModifiedByName: null,
     };
 
-    setPermissions([...permissions, newPermissionItem]);
+    setPermissions(prevPermissions => [...prevPermissions, newPermissionItem]);
     setNewPermissionName("");
     setNewPermissionCode("");
     setNewPermissionDescription("");
