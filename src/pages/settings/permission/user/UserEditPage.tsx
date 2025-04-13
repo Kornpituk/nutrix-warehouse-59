@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { User, UserFormData } from '../types';
 import UserEditHeader from './components/UserEditHeader';
 import UserEditForm from './components/UserEditForm';
@@ -13,6 +13,7 @@ interface UserEditPageProps {
 
 const UserEditPage: React.FC<UserEditPageProps> = ({ user, onSave, isNew = false }) => {
   const navigate = useNavigate();
+  const params = useParams();
   
   // Convert User to UserFormData for the form
   const userFormData: UserFormData | undefined = user ? {
@@ -33,6 +34,7 @@ const UserEditPage: React.FC<UserEditPageProps> = ({ user, onSave, isNew = false
 
   const handleSubmit = (data: UserFormData) => {
     onSave(data);
+    navigate('/settings/permission/users');
   };
 
   return (

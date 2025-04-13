@@ -18,7 +18,8 @@ const UserDialogs: React.FC = () => {
     confirmDeleteUser, 
     handleSaveUser, 
     setSelectedUser,
-    setUserToDelete 
+    setUserToDelete,
+    handleEditUser 
   } = useUserContext();
   const { t } = useLanguage();
   
@@ -124,6 +125,7 @@ const UserDialogs: React.FC = () => {
           if (!open) setSelectedUser(null);
         }}
         user={selectedUser}
+        onEditUser={handleEditUser}
       />
       
       <UserFormDialog

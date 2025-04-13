@@ -38,7 +38,7 @@ const UserEditForm: React.FC<UserEditFormProps> = ({
   });
 
   const handleChangePhoto = () => {
-    setAvatarUrl('/lovable-uploads/f3e076ea-7b13-4bcb-9c03-7cc401abcc74.png');
+    setAvatarUrl('/lovable-uploads/53120cd9-fe57-4129-bc06-a3ab8b03325d.png');
   };
 
   const handleSubmit = form.handleSubmit((data) => {

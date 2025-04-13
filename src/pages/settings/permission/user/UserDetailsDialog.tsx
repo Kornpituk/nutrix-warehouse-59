@@ -1,80 +1,124 @@
 
 import React from 'react';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { Badge } from '@/components/ui/badge';
+import { useNavigate } from 'react-router-dom';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { Button } from '@/components/ui/button';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { Edit } from 'lucide-react';
 import { User } from '../types';
 
 interface UserDetailsDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   user: User | null;
+  onEditUser?: (user: User) => void;
 }
 
 const UserDetailsDialog: React.FC<UserDetailsDialogProps> = ({
   open,
   onOpenChange,
-  user
+  user,
+  onEditUser
 }) => {
   const { t } = useLanguage();
+  const navigate = useNavigate();
 
   if (!user) return null;
 
+  const handleEdit = () => {
+    if (onEditUser) {
+      onEditUser(user);
+    } else {
+      navigate(`/settings/permission/users/edit/${user.id}`);
+    }
+    onOpenChange(false);
+  };
+
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[500px] bg-white">
-        <DialogHeader>
-          <DialogTitle>{t('permission.userDetails')}</DialogTitle>
-          <DialogDescription>
-            {t('permission.userDetailsDesc')}
-          </DialogDescription>
+      <DialogContent className="sm:max-w-[600px] bg-white p-0 overflow-hidden">
+        <DialogHeader className="px-6 pt-6 pb-2">
+          <div className="flex justify-between items-center w-full">
+            <DialogTitle className="text-xl font-bold">{t('permission.userDetails')}</DialogTitle>
+            <Button 
+              onClick={handleEdit}
+              variant="destructive"
+              className="bg-red-600 hover:bg-red-700"
+            >
+              <Edit className="mr-2 h-4 w-4" /> Edit User
+            </Button>
+          </div>
         </DialogHeader>
 
-        <div className="space-y-4">
-          <div className="flex flex-col space-y-1">
-            <span className="text-sm font-medium text-gray-500">{t('permission.name')}</span>
-            <span className="text-base">{user.name}</span>
-          </div>
-          
-          <div className="flex flex-col space-y-1">
-            <span className="text-sm font-medium text-gray-500">{t('permission.email')}</span>
-            <span className="text-base">{user.email}</span>
-          </div>
-          
-          <div className="grid grid-cols-2 gap-4">
-            <div className="flex flex-col space-y-1">
-              <span className="text-sm font-medium text-gray-500">{t('permission.position')}</span>
-              <span className="text-base">{user.position}</span>
+        <div className="p-6">
+          <div className="flex gap-6">
+            <div className="flex-shrink-0">
+              <Avatar className="h-24 w-24 border-2 border-gray-200">
+                {user.avatar ? (
+                  <AvatarImage src={user.avatar} alt={user.name} />
+                ) : (
+                  <AvatarFallback className="text-2xl bg-gray-100 text-gray-600">
+                    {user.firstName?.charAt(0)}{user.lastName?.charAt(0)}
+                  </AvatarFallback>
+                )}
+              </Avatar>
             </div>
             
-            <div className="flex flex-col space-y-1">
-              <span className="text-sm font-medium text-gray-500">{t('permission.department')}</span>
-              <span className="text-base">{user.department}</span>
-            </div>
-          </div>
-          
-          <div className="flex flex-col space-y-1">
-            <span className="text-sm font-medium text-gray-500">{t('permission.status')}</span>
-            <Badge variant={user.isActive ? "default" : "destructive"} className="w-fit">
-              {user.isActive ? t('permission.active') : t('permission.inactive')}
-            </Badge>
-          </div>
-
-          <div className="flex flex-col space-y-1">
-            <span className="text-sm font-medium text-gray-500">{t('permission.isAdmin')}</span>
-            <Badge variant={user.isAdmin ? "default" : "outline"} className="w-fit">
-              {user.isAdmin ? t('permission.yes') : t('permission.no')}
-            </Badge>
-          </div>
-          
-          <div className="flex flex-col space-y-1">
-            <span className="text-sm font-medium text-gray-500">{t('permission.permissions')}</span>
-            <div className="flex flex-wrap gap-2 mt-1">
-              {user.permissions.map(permission => (
-                <Badge key={permission.id} variant="outline" className="bg-gray-100">
-                  {permission.name}
-                </Badge>
-              ))}
+            <div className="flex-1 grid grid-cols-2 gap-x-8 gap-y-4">
+              <div>
+                <div className="text-sm text-gray-500">First Name</div>
+                <div className="font-medium">{user.firstName}</div>
+              </div>
+              
+              <div>
+                <div className="text-sm text-gray-500">Last Name</div>
+                <div className="font-medium">{user.lastName}</div>
+              </div>
+              
+              <div>
+                <div className="text-sm text-gray-500">Email</div>
+                <div className="font-medium">{user.email}</div>
+              </div>
+              
+              <div className="col-span-2 grid grid-cols-2 gap-8">
+                <div>
+                  <div className="text-sm text-gray-500">Username</div>
+                  <div className="font-medium">{user.userName}</div>
+                </div>
+                
+                <div>
+                  <div className="text-sm text-gray-500">Password</div>
+                  <div className="font-medium">••••</div>
+                </div>
+              </div>
+              
+              <div>
+                <div className="text-sm text-gray-500">Role</div>
+                <div className="font-medium">{user.role}</div>
+              </div>
+              
+              <div className="col-span-2 grid grid-cols-2 gap-8">
+                <div>
+                  <div className="text-sm text-gray-500">Department</div>
+                  <div className="font-medium">{user.department}</div>
+                </div>
+                
+                <div>
+                  <div className="text-sm text-gray-500">Position</div>
+                  <div className="font-medium">{user.position}</div>
+                </div>
+              </div>
+              
+              <div>
+                <div className="text-sm text-gray-500">Created</div>
+                <div className="font-medium text-sm">{user.created}</div>
+              </div>
+              
+              <div>
+                <div className="text-sm text-gray-500">Last Update</div>
+                <div className="font-medium text-sm">{user.updated}</div>
+              </div>
             </div>
           </div>
         </div>

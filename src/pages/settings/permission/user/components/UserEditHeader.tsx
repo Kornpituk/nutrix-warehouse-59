@@ -20,24 +20,19 @@ const UserEditHeader: React.FC<UserEditHeaderProps> = ({ isNew, onSave }) => {
 
   return (
     <div className="flex justify-between items-center mb-6">
-      <div className="flex items-center space-x-2">
+      <div className="flex items-center space-x-4">
         <Button variant="ghost" onClick={handleBack} className="p-0 h-8 w-8">
           <ArrowLeft className="h-5 w-5" />
         </Button>
-        <div>
-          <h1 className="text-2xl font-semibold">
-            {isNew ? t('permission.addUser') : t('permission.editUser')}
-          </h1>
-          <p className="text-sm text-muted-foreground">
-            {isNew ? t('permission.addUserDesc') : t('permission.editUserDesc')}
-          </p>
-        </div>
+        <h1 className="text-xl font-bold">
+          {isNew ? 'Add User' : 'Edit User'}
+        </h1>
       </div>
       <Button 
         onClick={onSave} 
         className="bg-red-600 hover:bg-red-700 text-white"
       >
-        <Check className="mr-1 h-4 w-4" /> {t('common.save')} Changes
+        <Check className="mr-2 h-4 w-4" /> {isNew ? 'Save Changes' : 'Save Changes'}
       </Button>
     </div>
   );

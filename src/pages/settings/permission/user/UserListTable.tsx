@@ -12,7 +12,6 @@ import {
   TableRow
 } from "@/components/ui/table";
 import { Checkbox } from '@/components/ui/checkbox';
-import { Badge } from '@/components/ui/badge';
 import { 
   DropdownMenu, 
   DropdownMenuContent, 
@@ -37,35 +36,17 @@ const UserListTable: React.FC<UserListTableProps> = ({
   const { t } = useLanguage();
 
   const renderStatusBadge = (isActive: boolean) => {
-    if (isActive) {
-      return (
-        <div className="px-3 py-1 text-xs font-medium rounded-full w-fit bg-green-100 text-green-800">
-          Active
-        </div>
-      );
-    } else {
-      return (
-        <div className="px-3 py-1 text-xs font-medium rounded-full w-fit bg-red-100 text-red-800">
-          Inactive
-        </div>
-      );
-    }
-  };
-
-  const getStatusClassName = (isActive: boolean) => {
-    if (isActive === null || isActive === undefined) {
-      return "bg-yellow-100 text-yellow-800";
-    }
-    return isActive 
+    const statusClassName = isActive 
       ? "bg-green-100 text-green-800" 
       : "bg-red-100 text-red-800";
-  };
-
-  const getStatusText = (isActive: boolean) => {
-    if (isActive === null || isActive === undefined) {
-      return "Suspended";
-    }
-    return isActive ? "Active" : "Inactive";
+    
+    const statusText = isActive ? "Active" : "Inactive";
+    
+    return (
+      <div className={`px-3 py-1 text-xs font-medium rounded-full w-fit ${statusClassName}`}>
+        {statusText}
+      </div>
+    );
   };
 
   return (
@@ -99,9 +80,7 @@ const UserListTable: React.FC<UserListTableProps> = ({
                   <Checkbox />
                 </TableCell>
                 <TableCell>
-                  <div className={`px-3 py-1 text-xs font-medium rounded-full w-fit ${getStatusClassName(user.isActive)}`}>
-                    {getStatusText(user.isActive)}
-                  </div>
+                  {renderStatusBadge(user.isActive)}
                 </TableCell>
                 <TableCell className="flex items-center gap-2">
                   <div className="w-8 h-8 rounded-full bg-gray-200 overflow-hidden flex items-center justify-center text-gray-500">
