@@ -12,7 +12,7 @@ import {
   Copy,
   Trash2,
   ArrowLeft,
-} from "lucIde-react";
+} from "lucide-react";
 import { useLanguage } from "@/contexts/LanguageContext";
 import { useNavigate, Link } from "react-router-dom";
 import {
@@ -44,6 +44,7 @@ import { authenticatedFetch } from "@/utils/auth";
 import {
   PermissionItem,
   PermissionNew,
+  PermissionResponse,
 } from "@/types/settingType/permission/permission";
 
 interface Permission {
@@ -158,10 +159,23 @@ export default function PermissionsPage() {
       PermissionCode: newPermissionCode,
       Description: newPermissionDescription,
       UsedInRols: 0,
-      // isNew: true
     };
 
-    // setPermissions([...permissions, newPermission]);
+    const newPermissionItem: PermissionItem = {
+      PermissionId: 0,
+      PermissionName: newPermissionName,
+      PermissionCode: newPermissionCode,
+      Description: newPermissionDescription,
+      UsedInRols: 0,
+      CreatedAt: new Date().toISOString(),
+      CreatedBy: null,
+      CreatedByName: null,
+      ModifiedAt: null,
+      ModifiedBy: null,
+      ModifiedByName: null,
+    };
+
+    setPermissions([...permissions, newPermissionItem]);
     setNewPermissionName("");
     setNewPermissionCode("");
     setNewPermissionDescription("");
@@ -191,22 +205,6 @@ export default function PermissionsPage() {
     }
   };
 
-  // const handleDuplicatePermission = (permission: PermissionItem) => {
-  //   const duplicatedPermission = {
-  //     ...permission,
-  //     PermissionId: String(Date.now()),
-  //     name: `${permission.PermissionName} (Copy)`,
-  //     isNew: true
-  //   };
-
-  //   setPermissions([...permissions, duplicatedPermission]);
-
-  //   toast({
-  //     title: "Success",
-  //     description: `Permission "${permission.PermissionName}" has been duplicated`
-  //   });
-  // };
-
   useEffect(() => {
     const isAuthenticated = localStorage.getItem("isAuthenticated");
     if (!isAuthenticated) {
@@ -233,9 +231,6 @@ export default function PermissionsPage() {
   }, [navigate]);
 
   const fetchPermissionData = async () => {
-    // setIsLoading(true);
-    // setError(null);
-
     try {
       const response = await authenticatedFetch(
         `https://hyperintruntime.srphub.com:2096/megw/apis/stream/users-permission-get-2cf66/v1.0/exec`,
@@ -253,25 +248,15 @@ export default function PermissionsPage() {
 
       const data: PermissionItem = await response.json();
 
-      // Handle null items from API response
       const items = data || [];
-      // setStockItems(items);
-      // setFilteredItems(items);
-      // setTotalPages(data.totalPages || 1);
-      // setTotalCount(data.totalCount || 0);
-      // setPerPage(data.perPage || 10);
-
-      console.log("items permission", items);
+      setPermissions(items);
     } catch (error) {
       console.error("Error fetching stock data:", error);
-      // setError("Failed to load stock data. Please try again.");
       toast({
         title: "Error",
         description: "Failed to load stock data. Please try again.",
         variant: "destructive",
       });
-    } finally {
-      // setIsLoading(false);
     }
   };
 
