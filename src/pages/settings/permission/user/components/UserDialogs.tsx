@@ -1,7 +1,6 @@
-
 import React, { useState } from 'react';
 import UserDetailsDialog from '../UserDetailsDialog';
-import UserFormDialog from '../UserFormDialog';
+import UserFormDialog from './UserFormDialog';
 import DeleteConfirmationDialog from '../../DeleteConfirmationDialog';
 import { useUserContext } from '../context';
 import { useForm } from 'react-hook-form';
@@ -66,7 +65,6 @@ const UserDialogs: React.FC = () => {
     }
   });
   
-  // Update form values when selected user changes
   React.useEffect(() => {
     if (selectedUser && isEditMode) {
       form.reset({
@@ -105,7 +103,6 @@ const UserDialogs: React.FC = () => {
     }
   }, [selectedUser, isEditMode, form]);
 
-  // Watch for changes in context and update local state
   React.useEffect(() => {
     if (selectedUser && !userDetailsOpen && !userFormOpen) {
       setUserDetailsOpen(true);
