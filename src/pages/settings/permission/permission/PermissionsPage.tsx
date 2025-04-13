@@ -246,10 +246,15 @@ export default function PermissionsPage() {
         throw new Error(`Failed to fetch stock data: ${response.status}`);
       }
 
-      const data: PermissionItem = await response.json();
+      const data = await response.json();
 
-      const items = data || [];
-      setPermissions(items);
+      if (Array.isArray(data)) {
+        setPermissions(data);
+      } else if (data) {
+        setPermissions([data]);
+      } else {
+        setPermissions([]);
+      }
     } catch (error) {
       console.error("Error fetching stock data:", error);
       toast({
@@ -257,6 +262,7 @@ export default function PermissionsPage() {
         description: "Failed to load stock data. Please try again.",
         variant: "destructive",
       });
+      setPermissions([]);
     }
   };
 
