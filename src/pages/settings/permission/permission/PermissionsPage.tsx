@@ -129,7 +129,6 @@ export default function PermissionsPage() {
   const { t } = useLanguage();
   const navigate = useNavigate();
   const [permissions, setPermissions] = useState<PermissionItem[]>([]);
-  const [permissionsNew, setPermissionsNew] = useState<PermissionNew[]>([]);
   const [selectedPermission, setSelectedPermission] =
     useState<PermissionItem | null>(null);
   const [isAddPermissionDialogOpen, setIsAddPermissionDialogOpen] =
@@ -153,19 +152,11 @@ export default function PermissionsPage() {
       return;
     }
 
-    const newPermission: PermissionNew = {
-      PermissionId: 0,
-      PermissionName: newPermissionName,
-      PermissionCode: newPermissionCode,
-      Description: newPermissionDescription,
-      UsedInRols: 0,
-    };
-
     const newPermissionItem: PermissionItem = {
       PermissionId: 0,
       PermissionName: newPermissionName,
       PermissionCode: newPermissionCode,
-      Description: newPermissionDescription,
+      Description: newPermissionDescription || null,
       UsedInRols: 0,
       CreatedAt: new Date().toISOString(),
       CreatedBy: null,
@@ -243,7 +234,7 @@ export default function PermissionsPage() {
       );
 
       if (!response.ok) {
-        throw new Error(`Failed to fetch stock data: ${response.status}`);
+        throw new Error(`Failed to fetch permission data: ${response.status}`);
       }
 
       const data = await response.json();
@@ -256,10 +247,10 @@ export default function PermissionsPage() {
         setPermissions([]);
       }
     } catch (error) {
-      console.error("Error fetching stock data:", error);
+      console.error("Error fetching permission data:", error);
       toast({
         title: "Error",
-        description: "Failed to load stock data. Please try again.",
+        description: "Failed to load permission data. Please try again.",
         variant: "destructive",
       });
       setPermissions([]);
@@ -275,7 +266,7 @@ export default function PermissionsPage() {
     setSelectedPermission(permission);
     setNewPermissionName(permission.PermissionName);
     setNewPermissionCode(permission.PermissionCode);
-    setNewPermissionDescription(permission.Description);
+    setNewPermissionDescription(permission.Description || "");
     setIsEditMode(true);
   };
 
@@ -285,10 +276,10 @@ export default function PermissionsPage() {
         permission.PermissionId === selectedPermission.PermissionId
           ? {
               ...permission,
-              name: newPermissionName,
-              code: newPermissionCode,
-              description: newPermissionDescription,
-              ModifiedAt: new Date().toLocaleString(),
+              PermissionName: newPermissionName,
+              PermissionCode: newPermissionCode,
+              Description: newPermissionDescription || null,
+              ModifiedAt: new Date().toISOString(),
             }
           : permission
       );
@@ -340,7 +331,7 @@ export default function PermissionsPage() {
                 setIsViewDetailsMode(false);
                 setNewPermissionName(selectedPermission.PermissionName);
                 setNewPermissionCode(selectedPermission.PermissionCode);
-                setNewPermissionDescription(selectedPermission.Description);
+                setNewPermissionDescription(selectedPermission.Description || "");
               }}
               className="bg-primary"
             >
@@ -363,7 +354,7 @@ export default function PermissionsPage() {
               </span>
             </h2>
             <p className="text-sm text-gray-500">
-              A unique code used to PermissionIdentify this permission in your
+              A unique code used to identify this permission in your
               system
             </p>
           </div>
@@ -375,12 +366,12 @@ export default function PermissionsPage() {
 
           <div>
             <h2 className="font-medium mb-2">Created</h2>
-            <p>01/04/2025, 17:36:28</p>
+            <p>{new Date(selectedPermission.CreatedAt).toLocaleString()}</p>
           </div>
 
           <div>
             <h2 className="font-medium mb-2">Last Updated</h2>
-            <p>{selectedPermission.ModifiedAt}</p>
+            <p>{selectedPermission.ModifiedAt ? new Date(selectedPermission.ModifiedAt).toLocaleString() : 'Not modified yet'}</p>
           </div>
         </div>
 
@@ -470,7 +461,7 @@ export default function PermissionsPage() {
               onChange={(e) => setNewPermissionCode(e.target.value)}
             />
             <p className="text-sm text-gray-500">
-              A unique code used to PermissionIdentify this permission in your
+              A unique code used to identify this permission in your
               system
             </p>
           </div>
@@ -489,12 +480,12 @@ export default function PermissionsPage() {
 
           <div>
             <h2 className="font-medium mb-2">Created</h2>
-            <p>01/04/2025, 17:36:28</p>
+            <p>{new Date(selectedPermission.CreatedAt).toLocaleString()}</p>
           </div>
 
           <div>
             <h2 className="font-medium mb-2">Last Updated</h2>
-            <p>{selectedPermission.ModifiedAt}</p>
+            <p>{selectedPermission.ModifiedAt ? new Date(selectedPermission.ModifiedAt).toLocaleString() : 'Not modified yet'}</p>
           </div>
         </div>
       </div>
@@ -557,7 +548,7 @@ export default function PermissionsPage() {
                 </TableCell>
                 <TableCell>{permission.PermissionCode}</TableCell>
                 <TableCell>{permission.Description}</TableCell>
-                <TableCell>{permission.ModifiedAt}</TableCell>
+                <TableCell>{permission.ModifiedAt ? new Date(permission.ModifiedAt).toLocaleString() : 'Not modified yet'}</TableCell>
                 <TableCell>{permission.UsedInRols}</TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end items-center">
@@ -647,7 +638,7 @@ export default function PermissionsPage() {
                 onChange={(e) => setNewPermissionCode(e.target.value)}
               />
               <p className="text-xs text-gray-500">
-                A unique code used to PermissionIdentify this permission in your
+                A unique code used to identify this permission in your
                 system
               </p>
             </div>
