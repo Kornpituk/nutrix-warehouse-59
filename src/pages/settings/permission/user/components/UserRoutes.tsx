@@ -2,6 +2,7 @@
 import React from 'react';
 import { Routes, Route } from 'react-router-dom';
 import UserEditPage from '../UserEditPage';
+import UserDetailsPage from '../UserDetailsPage';
 import { useUserContext } from '../context';
 import UserListView from './UserListView';
 
@@ -23,6 +24,7 @@ const UserRoutes: React.FC = () => {
           onSave={handleSaveUser}
         />
       } />
+      <Route path="/details/:id" element={<UserDetailsPage />} />
     </Routes>
   );
 };

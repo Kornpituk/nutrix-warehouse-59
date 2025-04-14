@@ -1,4 +1,3 @@
-
 import { User, Module, UserFormData } from '../../types';
 import { SetStateAction, Dispatch } from 'react';
 
@@ -74,7 +73,8 @@ export const createUserOperations = ({
   };
 
   const handleViewUser = (user: User) => {
-    setSelectedUser(user);
+    // This function is now used for navigation, not dialog opening
+    // Navigation is handled directly in UserListTable
   };
 
   const handleEditUser = (user: User) => {

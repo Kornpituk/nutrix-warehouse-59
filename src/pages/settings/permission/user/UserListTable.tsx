@@ -55,6 +55,10 @@ const UserListTable: React.FC<UserListTableProps> = ({
     onEditUser(user);
     navigate(`/settings/permission/users/edit/${user.id}`);
   };
+  
+  const handleView = (user: User) => {
+    navigate(`/settings/permission/users/details/${user.id}`);
+  };
 
   return (
     <div className="rounded-md border">
@@ -103,7 +107,7 @@ const UserListTable: React.FC<UserListTableProps> = ({
                 <TableCell>{user.position}</TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end items-center">
-                    <Button variant="ghost" size="icon" onClick={() => onViewUser(user)}>
+                    <Button variant="ghost" size="icon" onClick={() => handleView(user)}>
                       <Eye className="h-4 w-4" />
                     </Button>
                     <DropdownMenu>
