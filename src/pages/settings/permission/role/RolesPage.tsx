@@ -56,8 +56,8 @@ export default function RolesPage() {
       setSelectedRole(null);
       
       toast({
-        title: "Success",
-        description: `Role "${selectedRole.name}" has been deleted`
+        title: "สำเร็จ",
+        description: `บทบาท "${selectedRole.name}" ถูกลบเรียบร้อยแล้ว`
       });
     }
   };
@@ -70,14 +70,20 @@ export default function RolesPage() {
     navigate(`/settings/permission/roles/edit/${role.id}`);
   };
 
+  const handleAssignPermission = (role: Role) => {
+    setSelectedRole(role);
+    setIsAssignPermissionDialogOpen(true);
+  };
+
   const handleSearch = () => {
-    // Implement search functionality
-    // For now, this is just a placeholder
+    // Filter roles based on search term
+    // โค้ดจริงควรจะส่งคำค้นหาไปยัง API
+    console.log("Searching for:", searchTerm);
   };
 
   const handleClear = () => {
     setSearchTerm('');
-    // Reset search results
+    // Reset search results to show all roles
   };
 
   return (
@@ -101,10 +107,7 @@ export default function RolesPage() {
             setSelectedRole(role);
             setIsDeleteDialogOpen(true);
           }}
-          onAssignPermission={(role) => {
-            setSelectedRole(role);
-            setIsAssignPermissionDialogOpen(true);
-          }}
+          onAssignPermission={handleAssignPermission}
         />
       </div>
 
@@ -112,14 +115,16 @@ export default function RolesPage() {
         open={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}
         onConfirm={handleDeleteRole}
-        title="Delete Role"
-        description={`Are you sure you want to delete the role "${selectedRole?.name}"? This action cannot be undone.`}
+        title="ลบบทบาท"
+        description={`คุณแน่ใจหรือไม่ว่าต้องการลบบทบาท "${selectedRole?.name}"? การกระทำนี้ไม่สามารถยกเลิกได้`}
       />
 
       <AssignPermissionDialog 
         open={isAssignPermissionDialogOpen}
         onOpenChange={setIsAssignPermissionDialogOpen}
         modules={modules}
+        roleId={selectedRole?.id}
+        roleName={selectedRole?.name}
       />
     </div>
   );
