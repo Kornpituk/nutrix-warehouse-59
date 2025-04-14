@@ -25,14 +25,14 @@ const UserEditHeader: React.FC<UserEditHeaderProps> = ({ isNew, onSave }) => {
           <ArrowLeft className="h-5 w-5" />
         </Button>
         <h1 className="text-xl font-bold">
-          {isNew ? 'Add User' : 'Edit User'}
+          {isNew ? t('permission.addUser') : t('permission.editUser')}
         </h1>
       </div>
       <Button 
         onClick={onSave} 
         className="bg-red-600 hover:bg-red-700 text-white"
       >
-        <Check className="mr-2 h-4 w-4" /> {isNew ? 'Save Changes' : 'Save Changes'}
+        <Check className="mr-2 h-4 w-4" /> {t('common.save')}
       </Button>
     </div>
   );

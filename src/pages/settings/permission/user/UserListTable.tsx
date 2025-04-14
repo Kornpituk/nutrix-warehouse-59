@@ -3,6 +3,7 @@ import React from 'react';
 import { Eye, MoreHorizontal, Edit, Trash2 } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
 import { User } from '../types';
+import { useNavigate } from 'react-router-dom';
 import {
   Table,
   TableBody,
@@ -34,6 +35,7 @@ const UserListTable: React.FC<UserListTableProps> = ({
   onDeleteUser
 }) => {
   const { t } = useLanguage();
+  const navigate = useNavigate();
 
   const renderStatusBadge = (isActive: boolean) => {
     const statusClassName = isActive 
@@ -47,6 +49,11 @@ const UserListTable: React.FC<UserListTableProps> = ({
         {statusText}
       </div>
     );
+  };
+
+  const handleEdit = (user: User) => {
+    onEditUser(user);
+    navigate(`/settings/permission/users/edit/${user.id}`);
   };
 
   return (
@@ -106,7 +113,7 @@ const UserListTable: React.FC<UserListTableProps> = ({
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="w-40 bg-white">
-                        <DropdownMenuItem onClick={() => onEditUser(user)} className="cursor-pointer">
+                        <DropdownMenuItem onClick={() => handleEdit(user)} className="cursor-pointer">
                           <Edit className="mr-2 h-4 w-4" />
                           <span>Edit</span>
                         </DropdownMenuItem>

@@ -1,29 +1,30 @@
+
 import React from 'react';
 import { Button } from '@/components/ui/button';
-import { Plus } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { useUserContext } from '../context';
+import { useLanguage } from '@/contexts/LanguageContext';
+import { Plus } from 'lucide-react';
 
 const UserHeader: React.FC = () => {
+  const { t } = useLanguage();
   const navigate = useNavigate();
-  const { setSelectedUser } = useUserContext();
 
   const handleAddUser = () => {
-    setSelectedUser(null);
     navigate('/settings/permission/users/new');
   };
 
   return (
-    <div className="mb-6 flex items-center justify-between">
+    <div className="flex items-center justify-between mb-6">
       <div>
-        <h1 className="text-2xl font-bold tracking-tight">User</h1>
-        <p className="text-muted-foreground">Find all of your company's user accounts and their associate roles.</p>
+        <h1 className="text-2xl font-bold tracking-tight">
+          {t('settings.users')}
+        </h1>
+        <p className="text-muted-foreground">
+          {t('settings.usersDescription')}
+        </p>
       </div>
-      <Button 
-        onClick={handleAddUser}
-        className="gap-1 bg-primary"
-      >
-        <Plus className="size-4" /> Add User
+      <Button onClick={handleAddUser} className="bg-red-600 hover:bg-red-700 text-white">
+        <Plus className="mr-2 h-4 w-4" /> {t('permission.addUser')}
       </Button>
     </div>
   );
