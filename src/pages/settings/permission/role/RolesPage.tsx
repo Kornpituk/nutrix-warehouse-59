@@ -1,45 +1,17 @@
-import React, { useState, useEffect } from 'react';
-import { useToast } from '@/hooks/use-toast';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Plus, Search, Eye, MoreHorizontal, Edit, Copy, Trash2, UserPlus } from 'lucide-react';
-import { useLanguage } from '@/contexts/LanguageContext';
+
+import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { 
-  Table, 
-  TableBody, 
-  TableCell, 
-  TableHead, 
-  TableHeader, 
-  TableRow 
-} from '@/components/ui/table';
-import { 
-  Dialog, 
-  DialogContent, 
-  DialogDescription,
-  DialogHeader, 
-  DialogTitle,
-  DialogFooter,
-  DialogClose
-} from '@/components/ui/dialog';
-import { 
-  DropdownMenu, 
-  DropdownMenuContent, 
-  DropdownMenuItem, 
-  DropdownMenuTrigger 
-} from '@/components/ui/dropdown-menu';
-import DeleteConfirmationDialog from '../DeleteConfirmationDialog';
-import { Module } from '../types';
+import { useToast } from '@/hooks/use-toast';
+import { useLanguage } from '@/contexts/LanguageContext';
 import { mockModules } from '../mockData';
+import DeleteConfirmationDialog from '../DeleteConfirmationDialog';
+import RoleHeader from './components/RoleHeader';
+import RoleSearch from './components/RoleSearch';
+import RoleList from './components/RoleList';
+import AssignPermissionDialog from './components/AssignPermissionDialog';
+import { Role } from './types';
 
-interface Role {
-  id: string;
-  name: string;
-  description: string;
-  usedInPermissions: number;
-  isNew?: boolean;
-}
-
+// Mock data
 const mockRoles: Role[] = [
   {
     id: '1',
@@ -65,14 +37,12 @@ export default function RolesPage() {
   const { toast } = useToast();
   const { t } = useLanguage();
   const navigate = useNavigate();
+  
   const [roles, setRoles] = useState<Role[]>(mockRoles);
-  const [modules, setModules] = useState<Module[]>(mockModules);
+  const [modules] = useState(mockModules);
   const [selectedRole, setSelectedRole] = useState<Role | null>(null);
-  const [isAddRoleDialogOpen, setIsAddRoleDialogOpen] = useState(false);
   const [isDeleteDialogOpen, setIsDeleteDialogOpen] = useState(false);
   const [isAssignPermissionDialogOpen, setIsAssignPermissionDialogOpen] = useState(false);
-  const [newRoleName, setNewRoleName] = useState('');
-  const [newRoleDescription, setNewRoleDescription] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
 
   const handleAddRole = () => {
@@ -100,22 +70,6 @@ export default function RolesPage() {
     navigate(`/settings/permission/roles/edit/${role.id}`);
   };
 
-  const handleDuplicateRole = (role: Role) => {
-    const duplicatedRole = {
-      ...role,
-      id: String(Date.now()),
-      name: `${role.name} (Copy)`,
-      isNew: true
-    };
-    
-    setRoles([...roles, duplicatedRole]);
-    
-    toast({
-      title: "Success",
-      description: `Role "${role.name}" has been duplicated`
-    });
-  };
-
   const handleSearch = () => {
     // Implement search functionality
     // For now, this is just a placeholder
@@ -128,120 +82,32 @@ export default function RolesPage() {
 
   return (
     <div className="container mx-auto py-6">
-      <div className="mb-6 flex items-center justify-between">
-        <div>
-          <h1 className="text-2xl font-bold tracking-tight">Roles</h1>
-          <p className="text-muted-foreground">Manage user roles in your system.</p>
-        </div>
-        <Button 
-          onClick={handleAddRole}
-          className="gap-1 bg-primary"
-        >
-          <Plus className="size-4" /> Add Role
-        </Button>
-      </div>
+      <RoleHeader onAddRole={handleAddRole} />
       
       <div className="rounded-md border bg-white">
-        <div className="p-4">
-          <div className="flex gap-2">
-            <div className="relative flex-grow">
-              <Input 
-                placeholder="Search all" 
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pr-10"
-              />
-            </div>
-            <Button variant="default" onClick={handleSearch}>
-              <Search className="size-4 mr-1" /> Search
-            </Button>
-            <Button variant="outline" onClick={handleClear}>
-              <span>Clear</span>
-            </Button>
-          </div>
-        </div>
+        <RoleSearch 
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          onSearch={handleSearch}
+          onClear={handleClear}
+        />
         
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Name</TableHead>
-              <TableHead>Description</TableHead>
-              <TableHead>Used In Permissions</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {roles.map((role) => (
-              <TableRow key={role.id}>
-                <TableCell className="font-medium">
-                  {role.name}
-                  {role.isNew && (
-                    <span className="ml-2 rounded bg-red-500 px-1.5 py-0.5 text-xs text-white">New</span>
-                  )}
-                </TableCell>
-                <TableCell>{role.description}</TableCell>
-                <TableCell>{role.usedInPermissions}</TableCell>
-                <TableCell className="text-right">
-                  <div className="flex justify-end items-center">
-                    <Button 
-                      variant="ghost" 
-                      size="icon"
-                      onClick={() => handleViewDetails(role)}
-                    >
-                      <Eye className="h-4 w-4" />
-                    </Button>
-                    <DropdownMenu>
-                      <DropdownMenuTrigger asChild>
-                        <Button variant="ghost" size="icon">
-                          <MoreHorizontal className="h-4 w-4" />
-                        </Button>
-                      </DropdownMenuTrigger>
-                      <DropdownMenuContent align="end" className="w-56 bg-white">
-                        <DropdownMenuItem 
-                          className="cursor-pointer"
-                          onClick={() => handleEditRole(role)}
-                        >
-                          <Edit className="mr-2 h-4 w-4" />
-                          <span>Edit</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem 
-                          className="cursor-pointer"
-                          onClick={() => {
-                            setSelectedRole(role);
-                            setIsAssignPermissionDialogOpen(true);
-                          }}
-                        >
-                          <UserPlus className="mr-2 h-4 w-4" />
-                          <span>Assign Permission</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem 
-                          className="cursor-pointer"
-                          onClick={() => handleDuplicateRole(role)}
-                        >
-                          <Copy className="mr-2 h-4 w-4" />
-                          <span>Duplicate</span>
-                        </DropdownMenuItem>
-                        <DropdownMenuItem 
-                          className="text-red-600 focus:bg-red-50 focus:text-red-600 cursor-pointer"
-                          onClick={() => {
-                            setSelectedRole(role);
-                            setIsDeleteDialogOpen(true);
-                          }}
-                        >
-                          <Trash2 className="mr-2 h-4 w-4" />
-                          <span>Delete</span>
-                        </DropdownMenuItem>
-                      </DropdownMenuContent>
-                    </DropdownMenu>
-                  </div>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
+        <RoleList 
+          roles={roles}
+          setRoles={setRoles}
+          onViewDetails={handleViewDetails}
+          onEditRole={handleEditRole}
+          onDeleteRole={(role) => {
+            setSelectedRole(role);
+            setIsDeleteDialogOpen(true);
+          }}
+          onAssignPermission={(role) => {
+            setSelectedRole(role);
+            setIsAssignPermissionDialogOpen(true);
+          }}
+        />
       </div>
 
-      
       <DeleteConfirmationDialog
         open={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}
@@ -250,55 +116,11 @@ export default function RolesPage() {
         description={`Are you sure you want to delete the role "${selectedRole?.name}"? This action cannot be undone.`}
       />
 
-      <Dialog open={isAssignPermissionDialogOpen} onOpenChange={setIsAssignPermissionDialogOpen}>
-        <DialogContent className="sm:max-w-[700px] bg-white">
-          <DialogHeader>
-            <DialogTitle>Assign Permission</DialogTitle>
-            <DialogDescription>
-              Find all of Permission
-            </DialogDescription>
-          </DialogHeader>
-          <div className="flex gap-2 py-2">
-            <Input placeholder="Search all" />
-            <Button variant="default">
-              <Search className="size-4 mr-1" /> Search
-            </Button>
-            <Button variant="outline">Clear</Button>
-          </div>
-          <div className="overflow-y-auto max-h-[400px] border rounded-md">
-            <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead className="w-12"></TableHead>
-                  <TableHead>Permission Name</TableHead>
-                  <TableHead>Permission Code</TableHead>
-                  <TableHead>Description</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {modules.flatMap(module => module.permissions).map(permission => (
-                  <TableRow key={permission.id}>
-                    <TableCell>
-                      <input type="checkbox" className="rounded border-gray-300" />
-                    </TableCell>
-                    <TableCell>{permission.name}</TableCell>
-                    <TableCell>{permission.id}</TableCell>
-                    <TableCell>{permission.description}</TableCell>
-                  </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
-            </DialogClose>
-            <Button variant="default" className="bg-primary">
-              Save
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
+      <AssignPermissionDialog 
+        open={isAssignPermissionDialogOpen}
+        onOpenChange={setIsAssignPermissionDialogOpen}
+        modules={modules}
+      />
     </div>
   );
 }
