@@ -37,10 +37,12 @@ const PermissionNav: React.FC<PermissionNavProps> = ({ className }) => {
         <NavLink
           key={item.path}
           to={item.path}
+          end
           className={({ isActive }) =>
             cn(
               "flex items-center px-3 py-2 text-sm font-medium rounded-md gap-2",
-              isActive
+              isActive ||
+              (location.pathname.startsWith(item.path) && item.path !== '/settings/permission')
                 ? "bg-primary text-white"
                 : "text-gray-600 hover:bg-gray-100"
             )

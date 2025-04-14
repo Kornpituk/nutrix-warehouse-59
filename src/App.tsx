@@ -40,6 +40,9 @@ import UsersPage from "./pages/settings/permission/user/UsersPage";
 import RolesPage from "./pages/settings/permission/role/RolesPage";
 import PermissionsPage from "./pages/settings/permission/permission/PermissionsPage";
 
+// Role routes import
+import RoleRoutes from "./pages/settings/permission/role/components/RoleRoutes";
+
 const queryClient = new QueryClient();
 
 function App() {
@@ -142,9 +145,9 @@ function App() {
                   <UsersPage />
                 </ProtectedRoute>
               } />
-              <Route path="/settings/permission/roles" element={
+              <Route path="/settings/permission/roles/*" element={
                 <ProtectedRoute>
-                  <RolesPage />
+                  <RoleRoutes />
                 </ProtectedRoute>
               } />
               <Route path="/settings/permission/permissions" element={

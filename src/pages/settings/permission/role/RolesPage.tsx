@@ -1,11 +1,10 @@
-
 import React, { useState, useEffect } from 'react';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
 import { Plus, Search, Eye, MoreHorizontal, Edit, Copy, Trash2, UserPlus } from 'lucide-react';
 import { useLanguage } from '@/contexts/LanguageContext';
+import { useNavigate } from 'react-router-dom';
 import { 
   Table, 
   TableBody, 
@@ -65,6 +64,7 @@ const mockRoles: Role[] = [
 export default function RolesPage() {
   const { toast } = useToast();
   const { t } = useLanguage();
+  const navigate = useNavigate();
   const [roles, setRoles] = useState<Role[]>(mockRoles);
   const [modules, setModules] = useState<Module[]>(mockModules);
   const [selectedRole, setSelectedRole] = useState<Role | null>(null);
@@ -76,32 +76,7 @@ export default function RolesPage() {
   const [searchTerm, setSearchTerm] = useState('');
 
   const handleAddRole = () => {
-    if (!newRoleName.trim()) {
-      toast({
-        title: "Error",
-        description: "Role name is required",
-        variant: "destructive"
-      });
-      return;
-    }
-
-    const newRole: Role = {
-      id: String(Date.now()),
-      name: newRoleName,
-      description: newRoleDescription,
-      usedInPermissions: 0,
-      isNew: true
-    };
-
-    setRoles([...roles, newRole]);
-    setNewRoleName('');
-    setNewRoleDescription('');
-    setIsAddRoleDialogOpen(false);
-    
-    toast({
-      title: "Success",
-      description: "Role added successfully"
-    });
+    navigate('/settings/permission/roles/new');
   };
 
   const handleDeleteRole = () => {
@@ -115,6 +90,14 @@ export default function RolesPage() {
         description: `Role "${selectedRole.name}" has been deleted`
       });
     }
+  };
+
+  const handleViewDetails = (role: Role) => {
+    navigate(`/settings/permission/roles/details/${role.id}`);
+  };
+
+  const handleEditRole = (role: Role) => {
+    navigate(`/settings/permission/roles/edit/${role.id}`);
   };
 
   const handleDuplicateRole = (role: Role) => {
@@ -151,7 +134,7 @@ export default function RolesPage() {
           <p className="text-muted-foreground">Manage user roles in your system.</p>
         </div>
         <Button 
-          onClick={() => setIsAddRoleDialogOpen(true)}
+          onClick={handleAddRole}
           className="gap-1 bg-primary"
         >
           <Plus className="size-4" /> Add Role
@@ -200,7 +183,11 @@ export default function RolesPage() {
                 <TableCell>{role.usedInPermissions}</TableCell>
                 <TableCell className="text-right">
                   <div className="flex justify-end items-center">
-                    <Button variant="ghost" size="icon">
+                    <Button 
+                      variant="ghost" 
+                      size="icon"
+                      onClick={() => handleViewDetails(role)}
+                    >
                       <Eye className="h-4 w-4" />
                     </Button>
                     <DropdownMenu>
@@ -210,7 +197,10 @@ export default function RolesPage() {
                         </Button>
                       </DropdownMenuTrigger>
                       <DropdownMenuContent align="end" className="w-56 bg-white">
-                        <DropdownMenuItem className="cursor-pointer">
+                        <DropdownMenuItem 
+                          className="cursor-pointer"
+                          onClick={() => handleEditRole(role)}
+                        >
                           <Edit className="mr-2 h-4 w-4" />
                           <span>Edit</span>
                         </DropdownMenuItem>
@@ -251,50 +241,7 @@ export default function RolesPage() {
         </Table>
       </div>
 
-      <Dialog open={isAddRoleDialogOpen} onOpenChange={setIsAddRoleDialogOpen}>
-        <DialogContent className="sm:max-w-[500px] bg-white">
-          <DialogHeader>
-            <DialogTitle>Add New Role</DialogTitle>
-            <DialogDescription>
-              Create a new role in the system. Click save when you're done.
-            </DialogDescription>
-          </DialogHeader>
-          <div className="space-y-4 py-2">
-            <div className="space-y-2">
-              <label htmlFor="name" className="text-sm font-medium">Name</label>
-              <Input 
-                id="name" 
-                placeholder="e.g. Editor"
-                value={newRoleName}
-                onChange={(e) => setNewRoleName(e.target.value)}
-              />
-            </div>
-            <div className="space-y-2">
-              <label htmlFor="description" className="text-sm font-medium">Description</label>
-              <Textarea 
-                id="description"
-                placeholder="Describe the role's purpose" 
-                className="min-h-[100px] resize-none"
-                value={newRoleDescription}
-                onChange={(e) => setNewRoleDescription(e.target.value)}
-              />
-            </div>
-          </div>
-          <DialogFooter>
-            <DialogClose asChild>
-              <Button variant="outline">Cancel</Button>
-            </DialogClose>
-            <Button 
-              variant="default" 
-              className="bg-primary"
-              onClick={handleAddRole}
-            >
-              Save
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-
+      
       <DeleteConfirmationDialog
         open={isDeleteDialogOpen}
         onOpenChange={setIsDeleteDialogOpen}
