@@ -6,7 +6,7 @@ import DashboardHeader from '@/components/dashboard/DashboardHeader';
 
 const DashboardLayout: React.FC = () => {
   const [showFilters, setShowFilters] = useState(false);
-  
+
   // Mock notification data
   const notificationsData = [
     {
@@ -29,10 +29,10 @@ const DashboardLayout: React.FC = () => {
 
   return (
     <div className="flex min-h-screen flex-col">
-      <DashboardHeader 
-        showFilters={showFilters} 
-        toggleFilters={() => setShowFilters(!showFilters)} 
-        notificationsData={notificationsData} 
+      <DashboardHeader
+        showFilters={showFilters}
+        toggleFilters={() => setShowFilters(!showFilters)}
+        notificationsData={notificationsData}
       />
       <div className="flex flex-1">
         <SidebarNav>
