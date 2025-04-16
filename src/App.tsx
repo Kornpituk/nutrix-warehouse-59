@@ -52,7 +52,8 @@ function App() {
         <CompanyProvider>
           <div className="min-h-screen bg-background text-foreground transition-colors duration-300">
             <Routes>
-              <Route path="/" element={<Index />} />
+              {/* <Route path="/" element={<Index />} /> */}
+              <Route path="/" element={<Login />} />
               <Route path="/login" element={<Login />} />
               <Route path="/select-warehouse" element={<SelectWarehouse />} />
               
