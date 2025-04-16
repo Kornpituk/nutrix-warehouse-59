@@ -1,69 +1,105 @@
-# Welcome to your Lovable project
 
-## Project info
+# WMS WebApp - Improved Architecture
 
-**URL**: https://lovable.dev/projects/e5b4a0c6-3545-46d8-b231-64e26b712a5b
+This repository contains a Warehouse Management System (WMS) WebApp with an improved architecture designed for maintainability, scalability, and developer experience.
 
-## How can I edit this code?
+## Architecture Overview
 
-There are several ways of editing your application.
+The application follows a feature-based organization with clear separation of concerns:
 
-**Use Lovable**
-
-Simply visit the [Lovable Project](https://lovable.dev/projects/e5b4a0c6-3545-46d8-b231-64e26b712a5b) and start prompting.
-
-Changes made via Lovable will be committed automatically to this repo.
-
-**Use your preferred IDE**
-
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
-
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
-
-Follow these steps:
-
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
-npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
+```
+src/
+├── app/              # Next.js style routing with layouts
+├── assets/           # Static assets (images, fonts, etc.)
+├── components/       # Shared UI components
+├── contexts/         # React context providers
+├── features/         # Feature-based modules
+├── hooks/            # Custom React hooks
+├── lib/              # Utility libraries
+├── services/         # API services
+└── types/            # TypeScript definitions
 ```
 
-**Edit a file directly in GitHub**
+## Key Features
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+- Feature-based organization (Domain-Driven Design approach)
+- Clear separation of concerns
+- Reusable components and services
+- Type safety with TypeScript
+- Centralized state management
+- Clean routing structure
+- API service layer abstraction
 
-**Use GitHub Codespaces**
+## Feature Modules
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+Each feature module encapsulates related functionality:
 
-## What technologies are used for this project?
+```
+features/
+├── auth/             # Authentication related functionality
+├── dashboard/        # Dashboard visualizations and analytics
+├── inventory/        # Inventory management
+├── permission-management/ # User, role and permission management
+└── ...
+```
 
-This project is built with .
+Inside each feature:
+```
+features/auth/
+├── components/       # Feature-specific components
+├── hooks/            # Feature-specific hooks
+├── services/         # Feature-specific services
+├── types/            # Feature-specific types
+└── utils/            # Feature-specific utility functions
+```
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## API Service Layer
 
-## How can I deploy this project?
+The application uses a service layer to abstract API communication:
 
-Simply open [Lovable](https://lovable.dev/projects/e5b4a0c6-3545-46d8-b231-64e26b712a5b) and click on Share -> Publish.
+```
+services/
+├── api-client.ts     # Base API client configuration
+├── auth.service.ts   # Authentication services
+├── dashboard/        # Dashboard-related services
+└── ...
+```
 
-## I want to use a custom domain - is that possible?
+## Routing Structure
 
-We don't support custom domains (yet). If you want to deploy your project under your own domain then we recommend using Netlify. Visit our docs for more details: [Custom domains](https://docs.lovable.dev/tips-tricks/custom-domain/)
+The application uses a Next.js-inspired file-based routing structure:
+
+```
+app/
+├── (auth)/           # Authentication routes with layout
+├── (dashboard)/      # Dashboard routes with layout
+└── (settings)/       # Settings routes with layout
+```
+
+## State Management
+
+- React Context API for global state
+- React Query for server state management
+- Local component state for UI state
+
+## Getting Started
+
+1. Install dependencies:
+   ```
+   npm install
+   ```
+
+2. Start the development server:
+   ```
+   npm run dev
+   ```
+
+## Development Guidelines
+
+- Follow the feature-based organization pattern
+- Create small, focused components
+- Use TypeScript for type safety
+- Leverage custom hooks for reusable logic
+- Use service layer for API communication
+- Follow the Next.js-inspired routing structure
+- Write unit tests for critical business logic
