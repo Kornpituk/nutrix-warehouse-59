@@ -19,6 +19,8 @@ import StockUpdate from "./pages/StockUpdate";
 // Permission subpages
 import SummaryStockUpdate from "./pages/stockUpdate/summary/SummaryStockUpdate";
 import SummaryStockUpdateDetail from "./pages/stockUpdate/details/DetailsStockUpdate";
+import StockUpdateDetailsLot from "./pages/stockUpdate/detailsByLot/DetailsStockUpdateLot";
+import StockUpdateDetailsLotBatch from "./pages/stockUpdate/detailsByLotBatch/DetailsStockUpdateLotBatch";
 
 // New pages
 import Receiving from "./pages/Receiving";
@@ -73,9 +75,19 @@ function App() {
                   <SummaryStockUpdate />
                 </ProtectedRoute>
               } />
-              <Route path="/stock/details" element={
+              {/* <Route path="/stock/details" element={
                 <ProtectedRoute>
                   <SummaryStockUpdateDetail />
+                </ProtectedRoute>
+              } /> */}
+              <Route path="/stock/detailsByLot" element={
+                <ProtectedRoute>
+                  <StockUpdateDetailsLot />
+                </ProtectedRoute>
+              } />
+              <Route path="/stock/detailsByLotBatch" element={
+                <ProtectedRoute>
+                  <StockUpdateDetailsLotBatch />
                 </ProtectedRoute>
               } />
               

@@ -26,6 +26,7 @@ export interface StockItem {
   nonTags: number;
   tags: number;
   lotNumber: string | null;
+  lotBatch: string  | null;
   locations: string | null;
 }
 
