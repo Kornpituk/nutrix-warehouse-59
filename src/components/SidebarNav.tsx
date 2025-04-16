@@ -116,9 +116,9 @@ const SidebarNav: React.FC<SidebarNavProps> = ({ children }) => {
 
   const [isStockMenuOpen, setIsStockMenuOpen] = useState(false);
 
-  return (
-    <div className="flex h-screen w-full overflow-hidden">
-      <div className="fixed left-4 top-4 z-50 lg:hidden">
+  return ( 
+    <div className="flex h-screen w-full overflow-hidden bg-background">
+      <div className="fixed left-4 top-4 z-50 lg:hidden ">
         <Button
           variant="outline"
           size="icon"
@@ -146,7 +146,7 @@ const SidebarNav: React.FC<SidebarNavProps> = ({ children }) => {
         initial={{ x: -320 }}
         animate={{ x: isOpen ? 0 : -320 }}
         transition={{ type: 'spring', stiffness: 300, damping: 30 }}
-        className="fixed z-40 flex h-full w-64 flex-col bg-white shadow-lg lg:static"
+        className="fixed z-40 flex h-full w-64 flex-col bg-sidebar text-sidebar-foreground shadow-lg lg:static"
       >
         <div className="flex h-16 items-center justify-between border-b px-6">
           <div className="flex items-center space-x-2">

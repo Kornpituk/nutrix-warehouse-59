@@ -27,7 +27,7 @@ const UserFilterBar: React.FC = () => {
   };
 
   return (
-    <div className="p-4 flex gap-2">
+    <div className="p-4 flex gap-2 bg-card">
       <Select 
         value={selectedRole} 
         onValueChange={onRoleChange}
@@ -35,7 +35,7 @@ const UserFilterBar: React.FC = () => {
         <SelectTrigger className="w-[200px]">
           <SelectValue placeholder="Select Role" />
         </SelectTrigger>
-        <SelectContent className="bg-white">
+        <SelectContent className="bg-background">
           <SelectItem value="all">All Roles</SelectItem>
           <SelectItem value="Admin">Admin</SelectItem>
           <SelectItem value="Manager">Manager</SelectItem>

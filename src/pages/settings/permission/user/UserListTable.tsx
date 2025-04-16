@@ -61,9 +61,9 @@ const UserListTable: React.FC<UserListTableProps> = ({
   };
 
   return (
-    <div className="rounded-md border">
-      <Table>
-        <TableHeader className="bg-muted/50">
+    <div className="rounded-md border bg-card">
+      <Table className='bg-card'>
+        <TableHeader className="bg-secondary">
           <TableRow>
             <TableHead className="w-12">
               <Checkbox />
@@ -77,7 +77,7 @@ const UserListTable: React.FC<UserListTableProps> = ({
             <TableHead className="uppercase text-xs text-right">Action</TableHead>
           </TableRow>
         </TableHeader>
-        <TableBody>
+        <TableBody className='bg-muted'>
           {users.length === 0 ? (
             <TableRow>
               <TableCell colSpan={8} className="text-center text-muted-foreground py-10">
